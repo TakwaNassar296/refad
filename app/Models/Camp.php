@@ -30,6 +30,12 @@ class Camp extends Model
         return $this->hasMany(User::class);
     }
 
+
+    public function families()
+    {
+        return $this->hasMany(Family::class);
+    }
+
     protected static function boot()
     {
         parent::boot();
@@ -68,6 +74,11 @@ class Camp extends Model
         }
 
         return $slug;
+    }
+
+    public function projects()
+    {
+        return $this->hasMany(Project::class);
     }
 
 }

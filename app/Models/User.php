@@ -106,4 +106,15 @@ class User extends Authenticatable
         return $this->status === 'pending';
     }
 
+
+    public function families()
+    {
+        return $this->hasMany(Family::class, 'added_by');
+    }
+
+    public function projects()
+    {
+        return $this->hasMany(Project::class, 'added_by');
+    }
+
 }

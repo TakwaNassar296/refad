@@ -5,7 +5,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CampController;
 use App\Http\Controllers\Api\AdminController;
+use App\Http\Controllers\Api\FamilyController;
 use App\Http\Controllers\Api\ProfileController;
+use App\Http\Controllers\Api\ProjectController;
+use App\Http\Controllers\Api\FamilyMemberController;
+use App\Http\Controllers\Api\ProjectFamilyController;
 
 Route::middleware(SetLocale::class)->group(function () {
 
@@ -46,6 +50,38 @@ Route::middleware(SetLocale::class)->group(function () {
             Route::post('camps/{slug}', [CampController::class, 'update']);
             Route::delete('camps/{slug}', [CampController::class, 'destroy']);
         });
+    });
+
+    Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
+        Route::get('/families', [FamilyController::class, 'index']);
+        Route::post('/families', [FamilyController::class, 'store']);
+        Route::get('/families/{family}', [FamilyController::class, 'show']);
+        Route::post('/families/{family}', [FamilyController::class, 'update']);
+        Route::delete('/families/{family}', [FamilyController::class, 'destroy']);
+
+
+        Route::get('/families/{family}/members', [FamilyMemberController::class, 'index']);
+        Route::post('/families/{family}/members', [FamilyMemberController::class, 'store']);
+        Route::get('/families/{family}/members/{member}', [FamilyMemberController::class, 'show']);
+        Route::post('/families/{family}/members/{member}', [FamilyMemberController::class, 'update']);
+        Route::delete('/families/{family}/members/{member}', [FamilyMemberController::class, 'destroy']);
+    });
+
+    Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
+    
+        Route::get('/projects', [ProjectController::class, 'index']);
+        Route::post('/projects', [ProjectController::class, 'store']);
+        Route::get('/projects/{project}', [ProjectController::class, 'show']);
+        Route::put('/projects/{project}', [ProjectController::class, 'update']);
+        Route::delete('/projects/{project}', [ProjectController::class, 'destroy']);
+        Route::get('/projects/export/data', [ProjectController::class, 'export']);
+
+
+        Route::get('/projects/{project}/families', [ProjectFamilyController::class, 'index']);
+        Route::post('/projects/{project}/families', [ProjectFamilyController::class, 'store']);
+        Route::delete('/projects/{project}/families/{family}', [ProjectFamilyController::class, 'destroy']);
+        Route::post('/projects/{project}/families/sync', [ProjectFamilyController::class, 'syncFamilies']);
+        Route::get('/projects/{project}/families/available', [ProjectFamilyController::class, 'availableFamilies']);
     });
 
 
