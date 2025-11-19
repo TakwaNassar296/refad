@@ -7,12 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\Translatable\HasTranslations;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
+
 
 class Camp extends Model
 {
-    use HasFactory, SoftDeletes, HasTranslations;
+    use HasFactory, SoftDeletes, HasTranslations , LogsActivity;
 
-    public $translatable = ['name']; 
+    public $translatable = ['name' , 'description']; 
 
     protected $fillable = [
         'name',
@@ -22,8 +25,36 @@ class Camp extends Model
         'latitude',
         'longitude',
         'bank_account',
-        'slug'
+        'slug',
+        'description'
     ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly([
+                'name',
+                'description',
+                'family_count',
+                'children_count',
+                'elderly_count',
+                'latitude',
+                'longitude',
+                'bank_account',
+                'slug'
+            ])
+            ->logOnlyDirty()
+            ->setDescriptionForEvent(function (string $eventName) {
+            $eventText = match($eventName) {
+                'created' => 'تم إنشاء',
+                'updated' => 'تم تحديث',
+                'deleted' => 'تم حذف',
+                default => $eventName,
+            };
+            return "{$eventText} المخيم «{$this->getTranslation('name', 'ar')}»";
+        });
+    }
+
 
     public function delegates()
     {

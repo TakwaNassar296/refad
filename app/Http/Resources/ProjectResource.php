@@ -18,7 +18,7 @@ class ProjectResource extends JsonResource
             'status' => $this->status,
             'notes' => $this->notes,
             'file' => $this->when($this->file_path, [
-                'path' => $this->file_path,
+                'path' => $this->file_path ? asset('storage/' . $this->file_path) : null,
                 'originalName' => $this->file_original_name,
                 'type' => $this->file_type,
                 'size' => $this->file_size,

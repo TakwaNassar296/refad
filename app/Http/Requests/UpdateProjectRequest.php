@@ -23,13 +23,22 @@ class UpdateProjectRequest extends FormRequest
     {
         return [
             'name' => 'sometimes|required|string|max:255',
-            'type' => 'nullable|string|max:255',
-            'beneficiary_count' => 'nullable|integer|min:0',
-            'college' => 'nullable|string|max:255',
-            'project_number' => 'nullable|string|max:100',
+            'type' => 'sometimes|string|max:255',
+            'beneficiary_count' => 'sometimes|integer|min:0',
+            'college' => 'sometimes|string|max:255',
+            'project_number' => 'sometimes|string|max:100',
             'status' => 'nullable|in:pending,in_progress,delivered,cancelled',
             'notes' => 'nullable|string|max:1000',
             'file' => 'nullable|file|max:10240',
         ];
+    }
+
+    protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)
+    {
+        throw new \Illuminate\Validation\ValidationException($validator, response()->json([
+            'success' => false,
+            'message' => __('messages.validation_failed'),
+            'errors' => $validator->errors(),
+        ], 422));
     }
 }

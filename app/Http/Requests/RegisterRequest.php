@@ -40,7 +40,7 @@ class RegisterRequest extends FormRequest
             'backup_phone' => ['nullable', 'string', 'max:20' ,'regex:/^(\+?2)?01[0125][0-9]{8}$/'],
             'role' => ['required', 'in:delegate,contributor'],
             'admin_position' => ['nullable', 'string', 'max:255'],
-            'license_number' => ['required_with:admin_position', 'string', 'max:100'],
+            'license_number' => ['nullable', 'string', 'max:100'],
             'accept_terms' => ['required', 'boolean', 'accepted'],
         ];
     }

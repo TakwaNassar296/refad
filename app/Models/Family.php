@@ -7,10 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class Family extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes , LogsActivity;
 
     protected $fillable = [
         'camp_id',
@@ -34,6 +36,28 @@ class Family extends Model
         'dob' => 'date',
     ];
 
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logAll()
+            ->useLogName('families')
+            ->setDescriptionForEvent(function (string $eventName) {
+
+                $eventText = match ($eventName) {
+                    'created' => 'تم إنشاء العائلة',
+                    'updated' => 'تم تحديث العائلة',
+                    'deleted' => 'تم حذف العائلة',
+                    default   => $eventName,
+                };
+
+                $familyName = $this->family_name ?? 'بدون اسم';
+                $campName   = $this->camp?->name ?? 'بدون مخيم';
+
+                return "{$eventText} \"{$familyName}\" في المخيم \"{$campName}\"";
+            })
+            ->logOnlyDirty();
+    }
+
     public function camp(): BelongsTo
     {
         return $this->belongsTo(Camp::class);
@@ -49,10 +73,18 @@ class Family extends Model
         return $this->hasMany(FamilyMember::class);
     }
 
-    public function supportedProjects()
+    public function projects()
     {
         return $this->belongsToMany(Project::class, 'project_beneficiaries')
-                    ->withPivot(['support_date', 'notes'])
+                    ->withPivot(['requested_quantity', 'received_quantity', 'received', 'notes', 'support_date'])
                     ->withTimestamps();
     }
+
+    public function contributions()
+    {
+        return $this->belongsToMany(Contribution::class, 'contribution_families')
+                    ->withTimestamps();
+    }
+
+
 }

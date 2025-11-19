@@ -22,22 +22,25 @@ class ProjectController extends Controller
             $query->where('added_by', $user->id);
         }
 
-        // البحث باسم المشروع
         if ($request->has('search') && $request->search) {
             $query->where('name', 'like', '%' . $request->search . '%');
         }
 
-        // البحث بالحالة
+
+        if ($request->has('family_name') && $request->family_name) {
+            $query->whereHas('beneficiaryFamilies', function($q) use ($request) {
+                $q->where('family_name', 'like', '%' . $request->family_name . '%');
+            });
+        }
+
         if ($request->has('status')) {
             $query->where('status', $request->status);
         }
 
-        // البحث بعدد العائلات المستفيدة
         if ($request->has('beneficiary_count')) {
             $query->where('beneficiary_count', $request->beneficiary_count);
         }
 
-        // البحث بنوع المشروع
         if ($request->has('type')) {
             $query->where('type', $request->type);
         }
@@ -45,14 +48,17 @@ class ProjectController extends Controller
         $projects = $query->latest()->paginate($request->per_page ?? 15);
 
         return response()->json([
+            'success' => true,
+            'message' => __('messages.projects_retrieved_successfully'),
             'data' => ProjectResource::collection($projects),
             'meta' => [
-                'current_page' => $projects->currentPage(),
-                'last_page' => $projects->lastPage(),
-                'per_page' => $projects->perPage(),
+                'currentPage' => $projects->currentPage(),
+                'lastPage' => $projects->lastPage(),
+                'perPage' => $projects->perPage(),
                 'total' => $projects->total(),
             ]
         ]);
+
     }
 
     public function store(StoreProjectRequest $request): JsonResponse
@@ -70,14 +76,7 @@ class ProjectController extends Controller
             'status' => $request->status ?? 'pending',
             'notes' => $request->notes,
         ]);
-
-        // ربط العائلات المستفيدة إذا وجدت
-        if ($request->has('families')) {
-            $project->beneficiaryFamilies()->attach($request->families);
-            $project->updateBeneficiaryCount();
-        }
-
-        // رفع الملف إذا وجد
+        
         if ($request->hasFile('file')) {
             $this->handleFileUpload($project, $request->file('file'));
         }
@@ -135,13 +134,6 @@ class ProjectController extends Controller
 
         $project->update($request->validated());
 
-        // تحديث العائلات المستفيدة إذا وجدت
-        if ($request->has('families')) {
-            $project->beneficiaryFamilies()->sync($request->families);
-            $project->updateBeneficiaryCount();
-        }
-
-        // تحديث الملف إذا وجد
         if ($request->hasFile('file')) {
             $this->handleFileUpload($project, $request->file('file'));
         }
@@ -189,7 +181,6 @@ class ProjectController extends Controller
             $query->where('added_by', $user->id);
         }
 
-        // تطبيق نفس عوامل التصفية مثل index
         if ($request->has('search') && $request->search) {
             $query->where('name', 'like', '%' . $request->search . '%');
         }

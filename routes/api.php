@@ -8,6 +8,8 @@ use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\FamilyController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\ProjectController;
+use App\Http\Controllers\Api\ActivityLogController;
+use App\Http\Controllers\Api\ContributorController;
 use App\Http\Controllers\Api\FamilyMemberController;
 use App\Http\Controllers\Api\ProjectFamilyController;
 
@@ -25,6 +27,8 @@ Route::middleware(SetLocale::class)->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('logout', [AuthController::class, 'logout']);
         Route::delete('delete-account', [AuthController::class, 'destroy']);
+        Route::get('/my-activities', [ActivityLogController::class, 'userActivityLogs']);
+
     });
 
 
@@ -32,6 +36,8 @@ Route::middleware(SetLocale::class)->group(function () {
         Route::get('delegates/pending', [AdminController::class, 'pendingDelegates']);
         Route::post('delegates/{delegate}/approve', [AdminController::class, 'approveDelegate']);
         Route::post('delegates/{delegate}/reject', [AdminController::class, 'rejectDelegate']);
+      //  Route::post('contributions/{id}/decision', [AdminController::class, 'decision']);
+
     });
 
     Route::middleware('auth:sanctum')->group(function () {
@@ -52,7 +58,7 @@ Route::middleware(SetLocale::class)->group(function () {
         });
     });
 
-    Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
+    Route::middleware(['auth:sanctum', 'role:delegate'])->group(function () {
         Route::get('/families', [FamilyController::class, 'index']);
         Route::post('/families', [FamilyController::class, 'store']);
         Route::get('/families/{family}', [FamilyController::class, 'show']);
@@ -67,12 +73,12 @@ Route::middleware(SetLocale::class)->group(function () {
         Route::delete('/families/{family}/members/{member}', [FamilyMemberController::class, 'destroy']);
     });
 
-    Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
+    Route::middleware(['auth:sanctum', 'role:delegate'])->group(function () {
     
         Route::get('/projects', [ProjectController::class, 'index']);
         Route::post('/projects', [ProjectController::class, 'store']);
         Route::get('/projects/{project}', [ProjectController::class, 'show']);
-        Route::put('/projects/{project}', [ProjectController::class, 'update']);
+        Route::post('/projects/{project}', [ProjectController::class, 'update']);
         Route::delete('/projects/{project}', [ProjectController::class, 'destroy']);
         Route::get('/projects/export/data', [ProjectController::class, 'export']);
 
@@ -80,8 +86,17 @@ Route::middleware(SetLocale::class)->group(function () {
         Route::get('/projects/{project}/families', [ProjectFamilyController::class, 'index']);
         Route::post('/projects/{project}/families', [ProjectFamilyController::class, 'store']);
         Route::delete('/projects/{project}/families/{family}', [ProjectFamilyController::class, 'destroy']);
-        Route::post('/projects/{project}/families/sync', [ProjectFamilyController::class, 'syncFamilies']);
-        Route::get('/projects/{project}/families/available', [ProjectFamilyController::class, 'availableFamilies']);
+        Route::post('projects/{project}/families/mark-beneficial', [ProjectFamilyController::class, 'markAsBeneficial']);
+    });
+
+    Route::middleware(['auth:sanctum', 'role:contributor'])->group(function () {
+        Route::get('contributor/camps', [ContributorController::class, 'index']);
+        Route::get('contributor/camps/{campId}/projects', [ContributorController::class, 'projects']);
+        Route::get('/contributor/projects/{projectId}/families', [ContributorController::class, 'projectFamilies']);
+        Route::post('/contributor/projects/{projectId}/contribute', [ContributorController::class, 'contribute']);
+        Route::get('/contributor/history', [ContributorController::class, 'history']);
+        Route::post('/contributor/contributions/{id}', [ContributorController::class, 'update']);
+        Route::delete('/contributor/contributions/{id}', [ContributorController::class, 'destroy']);
     });
 
 

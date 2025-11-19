@@ -20,7 +20,7 @@ return new class extends Migration
             $table->unsignedInteger('beneficiary_count')->default(0); 
             $table->string('college')->nullable();         
             $table->string('project_number')->nullable();  
-            $table->enum('status', ['pending', 'in_progress', 'delivered', 'cancelled'])->default('pending');  // الحالة
+            $table->enum('status', ['pending', 'in_progress', 'delivered', 'cancelled'])->default('pending');  
             $table->text('notes')->nullable(); 
 
 

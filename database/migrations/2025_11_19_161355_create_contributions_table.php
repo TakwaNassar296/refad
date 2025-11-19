@@ -11,17 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('project_beneficiaries', function (Blueprint $table) {
+        Schema::create('contributions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('family_id')->constrained('families')->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('project_id')->constrained('projects')->cascadeOnDelete();
-            $table->integer('requested_quantity')->nullable(); 
-            $table->integer('received_quantity')->nullable();  
-            $table->boolean('received')->default(false);       
-            $table->date('support_date')->nullable(); 
+            $table->integer('total_quantity');
             $table->text('notes')->nullable(); 
+            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->timestamps();
-            $table->unique(['family_id', 'project_id']);
+            $table->softDeletes();
         });
     }
 
@@ -30,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('project_beneficiaries');
+        Schema::dropIfExists('contributions');
     }
 };

@@ -11,6 +11,7 @@ class CampResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->getTranslation('name', app()->getLocale()),
+            'description' =>  $this->getTranslation('description', app()->getLocale()),
             'slug' => $this->slug,
             'familyCount' => $this->family_count,
             'childrenCount' => $this->children_count,
@@ -19,6 +20,8 @@ class CampResource extends JsonResource
             'longitude' => $this->longitude,
             'bankAccount' => $this->bank_account,
             'delegates' => UserResource::collection($this->whenLoaded('delegates')),
+            'families' => FamilyResource::collection($this->whenLoaded('families')),
+            'projects' => ProjectResource::collection($this->whenLoaded('projects')),
             'createdAt' => $this->created_at,
             'updatedAt' => $this->updated_at,
         ];
