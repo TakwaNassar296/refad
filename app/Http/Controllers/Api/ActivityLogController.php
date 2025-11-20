@@ -25,6 +25,7 @@ class ActivityLogController extends Controller
         $logs = Activity::where('causer_id', $user->id)
             ->where('causer_type', User::class)
             ->orderBy('created_at', 'desc')
+            ->take(3)
             ->get()
             ->map(function ($log) {
                 return [

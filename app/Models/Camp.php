@@ -112,4 +112,9 @@ class Camp extends Model
         return $this->hasMany(Project::class);
     }
 
+    public function complaints()
+    {
+        return $this->hasMany(Complaint::class);
+    }
+
 }

@@ -53,7 +53,7 @@ class Family extends Model
                 $familyName = $this->family_name ?? 'بدون اسم';
                 $campName   = $this->camp?->name ?? 'بدون مخيم';
 
-                return "{$eventText} \"{$familyName}\" في المخيم \"{$campName}\"";
+               return "{$eventText} '{$familyName}' في المخيم '{$campName}'";
             })
             ->logOnlyDirty();
     }

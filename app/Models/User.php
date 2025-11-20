@@ -35,7 +35,8 @@ class User extends Authenticatable
         'reset_code',
         'reset_code_expires_at',
         'backup_phone',
-        'camp_id'
+        'camp_id',
+        'fcm_token'
     ];
 
     /**
@@ -74,7 +75,18 @@ class User extends Authenticatable
                 'status',
                 'camp_id',
             ])
-            ->logOnlyDirty();
+            ->logOnlyDirty()
+            ->setDescriptionForEvent(function (string $eventName) {
+
+                $eventText = match ($eventName) {
+                    'created' => 'تم إنشاء بياناتك',
+                    'updated' => 'تم تحديث بياناتك',
+                    'deleted' => 'تم حذف بياناتك',
+                    default   => $eventName,
+                };
+
+                return $eventText;
+            });
     }
 
     public function refreshTokens()
@@ -141,6 +153,11 @@ class User extends Authenticatable
     public function delegateContributions()
     {
         return $this->hasMany(Contribution::class, 'delegate_id');
+    }
+
+    public function notifications()
+    {
+        return $this->morphMany(UserNotification::class, 'notifiable');
     }
 
 

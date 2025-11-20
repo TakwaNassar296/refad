@@ -4,10 +4,13 @@ use App\Http\Middleware\SetLocale;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CampController;
+use App\Http\Controllers\Api\PageController;
 use App\Http\Controllers\Api\AdminController;
+use App\Http\Controllers\Api\ContactUsController;
 use App\Http\Controllers\Api\FamilyController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\ProjectController;
+use App\Http\Controllers\API\HomepageController;
 use App\Http\Controllers\Api\ActivityLogController;
 use App\Http\Controllers\Api\ContributorController;
 use App\Http\Controllers\Api\FamilyMemberController;
@@ -27,6 +30,7 @@ Route::middleware(SetLocale::class)->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('logout', [AuthController::class, 'logout']);
         Route::delete('delete-account', [AuthController::class, 'destroy']);
+        Route::post('/user/fcm-token', [AuthController::class, 'saveFcmToken']);
         Route::get('/my-activities', [ActivityLogController::class, 'userActivityLogs']);
 
     });
@@ -98,6 +102,18 @@ Route::middleware(SetLocale::class)->group(function () {
         Route::post('/contributor/contributions/{id}', [ContributorController::class, 'update']);
         Route::delete('/contributor/contributions/{id}', [ContributorController::class, 'destroy']);
     });
+
+    Route::get('/homepage', [HomepageController::class, 'index']);
+    Route::get('/settings', [HomepageController::class, 'setting']);
+
+    
+    Route::get('/pages', [PageController::class, 'index']);
+    Route::get('/pages/{type}', [PageController::class, 'show']);
+    Route::get('/partners', [PageController::class, 'partner']);
+    Route::get('/testimonials', [PageController::class, 'testimonial']);
+
+    Route::post('/contact-us', [ContactUsController::class, 'store']);
+    Route::post('/complaints', [ContactUsController::class, 'complaints']);
 
 
 });

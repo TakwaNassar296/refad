@@ -167,6 +167,7 @@ class ContributorController extends Controller
         $contribution = Contribution::create([
             'project_id' => $projectId,
             'user_id' => $user->id,
+            'delegate_id' => $project->added_by,
             'total_quantity' => $validated['contributedQuantity'],
             'notes' => $validated['notes'] ?? null,
             'status' => 'pending',

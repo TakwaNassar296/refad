@@ -288,4 +288,20 @@ class AuthController extends Controller
             'data' => null,
         ]);
     }
+
+    public function saveFcmToken(Request $request)
+    {
+        $request->validate([
+            'fcm_token' => 'required|string|max:255',
+        ]);
+
+        $user = Auth::user();
+        $user->fcm_token = $request->fcm_token;
+        $user->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => __('messages.fcm_token_saved'),
+        ]);
+    }
 }
