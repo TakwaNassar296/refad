@@ -65,4 +65,7 @@ return [
     'partners_retrieved' => 'Partners retrieved successfully.',
     'testimonials_retrieved' => 'Testimonials retrieved successfully.',
     'contact_us_sent' => 'Your message has been sent successfully, we will contact you soon.',
+    'families_retrieved_successfully' => 'Families retrieved successfully',
+    'activity_logs_fetched' => 'Activity logs retrieved successfully',
+    'statistics_fetched_successfully' => 'Statistics fetched successfully',
 ];

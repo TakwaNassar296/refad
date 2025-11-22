@@ -29,7 +29,8 @@ class Family extends Model
         'tent_number',
         'location',
         'notes',
-        'total_members'
+        'total_members',
+        'file'
     ];
 
     protected $casts = [

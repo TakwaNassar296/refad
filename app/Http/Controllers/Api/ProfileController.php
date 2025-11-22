@@ -7,15 +7,18 @@ use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
     public function profile(Request $request): JsonResponse
     {
+       $user = $request->user()->load('camp');
+
         return response()->json([
             'status' => true,
             'message' => __('messages.profile_retrieved_successfully'),
-            'data' => new UserResource($request->user()),
+            'data' => new UserResource($user),
         ]);
     }
 
@@ -31,7 +34,15 @@ class ProfileController extends Controller
             'id_number' => 'sometimes|string|unique:users,id_number,' . $user->id,
             'license_number' => 'sometimes|string|max:100',
             'admin_position' => 'sometimes|in:foundation,assistant,other',
+            'profile_image' => 'sometimes|file|mimes:jpg,jpeg,png|max:2048',
         ]);
+
+        if ($request->hasFile('profile_image')) {
+            if ($user->profile_image && Storage::disk('public')->exists($user->profile_image)) {
+                Storage::disk('public')->delete($user->profile_image);
+            }
+            $validated['profile_image'] = $request->file('profile_image')->store('users', 'public');
+        }
 
         $user->update($validated);
 

@@ -31,6 +31,7 @@ class StoreFamilyRequest extends FormRequest
             'total_members' => 'required|integer|min:1',
             'elderly_count' => 'required|integer|min:0',
             'medical_conditions_count' => 'required|integer|min:0',
+            'file' => 'required_unless:medical_conditions_count,0|file|mimes:pdf,jpg,jpeg,png,txt|max:2048',
             'children_count' => 'required|integer|min:0',
             'tent_number' => 'required|string|max:50',
             'location' => 'required|string|max:500',

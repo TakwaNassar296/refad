@@ -13,12 +13,13 @@ class FamilyResource extends JsonResource
             'familyName' => $this->family_name,
             'fatherName' => $this->father_name,
             'nationalId' => $this->national_id,
-            'dob' => $this->dob,
+            'dob' => $this->dob?->format('Y-m-d'),
             'phone' => $this->phone,
             'email' => $this->email,
             'totalMembers' => $this->total_members,
             'elderlyCount' => $this->elderly_count,
             'medicalConditionsCount' => $this->medical_conditions_count,
+            'fileUrl' => $this->file ? asset('storage/' . $this->file) : null,
             'childrenCount' => $this->children_count,
             'femalesCount' => $this->whenLoaded('members', function () {
                 return $this->members->where('gender', 'female')->count();

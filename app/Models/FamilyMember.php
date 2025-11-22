@@ -44,7 +44,7 @@ class FamilyMember extends Model
                     default => $eventName,
                 };
 
-                return $eventText . ': ' . $this->name;
+                return $eventText . ': ' . $this->family->family_name;
             });
     }
 

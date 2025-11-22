@@ -36,7 +36,8 @@ class User extends Authenticatable
         'reset_code_expires_at',
         'backup_phone',
         'camp_id',
-        'fcm_token'
+        'fcm_token',
+        'profile_image'
     ];
 
     /**

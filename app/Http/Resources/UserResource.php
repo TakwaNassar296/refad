@@ -21,8 +21,10 @@ class UserResource extends JsonResource
             'licenseNumber' => $this->license_number,
             'acceptTerms' => (bool) $this->accept_terms,
             'status' => $this->status,
+            'profileImageUrl' => $this->profile_image ? asset('storage/' . $this->profile_image) : null,
             'createdAt' => $this->created_at?->toDateTimeString(),
             'updatedAt' => $this->updated_at?->toDateTimeString(),
+            'camp' => new CampResource($this->whenLoaded('camp')),
         ];
     }
 }

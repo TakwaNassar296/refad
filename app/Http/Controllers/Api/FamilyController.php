@@ -8,6 +8,7 @@ use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\FamilyResource;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\StoreFamilyRequest;
 use App\Http\Requests\UpdateFamilyRequest;
 use Illuminate\Validation\ValidationException;
@@ -35,16 +36,12 @@ class FamilyController extends Controller
             $query->where('medical_conditions_count', $request->medical_conditions_count);
         }
 
-        $families = $query->latest()->paginate($request->per_page ?? 15);
+        $families = $query->latest()->get();
 
         return response()->json([
+            'success' => true,
+            'message' => __('messages.families_retrieved_successfully'),
             'data' => FamilyResource::collection($families), 
-            'meta' => [
-                'current_page' => $families->currentPage(),
-                'last_page' => $families->lastPage(),
-                'per_page' => $families->perPage(),
-                'total' => $families->total(),
-            ]
         ]);
     }
 
@@ -52,6 +49,11 @@ class FamilyController extends Controller
     {
         try {
             $user = Auth::user();
+
+            $filePath = null;
+                if ($request->hasFile('file')) {
+                    $filePath = $request->file('file')->store('families', 'public');
+            }
 
             $family = Family::create([
                 'camp_id' => $user->camp_id,
@@ -69,6 +71,7 @@ class FamilyController extends Controller
                 'tent_number' => $request->tent_number,
                 'location' => $request->location,
                 'notes' => $request->notes,
+                'file' => $filePath,
             ]);
 
             return response()->json([
@@ -131,7 +134,18 @@ class FamilyController extends Controller
             ], 403);
         }
 
-        $family->update($request->validated());
+        $data = $request->validated();
+
+        if ($request->hasFile('file')) {
+            if ($family->file && Storage::disk('public')->exists($family->file)) {
+                Storage::disk('public')->delete($family->file);
+            }
+            $data['file'] = $request->file('file')->store('families', 'public');
+        } else {
+            $data['file'] = $family->file;
+        }
+
+        $family->update($data);
 
         return response()->json([
             'success' => true,
@@ -139,6 +153,7 @@ class FamilyController extends Controller
             'data' => new FamilyResource($family->load(['camp', 'delegate'])),
         ]);
     }
+
 
     public function destroy($id): JsonResponse
     {

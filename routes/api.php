@@ -6,11 +6,12 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CampController;
 use App\Http\Controllers\Api\PageController;
 use App\Http\Controllers\Api\AdminController;
-use App\Http\Controllers\Api\ContactUsController;
 use App\Http\Controllers\Api\FamilyController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\ProjectController;
 use App\Http\Controllers\API\HomepageController;
+use App\Http\Controllers\Api\ContactUsController;
+use App\Http\Controllers\Api\StatisticsController;
 use App\Http\Controllers\Api\ActivityLogController;
 use App\Http\Controllers\Api\ContributorController;
 use App\Http\Controllers\Api\FamilyMemberController;
@@ -40,6 +41,8 @@ Route::middleware(SetLocale::class)->group(function () {
         Route::get('delegates/pending', [AdminController::class, 'pendingDelegates']);
         Route::post('delegates/{delegate}/approve', [AdminController::class, 'approveDelegate']);
         Route::post('delegates/{delegate}/reject', [AdminController::class, 'rejectDelegate']);
+        Route::delete('/families/{family}', [FamilyController::class, 'destroy']);
+        Route::delete('/families/{family}/members/{member}', [FamilyMemberController::class, 'destroy']);
       //  Route::post('contributions/{id}/decision', [AdminController::class, 'decision']);
 
     });
@@ -67,14 +70,12 @@ Route::middleware(SetLocale::class)->group(function () {
         Route::post('/families', [FamilyController::class, 'store']);
         Route::get('/families/{family}', [FamilyController::class, 'show']);
         Route::post('/families/{family}', [FamilyController::class, 'update']);
-        Route::delete('/families/{family}', [FamilyController::class, 'destroy']);
 
 
         Route::get('/families/{family}/members', [FamilyMemberController::class, 'index']);
         Route::post('/families/{family}/members', [FamilyMemberController::class, 'store']);
         Route::get('/families/{family}/members/{member}', [FamilyMemberController::class, 'show']);
         Route::post('/families/{family}/members/{member}', [FamilyMemberController::class, 'update']);
-        Route::delete('/families/{family}/members/{member}', [FamilyMemberController::class, 'destroy']);
     });
 
     Route::middleware(['auth:sanctum', 'role:delegate'])->group(function () {
@@ -102,6 +103,10 @@ Route::middleware(SetLocale::class)->group(function () {
         Route::post('/contributor/contributions/{id}', [ContributorController::class, 'update']);
         Route::delete('/contributor/contributions/{id}', [ContributorController::class, 'destroy']);
     });
+
+
+    Route::middleware('auth:sanctum')->get('user/statistics', [StatisticsController::class, 'statistics']);
+
 
     Route::get('/homepage', [HomepageController::class, 'index']);
     Route::get('/settings', [HomepageController::class, 'setting']);

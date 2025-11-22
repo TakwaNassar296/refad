@@ -66,4 +66,7 @@ return [
     'partners_retrieved' => 'تم جلب الشركاء بنجاح.',
     'testimonials_retrieved' => 'تم جلب آراء العملاء بنجاح.',
     'contact_us_sent' => 'تم إرسال رسالتك بنجاح، سنتواصل معك قريباً.',
+    'families_retrieved_successfully' => 'تم جلب العائلات بنجاح',
+    'activity_logs_fetched' => 'تم جلب سجلات النشاط بنجاح',
+    'statistics_fetched_successfully' => 'تم جلب الإحصائيات بنجاح',
 ];

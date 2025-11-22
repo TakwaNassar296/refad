@@ -37,6 +37,7 @@ class UpdateFamilyRequest extends FormRequest
             'total_members' => 'sometimes|integer|min:1',
             'elderly_count' => 'sometimes|required|integer|min:0',
             'medical_conditions_count' => 'sometimes|required|integer|min:0',
+            'file' => 'sometimes|file|mimes:pdf,jpg,jpeg,png,txt|max:2048',
             'children_count' => 'sometimes|required|integer|min:0',
             'tent_number' => 'sometimes|string|max:50',
             'location' => 'sometimes|string|max:500',
