@@ -15,39 +15,32 @@ class CampController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        $user = $request->user();
-        
-        if ($user->isAdmin()) {
-            $camps = Camp::with('delegates')->get();
-            return response()->json([
-                'status' => true,
-                'message' => __('messages.retrieved_successfully'),
-                'data' => CampResource::collection($camps)
-            ]);
-        } elseif ($user->isDelegate()) {
-            $camp = Camp::with('delegates')->find($user->camp_id);
-            
-            if (!$camp) {
-                return response()->json([
-                    'status' => false,
-                    'message' => __('messages.no_assigned_camp'),
-                    'data' => null
-                ], 404);
-            }
-            
-            return response()->json([
-                'status' => true,
-                'message' => __('messages.retrieved_successfully'),
-                'data' => new CampResource($camp)
-            ]);
+        $query = Camp::query();
+
+        if ($request->has('name') && $request->name) {
+            $query->where(function ($q) use ($request) {
+                $q->where('name->ar', 'like', '%' . $request->name . '%')
+                ->orWhere('name->en', 'like', '%' . $request->name . '%');
+            });
         }
-        
+
+        if ($request->has('location') && $request->location) {
+            $query->where('location', 'like', '%' . $request->location . '%');
+        }
+
+        if ($request->has('family_count') && $request->family_count) {
+            $query->where('family_count', $request->family_count);
+        }
+
+        $camps = $query->latest()->get();
+
         return response()->json([
-            'status' => false,
-            'message' => __('auth.unauthorized'),
-            'data' => null
-        ], 403);
+            'success' => true,
+            'message' => __('messages.camps_list_fetched'),
+            'data' => CampResource::collection($camps),
+        ]);
     }
+
 
     public function store(StoreCampRequest $request): JsonResponse
     {
@@ -66,9 +59,8 @@ class CampController extends Controller
         ], 201);
     }
 
-    public function show(Request $request, $slug): JsonResponse
+    public function show($slug): JsonResponse
     {
-        $user = $request->user();
         
         $camp = Camp::where('slug', $slug)->first();
 
@@ -80,19 +72,11 @@ class CampController extends Controller
             ], 404);
         }
 
-        if ($user->isAdmin() || ($user->isDelegate() && $user->camp_id == $camp->id)) {
-            return response()->json([
-                'status' => true,
-                'message' => __('messages.retrieved_successfully'),
-                'data' => new CampResource($camp->load('delegates'))
-            ]);
-        }
-
         return response()->json([
-            'status' => false,
-            'message' => __('auth.unauthorized'),
-            'data' => null
-        ], 403);
+            'status' => true,
+            'message' => __('messages.retrieved_successfully'),
+            'data' => new CampResource($camp->load('delegates'))
+        ]);
     }
 
 

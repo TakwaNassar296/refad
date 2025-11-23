@@ -3,9 +3,14 @@
 namespace App\Http\Controllers\Api;
 
 use Carbon\Carbon;
+use App\Models\User;
+use App\Models\Family;
+use App\Models\Project;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\StatisticsResource;
+use App\Models\Camp;
 
 class StatisticsController extends Controller
 {
@@ -28,5 +33,32 @@ class StatisticsController extends Controller
             'data' => new StatisticsResource($user, $startDate, $endDate, $monthType),
         ], 200);
     }
+
+    public function getStats(): JsonResponse
+    {
+        try {
+            $stats = [
+                'projectsCount' => Project::count(),
+                'familiesCount' => Family::count(),
+                'contributorsCount' => User::where('role', 'contributor')->count(),
+                'CampsCount' => Camp::count(),
+            ];
+
+            return response()->json([
+                'success' => true,
+                'message' => __('messages.statistics_retrieved_successfully'),
+                'data' => $stats,
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => __('messages.failed_to_retrieve_statistics'),
+                'data' => null,
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
 
 }

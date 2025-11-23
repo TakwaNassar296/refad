@@ -43,6 +43,7 @@ Route::middleware(SetLocale::class)->group(function () {
         Route::post('delegates/{delegate}/reject', [AdminController::class, 'rejectDelegate']);
         Route::delete('/families/{family}', [FamilyController::class, 'destroy']);
         Route::delete('/families/{family}/members/{member}', [FamilyMemberController::class, 'destroy']);
+        Route::delete('/projects/{project}/families/{family}', [ProjectFamilyController::class, 'destroy']);
 
         Route::get('/admin/contributions', [AdminController::class, 'allContributions']);
         Route::post('/contributions/{contributionId}/status', [AdminController::class, 'updateContributionStatus']);
@@ -55,17 +56,17 @@ Route::middleware(SetLocale::class)->group(function () {
         Route::post('profile/change-password', [ProfileController::class, 'changePassword']);
     });
 
-    Route::middleware('auth:sanctum')->group(function () {
+   
 
-        Route::get('camps', [CampController::class, 'index']);
-        Route::get('camps/{slug}', [CampController::class, 'show']);
+    Route::get('camps', [CampController::class, 'index']);
+    Route::get('camps/{slug}', [CampController::class, 'show']);
 
-        Route::middleware('role:admin')->group(function () {
-            Route::post('camps', [CampController::class, 'store']);
-            Route::post('camps/{slug}', [CampController::class, 'update']);
-            Route::delete('camps/{slug}', [CampController::class, 'destroy']);
-        });
+    Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
+        Route::post('camps', [CampController::class, 'store']);
+        Route::post('camps/{slug}', [CampController::class, 'update']);
+        Route::delete('camps/{slug}', [CampController::class, 'destroy']);
     });
+   
 
     Route::middleware(['auth:sanctum', 'role:delegate'])->group(function () {
         Route::get('/families', [FamilyController::class, 'index']);
@@ -94,7 +95,6 @@ Route::middleware(SetLocale::class)->group(function () {
 
         Route::get('/projects/{project}/families', [ProjectFamilyController::class, 'index']);
         Route::post('/projects/{project}/families', [ProjectFamilyController::class, 'store']);
-        Route::delete('/projects/{project}/families/{family}', [ProjectFamilyController::class, 'destroy']);
         Route::post('projects/{project}/families/mark-beneficial', [ProjectFamilyController::class, 'markAsBeneficial']);
     });
 
@@ -123,6 +123,7 @@ Route::middleware(SetLocale::class)->group(function () {
 
     Route::post('/contact-us', [ContactUsController::class, 'store']);
     Route::post('/complaints', [ContactUsController::class, 'complaints']);
+    Route::get('/stats', [StatisticsController::class, 'getStats']);
 
 
 });

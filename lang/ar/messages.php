@@ -74,6 +74,8 @@ return [
     'all_contributions_fetched' => 'تم جلب جميع المساهمات بنجاح',
     'contribution_status_updated' => 'تم تحديث حالة المساهمة بنجاح',
     'contribution_not_found' => 'المساهمة غير موجودة',
+    'statistics_retrieved_successfully' => 'تم استرجاع الإحصائيات بنجاح',
+    'failed_to_retrieve_statistics' => 'فشل في استرجاع الإحصائيات',
 
 
 ];

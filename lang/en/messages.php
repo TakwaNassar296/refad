@@ -73,6 +73,8 @@ return [
     'all_contributions_fetched' => 'All contributions fetched successfully',
     'contribution_status_updated' => 'Contribution status updated successfully',
     'contribution_not_found' => 'Contribution not found',
+    'statistics_retrieved_successfully' => 'Statistics retrieved successfully',
+    'failed_to_retrieve_statistics' => 'Failed to retrieve statistics',
 
     
 ];

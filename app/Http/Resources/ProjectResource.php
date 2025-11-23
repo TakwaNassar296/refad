@@ -9,7 +9,7 @@ class ProjectResource extends JsonResource
     public function toArray($request)
     {
         $totalReceived = $this->beneficiaryFamilies->sum('pivot.received_quantity');
-        $totalRemaining = $this->college - $totalReceived;
+        $totalRemaining = max(0, $this->college - $totalReceived);
         return [
             'id' => $this->id,
             'name' => $this->name,

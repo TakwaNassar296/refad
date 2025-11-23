@@ -99,7 +99,7 @@ class ProjectFamilyController extends Controller
         $project->total_received = $totalReceived;
 
         if ($totalReceived >= $project->college) {
-            $project->status = 'completed';
+            $project->status = 'delivered';
         } elseif ($totalReceived > 0) {
             $project->status = 'in_progress';
         } else {
@@ -146,7 +146,7 @@ class ProjectFamilyController extends Controller
         $project->total_received = $totalReceived;
 
         if ($totalReceived >= $project->college) {
-            $project->status = 'completed';
+            $project->status = 'delivered';
         } elseif ($totalReceived > 0) {
             $project->status = 'in_progress';
         } else {

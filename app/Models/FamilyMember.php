@@ -18,7 +18,8 @@ class FamilyMember extends Model
         'name',
         'gender',
         'dob',
-        'national_id'
+        'national_id',
+        'status'
     ];
 
     protected $casts = [
