@@ -8,6 +8,8 @@ class ProjectResource extends JsonResource
 {
     public function toArray($request)
     {
+        $totalReceived = $this->beneficiaryFamilies->sum('pivot.received_quantity');
+        $totalRemaining = $this->college - $totalReceived;
         return [
             'id' => $this->id,
             'name' => $this->name,
@@ -23,9 +25,12 @@ class ProjectResource extends JsonResource
                 'type' => $this->file_type,
                 'size' => $this->file_size,
             ]),
+            'totalReceived' => $totalReceived, // تم تسليم
+            'totalRemaining' => $totalRemaining, // المتبقي
             'camp' => new CampResource($this->whenLoaded('camp')),
             'delegate' => new UserResource($this->whenLoaded('delegate')),
             'beneficiaryFamilies' => FamilyResource::collection($this->whenLoaded('beneficiaryFamilies')),
+            'contributions' => ContributionResource::collection($this->whenLoaded('contributions')),
             'createdAt' => $this->created_at,
             'updatedAt' => $this->updated_at,
         ];

@@ -8,6 +8,7 @@ use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CampResource;
 use App\Http\Requests\StoreCampRequest;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\UpdateCampRequest;
 
 class CampController extends Controller
@@ -50,7 +51,13 @@ class CampController extends Controller
 
     public function store(StoreCampRequest $request): JsonResponse
     {
-        $camp = Camp::create($request->validated());
+        $data = $request->validated();
+
+        if ($request->hasFile('camp_img')) {
+            $data['camp_img'] = $request->file('camp_img')->store('camps', 'public');
+        }
+
+        $camp = Camp::create($data);
 
         return response()->json([
             'status' => true,
@@ -112,8 +119,17 @@ class CampController extends Controller
             ], 403);
         }
 
-        $validated = $request->validated();
-        $camp->update($validated);
+        $data = $request->validated();
+
+            if ($request->hasFile('camp_img')) {
+            if ($camp->camp_img && Storage::disk('public')->exists($camp->camp_img)) {
+                Storage::disk('public')->delete($camp->camp_img);
+            }
+            $data['camp_img'] = $request->file('camp_img')->store('camps', 'public');
+        }
+
+        $camp->update($data);
+       
 
         return response()->json([
             'status' => true,

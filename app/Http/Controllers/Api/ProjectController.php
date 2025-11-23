@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Project;
+use App\Models\Contribution;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
@@ -10,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\ProjectResource;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
+use App\Http\Resources\ContributionResource;
 
 class ProjectController extends Controller
 {
@@ -90,7 +92,7 @@ class ProjectController extends Controller
 
     public function show($id): JsonResponse
     {
-        $project = Project::with(['camp', 'delegate', 'beneficiaryFamilies'])->find($id);
+        $project = Project::with(['camp', 'delegate', 'beneficiaryFamilies','contributions'])->find($id);
 
         if (!$project) {
             return response()->json([
@@ -214,5 +216,31 @@ class ProjectController extends Controller
             'file_type' => $file->getClientMimeType(),
             'file_size' => $file->getSize(),
         ]);
+    }
+
+     public function delegateContributions(): JsonResponse
+    {
+        $user = Auth::user();
+
+        if ($user->role !== 'delegate') {
+            return response()->json([
+                'success' => false,
+                'message' => __('messages.access_denied'),
+                'data' => null,
+            ], 403);
+        }
+
+        $contributions = Contribution::with(['project', 'families'])
+            ->whereHas('project', function($q) use ($user) {
+                $q->where('added_by', $user->id);
+            })
+            ->where('status', 'approved')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'message' => __('messages.contribution_history_fetched'),
+            'data' => ContributionResource::collection($contributions),
+        ], 200);
     }
 }

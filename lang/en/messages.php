@@ -68,4 +68,11 @@ return [
     'families_retrieved_successfully' => 'Families retrieved successfully',
     'activity_logs_fetched' => 'Activity logs retrieved successfully',
     'statistics_fetched_successfully' => 'Statistics fetched successfully',
+    'camp_families_list_fetched' => 'Camp families list fetched successfully',
+    'invalid_families_for_camp' => 'Selected families are not valid for this camp',
+    'all_contributions_fetched' => 'All contributions fetched successfully',
+    'contribution_status_updated' => 'Contribution status updated successfully',
+    'contribution_not_found' => 'Contribution not found',
+
+    
 ];

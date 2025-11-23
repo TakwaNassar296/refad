@@ -26,7 +26,9 @@ class Camp extends Model
         'longitude',
         'bank_account',
         'slug',
-        'description'
+        'description',
+        'camp_img',   
+        'location', 
     ];
 
     public function getActivitylogOptions(): LogOptions

@@ -18,7 +18,7 @@ class ContributorController extends Controller
 {
 
 
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
         $user = Auth::user();
 
@@ -30,25 +30,34 @@ class ContributorController extends Controller
             ], 403);
         }
 
-        $camps = Camp::with('projects','delegates')->get();
+        $query = Camp::with(['projects', 'delegates']);
 
-        if ($camps->isEmpty()) {
-            return response()->json([
-                'success' => false,
-                'message' => __('messages.no_camps_found'),
-                'data' => null,
-            ], 404);
+        if ($request->has('name') && $request->name) {
+            $query->where('name->ar', 'like', '%' . $request->name . '%')
+                ->orWhere('name->en', 'like', '%' . $request->name . '%');
         }
+
+        if ($request->has('location') && $request->location) {
+            $query->where('location', 'like', '%' . $request->location . '%');
+        }
+
+        if ($request->has('family_count') && $request->family_count) {
+            $query->where('family_count', $request->family_count);
+        }
+
+        $camps = $query->latest()->get();
 
         return response()->json([
             'success' => true,
             'message' => __('messages.camps_list_fetched'),
             'data' => CampResource::collection($camps),
-        ], 200);
+        ]);
     }
 
+
+
    
-    public function projects($campId): JsonResponse
+    public function projects(Request $request, $campId): JsonResponse
     {
         $user = Auth::user();
 
@@ -60,10 +69,25 @@ class ContributorController extends Controller
             ], 403);
         }
 
-        $projects = Project::with(['camp', 'delegate'])
+        $query = Project::with(['camp', 'delegate'])
             ->where('camp_id', $campId)
-            ->whereIn('status', ['pending', 'in_progress'])
-            ->get();
+            ->whereIn('status', ['pending', 'in_progress']);
+
+        if ($request->filled('family_name')) {
+            $query->whereHas('beneficiaryFamilies', function ($q) use ($request) {
+                $q->where('family_name', 'like', '%' . $request->family_name . '%');
+            });
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('type')) {
+            $query->where('type', $request->type);
+        }
+
+        $projects = $query->get();
 
         if ($projects->isEmpty()) {
             return response()->json([
@@ -80,7 +104,8 @@ class ContributorController extends Controller
         ], 200);
     }
 
-    public function projectFamilies(Request $request, $projectId): JsonResponse
+
+    public function campFamilies(Request $request, $campId): JsonResponse
     {
         $user = Auth::user();
 
@@ -92,47 +117,44 @@ class ContributorController extends Controller
             ], 403);
         }
 
-        $project = Project::with('camp.families')->find($projectId);
+        $camp = Camp::with('families')->find($campId);
 
-        if (!$project) {
+        if (!$camp) {
             return response()->json([
                 'success' => false,
-                'message' => __('messages.project_not_found'),
+                'message' => __('messages.camp_not_found'),
                 'data' => null,
             ], 404);
         }
 
-        $familiesQuery = $project->camp->families();
+        $familiesQuery = $camp->families();
 
-        if ($request->has('search')) {
-            $search = $request->query('search');
+        if ($request->filled('search')) {
+            $search = $request->search;
             $familiesQuery->where('family_name', 'like', "%{$search}%");
         }
 
-        if ($request->has('medical')) {
+        if ($request->filled('medical')) {
             $familiesQuery->where('medical_conditions_count', '>', 0);
         }
 
-        if ($request->has('children')) {
+        if ($request->filled('children')) {
             $familiesQuery->where('children_count', '>', 0);
         }
 
-        if ($request->has('elderly')) {
+        if ($request->filled('elderly')) {
             $familiesQuery->where('elderly_count', '>', 0);
         }
-
-      /*  if ($request->has('orphans')) {
-            $familiesQuery->where('orphans_count', '>', 0); 
-        }*/
 
         $families = $familiesQuery->get();
 
         return response()->json([
             'success' => true,
-            'message' => __('messages.project_families_list_fetched'),
+            'message' => __('messages.camp_families_list_fetched'),
             'data' => FamilyResource::collection($families),
         ], 200);
     }
+
 
 
     public function contribute(Request $request, $projectId): JsonResponse
@@ -147,7 +169,7 @@ class ContributorController extends Controller
             ], 403);
         }
 
-        $project = Project::find($projectId);
+        $project = Project::with('camp')->find($projectId);
 
         if (!$project) {
             return response()->json([
@@ -164,6 +186,22 @@ class ContributorController extends Controller
             'notes' => 'nullable|string|max:1000',
         ]);
 
+        $validFamilies = [];
+        if (!empty($validated['families'])) {
+            $validFamilies = $project->camp->families()
+                ->whereIn('id', $validated['families'])
+                ->pluck('id')
+                ->toArray();
+
+            if (empty($validFamilies)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => __('messages.invalid_families_for_camp'),
+                    'data' => null,
+                ], 422);
+            }
+        }
+
         $contribution = Contribution::create([
             'project_id' => $projectId,
             'user_id' => $user->id,
@@ -173,10 +211,9 @@ class ContributorController extends Controller
             'status' => 'pending',
         ]);
 
-        if (!empty($validated['families'])) {
-            $contribution->families()->attach($validated['families']);
+        if (!empty($validFamilies)) {
+            $contribution->families()->attach($validFamilies);
         }
-
 
         return response()->json([
             'success' => true,

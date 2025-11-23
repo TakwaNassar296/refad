@@ -69,4 +69,11 @@ return [
     'families_retrieved_successfully' => 'تم جلب العائلات بنجاح',
     'activity_logs_fetched' => 'تم جلب سجلات النشاط بنجاح',
     'statistics_fetched_successfully' => 'تم جلب الإحصائيات بنجاح',
+    'camp_families_list_fetched' => 'تم جلب قائمة العائلات في المخيم بنجاح',
+    'invalid_families_for_camp' => 'العائلات المختارة غير متاحة لهذا المخيم',
+    'all_contributions_fetched' => 'تم جلب جميع المساهمات بنجاح',
+    'contribution_status_updated' => 'تم تحديث حالة المساهمة بنجاح',
+    'contribution_not_found' => 'المساهمة غير موجودة',
+
+
 ];

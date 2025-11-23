@@ -43,7 +43,9 @@ Route::middleware(SetLocale::class)->group(function () {
         Route::post('delegates/{delegate}/reject', [AdminController::class, 'rejectDelegate']);
         Route::delete('/families/{family}', [FamilyController::class, 'destroy']);
         Route::delete('/families/{family}/members/{member}', [FamilyMemberController::class, 'destroy']);
-      //  Route::post('contributions/{id}/decision', [AdminController::class, 'decision']);
+
+        Route::get('/admin/contributions', [AdminController::class, 'allContributions']);
+        Route::post('/contributions/{contributionId}/status', [AdminController::class, 'updateContributionStatus']);
 
     });
 
@@ -76,6 +78,8 @@ Route::middleware(SetLocale::class)->group(function () {
         Route::post('/families/{family}/members', [FamilyMemberController::class, 'store']);
         Route::get('/families/{family}/members/{member}', [FamilyMemberController::class, 'show']);
         Route::post('/families/{family}/members/{member}', [FamilyMemberController::class, 'update']);
+
+        Route::get('/delegate/contributions', [ProjectController::class, 'delegateContributions']);
     });
 
     Route::middleware(['auth:sanctum', 'role:delegate'])->group(function () {
@@ -97,7 +101,7 @@ Route::middleware(SetLocale::class)->group(function () {
     Route::middleware(['auth:sanctum', 'role:contributor'])->group(function () {
         Route::get('contributor/camps', [ContributorController::class, 'index']);
         Route::get('contributor/camps/{campId}/projects', [ContributorController::class, 'projects']);
-        Route::get('/contributor/projects/{projectId}/families', [ContributorController::class, 'projectFamilies']);
+        Route::get('/contributor/camps/{campId}/families', [ContributorController::class, 'campFamilies']);
         Route::post('/contributor/projects/{projectId}/contribute', [ContributorController::class, 'contribute']);
         Route::get('/contributor/history', [ContributorController::class, 'history']);
         Route::post('/contributor/contributions/{id}', [ContributorController::class, 'update']);

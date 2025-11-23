@@ -34,6 +34,8 @@ class UpdateCampRequest extends FormRequest
             'latitude' => 'sometimes|numeric|between:-90,90',
             'longitude' => 'sometimes|numeric|between:-180,180',
             'bank_account' => 'sometimes|string|max:255',
+            'location' => 'nullable|string|max:255',
+            'camp_img' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ];
     }
 }

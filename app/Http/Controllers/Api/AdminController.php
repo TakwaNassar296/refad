@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\ContributionResource;
 
 class AdminController extends Controller
@@ -81,9 +82,47 @@ class AdminController extends Controller
     }
 
 
-   /* public function decision(Request $request, $id): JsonResponse
+
+    public function allContributions(): JsonResponse
     {
-        $contribution = Contribution::find($id);
+        $user = Auth::user();
+
+        if ($user->role !== 'admin') {
+            return response()->json([
+                'success' => false,
+                'message' => __('messages.access_denied'),
+                'data' => null,
+            ], 403);
+        }
+
+        $contributions = Contribution::with(['project', 'families', 'delegate'])
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'message' => __('messages.all_contributions_fetched'),
+            'data' => ContributionResource::collection($contributions),
+        ], 200);
+    }
+
+
+    public function updateContributionStatus(Request $request, $contributionId): JsonResponse
+    {
+        $user = Auth::user();
+
+        if ($user->role !== 'admin') {
+            return response()->json([
+                'success' => false,
+                'message' => __('messages.access_denied'),
+                'data' => null,
+            ], 403);
+        }
+
+        $validated = $request->validate([
+            'status' => 'required|in:approved,rejected',
+        ]);
+
+        $contribution = Contribution::find($contributionId);
 
         if (!$contribution) {
             return response()->json([
@@ -93,40 +132,16 @@ class AdminController extends Controller
             ], 404);
         }
 
-        $validated = $request->validate([
-            'status' => 'required|in:approved,rejected',
-            'delegate_id' => 'nullable|exists:users,id',
+        $contribution->update([
+            'status' => $validated['status'],
         ]);
-
-        if ($validated['status'] === 'approved') {
-            if (empty($validated['delegate_id'])) {
-                return response()->json([
-                    'success' => false,
-                    'message' => __('messages.delegate_required_for_approval'),
-                    'data' => null,
-                ], 400);
-            }
-
-            $contribution->update([
-                'status' => 'approved',
-                'delegate_id' => $validated['delegate_id'],
-            ]);
-
-            $message = __('messages.contribution_approved');
-        } else {
-            $contribution->update([
-                'status' => 'rejected',
-                'delegate_id' => null,
-            ]);
-
-            $message = __('messages.contribution_rejected');
-        }
 
         return response()->json([
             'success' => true,
-            'message' => $message,
-            'data' => new ContributionResource($contribution->load(['user','delegate','project','families'])),
+            'message' => __('messages.contribution_status_updated'),
+            'data' => new ContributionResource($contribution->load(['project', 'families'])),
         ], 200);
-    }*/
+    }
+
 
 }

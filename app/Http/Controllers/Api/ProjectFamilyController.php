@@ -89,11 +89,24 @@ class ProjectFamilyController extends Controller
 
         $project->beneficiaryFamilies()->attach($request->family_id, [
             'requested_quantity' => null,
-            'received_quantity' => $request->received_quantity  ??null,
+            'received_quantity' => $request->received_quantity,
             'received' => true,
             'support_date' => now(),
             'notes' => $request->notes,
         ]);
+
+        $totalReceived = $project->beneficiaryFamilies()->sum('received_quantity');
+        $project->total_received = $totalReceived;
+
+        if ($totalReceived >= $project->college) {
+            $project->status = 'completed';
+        } elseif ($totalReceived > 0) {
+            $project->status = 'in_progress';
+        } else {
+            $project->status = 'pending';
+        }
+
+        $project->save();
 
         $project->load(['camp', 'delegate', 'beneficiaryFamilies']);
 
@@ -103,6 +116,7 @@ class ProjectFamilyController extends Controller
             'data' => new ProjectResource($project),
         ], 201);
     }
+
 
     public function destroy($projectId, $familyId): JsonResponse
     {
@@ -127,6 +141,20 @@ class ProjectFamilyController extends Controller
 
         $project->beneficiaryFamilies()->detach($familyId);
 
+
+        $totalReceived = $project->beneficiaryFamilies()->sum('received_quantity'); 
+        $project->total_received = $totalReceived;
+
+        if ($totalReceived >= $project->college) {
+            $project->status = 'completed';
+        } elseif ($totalReceived > 0) {
+            $project->status = 'in_progress';
+        } else {
+            $project->status = 'pending';
+        }
+
+        $project->save();
+
         return response()->json([
             'success' => true,
             'message' => __('messages.family_removed_from_project_successfully'),
@@ -134,47 +162,4 @@ class ProjectFamilyController extends Controller
         ], 200);
     }
 
-   /* public function markAsBeneficial(Request $request, $projectId): JsonResponse
-    {
-        $project = Project::find($projectId);
-
-        if (!$project) {
-            return response()->json([
-                'success' => false,
-                'message' => __('messages.project_not_found'),
-                'data' => null,
-            ], 404);
-        }
-
-        $user = Auth::user();
-        if ($user->role === 'delegate' && $project->added_by !== $user->id) {
-            return response()->json([
-                'success' => false,
-                'message' => __('messages.access_denied'),
-                'data' => null,
-            ], 403);
-        }
-
-        $request->validate([
-            'families' => 'required|array',
-            'families.*.id' => 'required|exists:families,id',
-            'families.*.received_quantity' => 'required|integer|min:1',
-        ]);
-
-        foreach ($request->families as $familyData) {
-            $project->beneficiaryFamilies()->updateExistingPivot($familyData['id'], [
-                'received' => true,
-                'received_quantity' => $familyData['received_quantity'] ?? null,
-                'support_date' => now(),
-            ]);
-        }
-
-        $project->load('beneficiaryFamilies');
-
-        return response()->json([
-            'success' => true,
-            'message' => __('messages.families_marked_as_beneficial'),
-            'data' => new ProjectResource($project),
-        ], 200);
-    }*/
 }
