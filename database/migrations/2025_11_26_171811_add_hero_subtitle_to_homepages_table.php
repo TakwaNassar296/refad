@@ -11,13 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('partners', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('logo');
-            $table->integer('order')->default(0);
-            $table->timestamps();
-            $table->softDeletes();
+        Schema::table('homepages', function (Blueprint $table) {
+            $table->text('hero_subtitle')->nullable();
         });
     }
 
@@ -26,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('partners');
+        Schema::table('homepages', function (Blueprint $table) {
+            $table->dropColumn('hero_subtitle');
+        });
     }
 };

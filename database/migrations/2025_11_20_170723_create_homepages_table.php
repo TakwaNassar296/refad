@@ -20,7 +20,6 @@ return new class extends Migration
             $table->integer('contributors_count')->default(0);
             $table->integer('projects_count')->default(0);
             $table->integer('families_count')->default(0);
-            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }

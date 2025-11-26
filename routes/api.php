@@ -7,13 +7,17 @@ use App\Http\Controllers\Api\CampController;
 use App\Http\Controllers\Api\PageController;
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\FamilyController;
+use App\Http\Controllers\Api\PartnerController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\ProjectController;
 use App\Http\Controllers\API\HomepageController;
+use App\Http\Controllers\Api\SettingsController;
+use App\Http\Controllers\Api\ComplaintController;
 use App\Http\Controllers\Api\ContactUsController;
 use App\Http\Controllers\Api\StatisticsController;
 use App\Http\Controllers\Api\ActivityLogController;
 use App\Http\Controllers\Api\ContributorController;
+use App\Http\Controllers\Api\TestimonialController;
 use App\Http\Controllers\Api\FamilyMemberController;
 use App\Http\Controllers\Api\ProjectFamilyController;
 
@@ -109,20 +113,55 @@ Route::middleware(SetLocale::class)->group(function () {
     });
 
 
+    Route::prefix('settings')->group(function () {
+        Route::get('/', [SettingsController::class, 'show'])->name('settings.show');
+        Route::post('/', [SettingsController::class, 'store'])->name('settings.store');
+        Route::post('/{setting}', [SettingsController::class, 'update'])->name('settings.update');
+    });
+
+    Route::prefix('homepage')->group(function () {
+        Route::get('/', [HomepageController::class, 'show'])->name('homepage.show');
+        Route::post('/{homepage}', [HomepageController::class, 'update'])->name('homepage.update');
+    });
+
+
+
     Route::middleware('auth:sanctum')->get('user/statistics', [StatisticsController::class, 'statistics']);
-
-
-    Route::get('/homepage', [HomepageController::class, 'index']);
-    Route::get('/settings', [HomepageController::class, 'setting']);
-
+   
     
-    Route::get('/pages', [PageController::class, 'index']);
-    Route::get('/pages/{type}', [PageController::class, 'show']);
-    Route::get('/partners', [PageController::class, 'partner']);
-    Route::get('/testimonials', [PageController::class, 'testimonial']);
+    Route::prefix('pages')->group(function () {
+        Route::get('/', [PageController::class, 'index']); 
+        Route::get('{type}', [PageController::class, 'show']);
+        Route::post('{type}', [PageController::class, 'update']); 
+    });
+    Route::prefix('partners')->group(function () {
+        Route::get('/', [PartnerController::class, 'index']);
+        Route::get('/{id}', [PartnerController::class, 'show']);
+        Route::post('/', [PartnerController::class, 'store']);
+        Route::post('/{id}', [PartnerController::class, 'update']);
+        Route::delete('/{id}', [PartnerController::class, 'destroy']);
+    });
+    Route::prefix('testimonials')->group(function () {
+        Route::get('/', [TestimonialController::class, 'index']);
+        Route::get('/{id}', [TestimonialController::class, 'show']);
+        Route::post('/', [TestimonialController::class, 'store']);
+        Route::post('/{id}', [TestimonialController::class, 'update']);
+        Route::delete('/{id}', [TestimonialController::class, 'destroy']);
+    });
 
-    Route::post('/contact-us', [ContactUsController::class, 'store']);
-    Route::post('/complaints', [ContactUsController::class, 'complaints']);
+    Route::prefix('contact-us')->group(function () {
+        Route::get('/', [ContactUsController::class, 'index']);
+        Route::get('/{id}', [ContactUsController::class, 'show']);
+        Route::post('/', [ContactUsController::class, 'store']);
+        Route::delete('/{id}', [ContactUsController::class, 'destroy']);
+    });
+    
+    Route::prefix('complaints')->group(function () {
+        Route::get('/', [ComplaintController::class, 'index']);
+        Route::get('/{id}', [ComplaintController::class, 'show']);
+        Route::post('/', [ComplaintController::class, 'store']);
+        Route::delete('/{id}', [ComplaintController::class, 'destroy']);
+    });
     Route::get('/stats', [StatisticsController::class, 'getStats']);
 
 

@@ -2,62 +2,73 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Complaint;
 use App\Models\ContactUs;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ContactUsResource;
+use App\Http\Requests\StoreContactUsRequest;
 
 class ContactUsController extends Controller
 {
-    public function store(Request $request)
+    public function index()
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email',
-            'phone' => 'required|string|max:20|regex:/^\+?\d{7,20}$/',
-            'topic' => 'required|string|max:255',
-            'message' => 'required|string'
-        ]);
-
-        $submission = ContactUs::create($validated);
+        $contacts = ContactUs::orderBy('created_at', 'desc')->get();
 
         return response()->json([
             'success' => true,
-            'message' => __('messages.contact_us_sent'),
-            'data' => [
-                'id' => $submission->id,
-                'name' => $submission->name,
-                'email' => $submission->email,
-                'topic' => $submission->topic,
-                'phone' => $submission->phone,
-            ]
+            'message' => __('messages.contacts_retrieved'),
+            'data' => ContactUsResource::collection($contacts),
+        ]);
+    }
+
+    public function show($id)
+    {
+        $contact = ContactUs::find($id);
+
+        if (!$contact) {
+            return response()->json([
+                'success' => false,
+                'message' => __('messages.contact_not_found'),
+                'data' => null,
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => __('messages.contact_retrieved'),
+            'data' => new ContactUsResource($contact),
+        ]);
+    }
+
+    public function store(StoreContactUsRequest $request)
+    {
+        $contact = ContactUs::create($request->validated());
+
+        return response()->json([
+            'success' => true,
+            'message' => __('messages.contact_created'),
+            'data' => new ContactUsResource($contact),
         ], 201);
     }
 
-    public function complaint(Request $request)
+    public function destroy($id)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'phone' => 'required|string|max:20',
-            'email' => 'required|email:rfc,dns|max:255',
-            'camp_id' => 'nullable|exists:camps,id',
-            'topic' => 'required|string|max:255',
-            'message' => 'required|string'
-        ]);
+        $contact = ContactUs::find($id);
 
-        $complaint = Complaint::create($validated);
+        if (!$contact) {
+            return response()->json([
+                'success' => false,
+                'message' => __('messages.contact_not_found'),
+                'data' => null,
+            ], 404);
+        }
+
+        $contact->delete();
 
         return response()->json([
             'success' => true,
-            'message' => __('messages.complaint_submitted'),
-            'data' => [
-                'id' => $complaint->id,
-                'name' => $complaint->name,
-                'email' => $complaint->email,
-                'phone' => $complaint->phone,
-                'topic' => $complaint->topic,
-                'camp' => $complaint->camp ? $complaint->camp->name : null
-            ]
-        ], 201);
+            'message' => __('messages.contact_deleted'),
+            'data' => null,
+        ]);
     }
 }

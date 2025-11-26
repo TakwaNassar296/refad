@@ -4,38 +4,28 @@ namespace App\Http\Controllers\API;
 
 use App\Models\Page;
 use App\Models\Partner;
-use App\Http\Controllers\Controller;
+use App\Models\PageSection;
 use App\Models\Testimonial;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\PageResource;
+use App\Http\Requests\UpdatePageRequest;
 
 class PageController extends Controller
 {
     public function index()
     {
-        $pages = Page::with(['sections' => fn($q) => $q->orderBy('order')])
-            ->where('is_active', true)
-            ->get()
-            ->map(fn($page) => [
-                'pageType' => $page->type,
-                'sections' => $page->sections->map(fn($section) => [
-                    'title' => $section->getTranslation('title', app()->getLocale()),
-                    'description' => $section->getTranslation('description', app()->getLocale()),
-                    'image' => $section->image ? asset('storage/' . $section->image) : null,
-                ]),
-            ]);
+        $pages = Page::all();
 
         return response()->json([
             'success' => true,
             'message' => __('messages.pages_retrieved'),
-            'data' => $pages,
+            'data' => PageResource::collection($pages),
         ]);
     }
 
     public function show($type)
     {
-        $page = Page::with(['sections' => fn($q) => $q->orderBy('order')])
-            ->where('type', $type)
-            ->where('is_active', true)
-            ->first();
+        $page = Page::where('type', $type)->first();
 
         if (!$page) {
             return response()->json([
@@ -47,37 +37,44 @@ class PageController extends Controller
         return response()->json([
             'success' => true,
             'message' => __('messages.page_retrieved'),
-            'data' => [
-                'pageType' => $page->type,
-                'sections' => $page->sections->map(fn($section) => [
-                    'title' => $section->getTranslation('title', app()->getLocale()),
-                    'description' => $section->getTranslation('description', app()->getLocale()),
-                    'image' => $section->image ? asset('storage/' . $section->image) : null,
-                ]),
-            ],
+            'data' => new PageResource($page),
         ]);
     }
 
-    public function partner()
+
+    public function update(UpdatePageRequest $request, $type)
     {
-        $partners = Partner::where('is_active', true)
-            ->orderBy('order')
-            ->get()
-            ->map(function ($partner) {
-                return [
-                    'id' => $partner->id,
-                    'name' => $partner->name,
-                    'logo' => $partner->logo ? asset('storage/' . $partner->logo) : null,
-                    'website' => $partner->website,
-                ];
-            });
+        $page = Page::where('type', $type)->first();
+
+        if (!$page) {
+            return response()->json([
+                'success' => false,
+                'message' => __('messages.page_not_found'),
+            ], 404);
+        }
+
+        foreach ($request->title as $locale => $value) {
+            $page->setTranslation('title', $locale, $value);
+        }
+
+        foreach ($request->description as $locale => $value) {
+            $page->setTranslation('description', $locale, $value);
+        }
+
+        if ($request->hasFile('image')) {
+            $page->image = $request->file('image')->store('pages', 'public');
+        }
+
+        $page->save();
 
         return response()->json([
             'success' => true,
-            'message' => __('messages.partners_retrieved'),
-            'data' => $partners,
+            'message' => __('messages.page_updated'),
+            'data' => new PageResource($page),
         ]);
     }
+
+   
 
     public function testimonial()
     {

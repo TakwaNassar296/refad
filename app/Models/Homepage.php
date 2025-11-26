@@ -10,20 +10,18 @@ class Homepage extends Model
 {
     use HasFactory , HasTranslations ;
 
-    public $translatable = ['hero_title' , 'hero_description']; 
+    public $translatable = ['hero_title' , 'hero_description' , 'hero_subtitle']; 
 
     protected $fillable = [
         'hero_title',
         'hero_description', 
         'hero_image',
-        'families_count',
+        'camps_count',
         'contributors_count',
         'projects_count',
-        'familz_count',
-        'is_active'
+        'families_count',
+        'hero_subtitle'
     ];
 
-    protected $casts = [
-        'is_active' => 'boolean'
-    ];
+ 
 }

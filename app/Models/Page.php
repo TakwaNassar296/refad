@@ -2,27 +2,21 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Translatable\HasTranslations;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Page extends Model
 {
-    use HasFactory;
+    use HasFactory, HasTranslations;
+    
+    public $translatable = ['title', 'description'];
 
     protected $fillable = [
         'type',
-        'is_active'
+        'title',
+        'description',
+        'image',
     ];
 
-    protected $casts = [
-        'is_active' => 'boolean'
-    ];
-
-    /**
-     * Get the sections for the page.
-     */
-    public function sections()
-    {
-        return $this->hasMany(PageSection::class)->orderBy('order');
-    }
 }

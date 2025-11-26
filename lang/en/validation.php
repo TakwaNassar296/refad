@@ -219,6 +219,8 @@ return [
         'notes' => 'notes',
         'total_members' => 'total members',
         'file' => 'file',
+        'logo' => 'logo',
+        'order' => 'order',
     ],
 
 ];
