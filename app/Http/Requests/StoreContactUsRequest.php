@@ -24,7 +24,7 @@ class StoreContactUsRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'email' => 'required|email',
-            'phone' => 'required|string|max:20|regex:/^\+?\d{7,20}$/',
+            'phone' => 'required|string|max:20|regex:/^\+?[0-9\s\-\(\)]{7,20}$/',
             'topic' => 'required|string|max:255',
             'message' => 'required|string'
         ];

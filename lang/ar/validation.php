@@ -221,5 +221,11 @@ return [
         'file' => 'الملف',
         'logo' => 'الشعار',
         'order' => 'الترتيب',
+        'password' => 'كلمة المرور',
+        'id_number' => 'رقم الهوية',
+        'password' => 'كلمة المرور',
+        'password_confirmation' => 'تأكيد كلمة المرور',
+        'reset_code' => 'كود إعادة التعيين',
+        'reset_token' => 'رمز إعادة التعيين',
     ],
 ];

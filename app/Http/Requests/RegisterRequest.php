@@ -24,7 +24,7 @@ class RegisterRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['nullable', 'email', 'max:255', 'unique:users,email'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
             'password' => [
                 'required',
                 'string', 
@@ -36,8 +36,8 @@ class RegisterRequest extends FormRequest
                     ->symbols(), 
             ],
             'id_number' => ['required', 'string', 'max:50', 'unique:users,id_number'],
-            'phone' => ['required', 'string', 'max:20', 'unique:users,phone','regex:/^(\+?2)?01[0125][0-9]{8}$/'],
-            'backup_phone' => ['nullable', 'string', 'max:20' ,'regex:/^(\+?2)?01[0125][0-9]{8}$/'],
+            'phone' => ['required', 'string', 'max:20', 'unique:users,phone', 'regex:/^\+?[0-9\s\-\(\)]{7,20}$/'],
+            'backup_phone' => ['nullable', 'string', 'max:20' , 'regex:/^\+?[0-9\s\-\(\)]{7,20}$/'],
             'role' => ['required', 'in:delegate,contributor'],
             'admin_position' => ['nullable', 'string', 'max:255'],
             'license_number' => ['nullable', 'string', 'max:100'],

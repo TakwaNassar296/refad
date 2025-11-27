@@ -125,6 +125,11 @@ class User extends Authenticatable
         return $this->role === 'delegate';
     }
 
+    public function isContributor(): bool
+    {
+        return $this->role === 'contributor';
+    }
+
     public function isAdmin(): bool
     {
         return $this->role === 'admin';

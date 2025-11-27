@@ -221,6 +221,12 @@ return [
         'file' => 'file',
         'logo' => 'logo',
         'order' => 'order',
+        'password' => 'password',
+        'id_number' => 'ID Number',
+        'password' => 'password',
+        'password_confirmation' => 'password confirmation',
+        'reset_code' => 'reset code',
+        'reset_token' => 'reset token',
     ],
 
 ];

@@ -15,7 +15,7 @@ class CampController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        $query = Camp::query();
+        $query = Camp::with('projects');
 
         if ($request->has('name') && $request->name) {
             $query->where(function ($q) use ($request) {
@@ -75,7 +75,7 @@ class CampController extends Controller
         return response()->json([
             'status' => true,
             'message' => __('messages.retrieved_successfully'),
-            'data' => new CampResource($camp->load('delegates'))
+            'data' => new CampResource($camp->load('projects'))
         ]);
     }
 
@@ -118,7 +118,7 @@ class CampController extends Controller
         return response()->json([
             'status' => true,
             'message' => __('messages.updated_successfully'),
-            'data' => new CampResource($camp->fresh()->load('delegates'))
+            'data' => new CampResource($camp->fresh())
         ]);
     }
 

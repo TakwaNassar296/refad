@@ -9,77 +9,109 @@ use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use App\Http\Resources\ContributionResource;
+use App\Http\Requests\AdminCreateUserRequest;
 
 class AdminController extends Controller
 {
-    public function pendingDelegates(): JsonResponse
+    public function pendingUsers(Request $request): JsonResponse
     {
-        $delegates = User::where('role', 'delegate')
-            ->where('status', 'pending')
-            ->get();
+        $query = User::whereIn('role', ['delegate', 'contributor'])
+            ->where('status', 'pending');
 
-        if ($delegates->isEmpty()) {
+        if ($request->has('role') && in_array($request->role, ['delegate', 'contributor'])) {
+            $query->where('role', $request->role);
+        }
+
+        $users = $query->get();
+
+        if ($users->isEmpty()) {
             return response()->json([
                 'status' => true,
-                'message' => __('auth.no_pending_delegates'),
+                'message' => __('auth.no_pending_users'),
                 'data' => []
             ]);
         }
 
         return response()->json([
             'status' => true,
-            'message' => __('auth.pending_delegates_list'),
-            'data' => UserResource::collection($delegates)
+            'message' => __('auth.pending_users_list'),
+            'data' => UserResource::collection($users)
         ]);
     }
 
-    public function approveDelegate(Request $request, User $delegate): JsonResponse
+    public function approveUser(Request $request, User $user): JsonResponse
     {
-        $request->validate([
-            'camp_id' => 'required|exists:camps,id'
-        ]);
-
-        if (!$delegate->isDelegate() || !$delegate->isPending()) {
+        if (!$user->isPending()) {
             return response()->json([
                 'status' => false,
-                'message' => __('auth.delegate_cannot_be_approved'),
+                'message' => __('auth.user_cannot_be_approved'),
                 'data' => null
             ], 422);
         }
 
-        $delegate->update([
-            'status' => 'approved',
-            'camp_id' => $request->camp_id
-        ]);
+        if ($user->isDelegate()) {
+            $request->validate([
+                'camp_id' => 'required|exists:camps,id'
+            ]);
+
+            $user->update([
+                'status' => 'approved',
+                'camp_id' => $request->camp_id
+            ]);
+
+            return response()->json([
+                'status' => true,
+                'message' => __('auth.delegate_approved_successfully'),
+                'data' => new UserResource($user)
+            ]);
+        }
+
+        if ($user->isContributor()) {
+            $user->update([
+                'status' => 'approved'
+            ]);
+
+            return response()->json([
+                'status' => true,
+                'message' => __('auth.contributor_approved_successfully'),
+                'data' => new UserResource($user)
+            ]);
+        }
 
         return response()->json([
-            'status' => true,
-            'message' => __('auth.delegate_approved_successfully'),
-            'data' => new UserResource($delegate)
-        ]);
+            'status' => false,
+            'message' => __('auth.user_role_not_supported'),
+            'data' => null
+        ], 422);
     }
 
-    public function rejectDelegate(User $delegate): JsonResponse
+    public function rejectUser(User $user): JsonResponse
     {
-        if (!$delegate->isDelegate() || !$delegate->isPending()) { 
+        if (!$user->isPending()) {
             return response()->json([
                 'status' => false,
-                'message' => __('auth.delegate_cannot_be_rejected'),
+                'message' => __('auth.user_cannot_be_rejected'),
                 'data' => null
             ], 422);
         }
 
-        $delegate->update([
+        $user->update([
             'status' => 'rejected'
         ]);
 
+        $messageKey = $user->isDelegate() 
+            ? 'delegate_rejected_successfully' 
+            : ($user->isContributor() ? 'contributor_rejected_successfully' : 'user_role_not_supported');
+
         return response()->json([
             'status' => true,
-            'message' => __('auth.delegate_rejected_successfully'),
-            'data' => new UserResource($delegate)
+            'message' => __('auth.' . $messageKey),
+            'data' => new UserResource($user)
         ]);
     }
+
 
 
 
@@ -142,6 +174,78 @@ class AdminController extends Controller
             'data' => new ContributionResource($contribution->load(['project', 'families'])),
         ], 200);
     }
+
+    public function createUser(AdminCreateUserRequest $request): JsonResponse
+    {
+        $data = $request->validated();
+
+        $user = User::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'phone' => $data['phone'],
+            'backup_phone' => $data['backup_phone'] ?? null,
+            'id_number' => $data['id_number'],
+            'role' => $data['role'],
+            'camp_id' => $data['role'] === 'delegate' ? $data['camp_id'] : null,
+            'password' => Hash::make($data['password']),
+            'admin_position' => $data['admin_position'] ?? null,
+            'license_number' => $data['license_number'] ?? null,
+            'is_approved' => true,
+            'accept_terms' => true,
+            'status' => 'approved',
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => __('auth.user_created_successfully'),
+            'data' => new UserResource($user),
+        ], 201);
+    }
+
+    public function getUsers(Request $request): JsonResponse
+    {
+        $query = User::whereIn('role', ['delegate', 'contributor']);
+
+
+        if ($request->has('role') && in_array($request->role, ['delegate', 'contributor'])) {
+            $query->where('role', $request->role);
+        }
+
+        if ($request->has('status') && in_array($request->status, ['approved', 'pending', 'rejected'])) {
+            $query->where('status', $request->status);
+        }
+
+        $users = $query->get();
+
+        return response()->json([
+            'success' => true,
+            'message' => __('auth.users_list_fetched'),
+            'data' => UserResource::collection($users),
+        ]);
+    }
+
+
+    public function deleteUser(User $user): JsonResponse
+    {
+        if ($user->role === 'admin') {
+            return response()->json([
+                'success' => false,
+                'message' => __('auth.cannot_delete_admin'),
+                'data' => null,
+            ], 403);
+        }
+
+        $user->tokens()->delete(); 
+        $user->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => __('auth.user_deleted_successfully'),
+            'data' => null,
+        ]);
+    }
+
+
 
 
 }

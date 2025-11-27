@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\CheckStatus;
 use Illuminate\Foundation\Application;
 use App\Http\Middleware\RoleMiddleware;
 use Illuminate\Foundation\Configuration\Exceptions;

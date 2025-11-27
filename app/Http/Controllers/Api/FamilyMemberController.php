@@ -14,7 +14,7 @@ use App\Http\Requests\UpdateFamilyMemberRequest;
 
 class FamilyMemberController extends Controller
 {
-   public function index($familyId): JsonResponse
+    public function index($familyId): JsonResponse
     {
         $family = Family::find($familyId);
 
@@ -103,6 +103,7 @@ class FamilyMemberController extends Controller
 
         return response()->json([
             'success' => true,
+            'message' => __('messages.family_member_retrieved_successfully'),
             'data' => new FamilyMemberResource($member)
         ]);
     }
@@ -153,14 +154,6 @@ class FamilyMemberController extends Controller
                 'success' => false,
                 'message' => __('messages.family_not_found')
             ], 404);
-        }
-
-        $user = Auth::user();
-        if ($user->role === 'delegate' && $family->added_by !== $user->id) {
-            return response()->json([
-                'success' => false,
-                'message' => __('messages.access_denied')
-            ], 403);
         }
 
         $member = FamilyMember::where('family_id', $familyId)->find($memberId);

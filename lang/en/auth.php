@@ -30,6 +30,28 @@ return [
     'unauthorized' => 'You are not authorized to access this resource',
     'no_pending_delegates' => 'There are no pending delegates',
     'user_not_found' => 'User not found.',
+    'cannot_delete_admin' => 'You cannot delete an admin account.',
+    'user_deleted_successfully' => 'User account deleted successfully.',
+    'admin_cannot_register' => 'Admin cannot register via this endpoint.',
+    'account_pending_approval' => 'Account is pending approval.',
+    'delegate_cannot_be_approved' => 'This delegate cannot be approved.',
+    'delegate_approved_successfully' => 'Delegate approved successfully.',
+    'delegate_cannot_be_rejected' => 'This delegate cannot be rejected.',
+    'delegate_rejected_successfully' => 'Delegate rejected successfully.',
+    'no_pending_delegates' => 'No pending delegates found.',
+    'pending_delegates_list' => 'Pending delegates list fetched successfully.',
+    'user_created_successfully' => 'User has been created successfully.',
+    'users_list_fetched' => 'Users list fetched successfully',
+    'no_pending_users' => 'No pending users found',
+    'pending_users_list' => 'Pending users list retrieved successfully',
+    'user_cannot_be_approved' => 'User cannot be approved',
+    'delegate_approved_successfully' => 'Delegate approved successfully',
+    'contributor_approved_successfully' => 'Contributor approved successfully',
+    'user_role_not_supported' => 'User role not supported',
+    'user_cannot_be_rejected' => 'User cannot be rejected',
+    'delegate_rejected_successfully' => 'Delegate rejected successfully',
+    'contributor_rejected_successfully' => 'Contributor rejected successfully',
+    
 
 
 

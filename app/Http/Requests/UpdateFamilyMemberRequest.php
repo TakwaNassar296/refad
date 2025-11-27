@@ -26,6 +26,7 @@ class UpdateFamilyMemberRequest extends FormRequest
             'name' => 'sometimes|required|string|max:255',
             'gender' => 'sometimes|required|in:male,female',
             'dob' => 'sometimes|date',
+            'status' => 'nullable|in:widow,widower,child,orphan',
             'national_id' => [
                 'sometimes',
                 'required',

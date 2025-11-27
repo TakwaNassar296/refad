@@ -30,8 +30,7 @@ class FamilyResource extends JsonResource
             'tentNumber' => $this->tent_number,
             'location' => $this->location,
             'notes' => $this->notes,
-            'camp' => new CampResource($this->whenLoaded('camp')),
-            'delegate' => new UserResource($this->whenLoaded('delegate')),
+            'camp' => $this->camp ? $this->camp->name : null,
             'members' => FamilyMemberResource::collection($this->whenLoaded('members')),
 
             'pivot' => $this->when($this->pivot, function () {

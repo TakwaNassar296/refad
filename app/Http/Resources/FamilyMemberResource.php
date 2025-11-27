@@ -14,6 +14,7 @@ class FamilyMemberResource extends JsonResource
             'gender' => $this->gender,
             'dob' => $this->dob?->format('Y-m-d'),
             'nationalId' => $this->national_id,
+            'status' => $this->status,
             'createdAt' => $this->created_at,
             'updatedAt' => $this->updated_at,
         ];

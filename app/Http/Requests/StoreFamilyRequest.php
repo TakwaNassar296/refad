@@ -26,7 +26,7 @@ class StoreFamilyRequest extends FormRequest
             'father_name' => 'required|string|max:255',
             'national_id' => 'required|string|unique:families,national_id',
             'dob' => 'required|date',
-            'phone' => ['required', 'string', 'max:20', 'regex:/^\+?[0-9]{7,20}$/', 'unique:families,phone'],
+            'phone' => ['required', 'string', 'max:20','regex:/^\+?[0-9\s\-\(\)]{7,20}$/', 'unique:families,phone'],
             'email' => ['nullable', 'email', 'max:255', 'unique:families,email'],
             'total_members' => 'required|integer|min:1',
             'elderly_count' => 'required|integer|min:0',

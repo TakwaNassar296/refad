@@ -26,6 +26,7 @@ class StoreFamilyMemberRequest extends FormRequest
             'gender' => 'required|in:male,female',
             'dob' => 'required|date',
             'national_id' => 'required|string|unique:family_members,national_id',
+            'status' => 'nullable|in:widow,widower,child,orphan',
         ];
     }
 }

@@ -22,12 +22,12 @@ class UpdatePageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|array',
-            'title.ar' => 'required|string|max:255',
-            'title.en' => 'required|string|max:255',
-            'description' => 'required|array',
-            'description.ar' => 'required|string',
-            'description.en' => 'required|string',
+            'title' => 'sometimes|array',
+            'title.ar' => 'sometimes|string|max:255',
+            'title.en' => 'sometimes|string|max:255',
+            'description' => 'sometimes|array',
+            'description.ar' => 'sometimes|string',
+            'description.en' => 'sometimes|string',
             'image' => 'nullable|image|max:2048',
         ];
     }

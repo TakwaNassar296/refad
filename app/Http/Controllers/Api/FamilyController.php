@@ -18,7 +18,7 @@ class FamilyController extends Controller
     public function index(Request $request): JsonResponse
     {
         $user = Auth::user();
-        $query = Family::with(['camp', 'delegate']);
+        $query = Family::with('camp');
 
         if ($user->role === 'delegate') {
             $query->where('added_by', $user->id);
@@ -50,24 +50,38 @@ class FamilyController extends Controller
         try {
             $user = Auth::user();
 
-            $filePath = null;
-                if ($request->hasFile('file')) {
-                    $filePath = $request->file('file')->store('families', 'public');
+            if ($user->isDelegate()) {
+                $campId = $user->camp_id;
+            } elseif ($user->isAdmin()) {
+                $request->validate([
+                    'camp_id' => 'required|exists:camps,id'
+                ]);
+                $campId = $request->camp_id;
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => __('auth.unauthorized'),
+                    'data' => null,
+                ], 403);
             }
 
+            $filePath = $request->hasFile('file') 
+                ? $request->file('file')->store('families', 'public') 
+                : null;
+
             $family = Family::create([
-                'camp_id' => $user->camp_id,
+                'camp_id' => $campId,
                 'added_by' => $user->id,
                 'family_name' => $request->family_name,
                 'father_name' => $request->father_name,
                 'national_id' => $request->national_id,
-                'dob' => $request->dob, 
+                'dob' => $request->dob,
                 'phone' => $request->phone,
                 'email' => $request->email,
                 'total_members' => $request->total_members,
                 'elderly_count' => $request->elderly_count,
                 'medical_conditions_count' => $request->medical_conditions_count,
-                'children_count' => $request->children_count, 
+                'children_count' => $request->children_count,
                 'tent_number' => $request->tent_number,
                 'location' => $request->location,
                 'notes' => $request->notes,
@@ -77,7 +91,7 @@ class FamilyController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => __('messages.family_added_successfully'),
-                'data' => new FamilyResource($family->load(['camp', 'delegate'])),
+                'data' => new FamilyResource($family->load('camp')),
             ], 201);
 
         } catch (ValidationException $e) {
@@ -89,9 +103,10 @@ class FamilyController extends Controller
         }
     }
 
+
     public function show($id): JsonResponse
     {
-        $family = Family::with(['camp', 'delegate','members'])->find($id);
+        $family = Family::with(['camp', 'members'])->find($id);
 
         if (!$family) {
             return response()->json([
@@ -99,15 +114,6 @@ class FamilyController extends Controller
                 'message' => __('messages.family_not_found')
             ], 404);
         }
-
-        $user = Auth::user();
-        if ($user->role === 'delegate' && $family->added_by !== $user->id) {
-            return response()->json([
-                'success' => false,
-                'message' => __('messages.access_denied')
-            ], 403);
-        }
-
         return response()->json([
             'success' => true,
             'message' => __('messages.family_retrieved_successfully'),
@@ -136,6 +142,12 @@ class FamilyController extends Controller
 
         $data = $request->validated();
 
+        if ($user->role === 'admin' && $request->has('camp_id')) {
+            $data['camp_id'] = $request->camp_id;
+        } elseif ($user->role === 'delegate') {
+            $data['camp_id'] = $user->camp_id;
+        }
+
         if ($request->hasFile('file')) {
             if ($family->file && Storage::disk('public')->exists($family->file)) {
                 Storage::disk('public')->delete($family->file);
@@ -150,7 +162,7 @@ class FamilyController extends Controller
         return response()->json([
             'success' => true,
             'message' => __('messages.family_updated_successfully'),
-            'data' => new FamilyResource($family->load(['camp', 'delegate'])),
+            'data' => new FamilyResource($family->load('camp')),
         ]);
     }
 

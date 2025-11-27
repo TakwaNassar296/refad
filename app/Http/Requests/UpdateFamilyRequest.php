@@ -32,7 +32,7 @@ class UpdateFamilyRequest extends FormRequest
                 Rule::unique('families','national_id')->ignore($this->family)
             ],
             'dob' => 'sometimes|date',
-            'phone' => ['sometimes', 'string', 'max:20', 'regex:/^\+?[0-9]{7,20}$/', Rule::unique('families', 'phone')->ignore($this->family)],
+            'phone' => ['sometimes', 'string', 'max:20',  'regex:/^\+?[0-9\s\-\(\)]{7,20}$/', Rule::unique('families', 'phone')->ignore($this->family)],
             'email' => ['nullable', 'email', 'max:255', Rule::unique('families', 'email')->ignore($this->family)],
             'total_members' => 'sometimes|integer|min:1',
             'elderly_count' => 'sometimes|required|integer|min:0',

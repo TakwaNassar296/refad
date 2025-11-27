@@ -199,12 +199,12 @@ class AuthController extends Controller
     {
         $request->validate([
             'email' => 'required|email|exists:users,email',
-            'resetCode' => 'required|string|size:6',
+            'reset_code' => 'required|string|size:6',
         ]);
 
         $user = User::where('email', $request->email)->first();
 
-        if (!$user || $user->reset_code !== $request->resetCode || $user->reset_code_expires_at < now()) {
+        if (!$user || $user->reset_code !== $request->reset_code || $user->reset_code_expires_at < now()) {
             return response()->json([
                 'success' => false,
                 'message' => __('auth.invalid_reset_code'),
@@ -229,11 +229,11 @@ class AuthController extends Controller
     public function resetPassword(Request $request): JsonResponse
     {
         $request->validate([
-            'resetToken' => 'required|string|size:60',
+            'reset_token' => 'required|string|size:60',
             'password' => 'required|string|confirmed|min:8',
         ]);
 
-        $email = Cache::get("reset_token:{$request->resetToken}");
+        $email = Cache::get("reset_token:{$request->reset_token}");
 
         if (!$email) {
             return response()->json([

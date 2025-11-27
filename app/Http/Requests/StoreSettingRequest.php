@@ -27,7 +27,7 @@ class StoreSettingRequest extends FormRequest
             'site_name.en' => 'required|string|max:255',
             'site_logo' => 'nullable|image|max:2048',
             'favicon' => 'nullable|image|max:1024',
-            'phone' =>  ['nullable', 'string', 'max:20', 'regex:/^\+?\d{7,15}$/'],
+            'phone' =>  ['nullable', 'string', 'max:20','regex:/^\+?[0-9\s\-\(\)]{7,20}$/'],
             'email' => 'nullable|email|max:255',
             'facebook' => 'nullable|url',
             'twitter' => 'nullable|url',

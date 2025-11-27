@@ -106,6 +106,14 @@ return [
     'complaint_retrieved' => 'تم استرجاع الشكوى بنجاح.',
     'complaint_created' => 'تم إنشاء الشكوى بنجاح.',
     'complaint_deleted' => 'تم حذف الشكوى بنجاح.',
+    'about_retrieved' => 'تم استرجاع بيانات من نحن بنجاح.',
+    'about_updated' => 'تم تحديث بيانات من نحن بنجاح.',
+    'camp_statistics_fetched' => 'تم جلب إحصائيات المخيم بنجاح',
+    'family_member_retrieved_successfully' => 'تم استرجاع بيانات عضو الأسرة بنجاح',
+    'camp_statistics_fetched' => 'تم جلب إحصائيات المخيم بنجاح',
+
+   
+
 
 
 

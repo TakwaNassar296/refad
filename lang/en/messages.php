@@ -105,6 +105,12 @@ return [
     'complaint_retrieved' => 'Complaint retrieved successfully.',
     'complaint_created' => 'Complaint created successfully.',
     'complaint_deleted' => 'Complaint deleted successfully.',
+    'about_retrieved' => 'About Us data retrieved successfully.',
+    'about_updated' => 'About Us updated successfully.',
+    'camp_statistics_fetched' => 'Camp statistics fetched successfully',
+    'family_member_retrieved_successfully' => 'Family member retrieved successfully',
+    'camp_statistics_fetched' => 'Camp statistics fetched successfully',
+
 
 
 
