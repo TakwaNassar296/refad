@@ -7,7 +7,7 @@ use App\Http\Controllers\Api\CampController;
 use App\Http\Controllers\Api\PageController;
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\FamilyController;
-use App\Http\Controllers\APi\AboutUsController;
+use App\Http\Controllers\Api\AboutUsController;
 use App\Http\Controllers\Api\PartnerController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\ProjectController;
