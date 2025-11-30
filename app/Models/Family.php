@@ -74,16 +74,16 @@ class Family extends Model
         return $this->hasMany(FamilyMember::class);
     }
 
-    public function projects()
-    {
-        return $this->belongsToMany(Project::class, 'project_beneficiaries')
-                    ->withPivot(['requested_quantity', 'received_quantity', 'received', 'notes', 'support_date'])
-                    ->withTimestamps();
-    }
-
     public function contributions()
     {
         return $this->belongsToMany(Contribution::class, 'contribution_families')
+                    ->withTimestamps();
+    }
+
+    public function delegateContributions()
+    {
+        return $this->belongsToMany(Contribution::class, 'delegate_families')
+                    ->withPivot('received_quantity', 'notes')
                     ->withTimestamps();
     }
 

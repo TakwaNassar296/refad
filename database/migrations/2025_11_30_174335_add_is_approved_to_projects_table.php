@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('contributions', function (Blueprint $table) {
-            $table->foreignId('delegate_id')->nullable()->constrained('users')->onDelete('set null');
+        Schema::table('projects', function (Blueprint $table) {
+            $table->boolean('is_approved')->default(false)->after('status');
         });
     }
 
@@ -21,9 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('contributions', function (Blueprint $table) {
-            $table->dropForeign('delegate_id');
-            $table->dropColumn('delegate_id');
+        Schema::table('projects', function (Blueprint $table) {
+            $table->dropColumn('is_approved');
         });
     }
 };

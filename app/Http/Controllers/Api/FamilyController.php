@@ -21,7 +21,7 @@ class FamilyController extends Controller
         $query = Family::with('camp');
 
         if ($user->role === 'delegate') {
-            $query->where('added_by', $user->id);
+            $query->where('camp_id', $user->camp_id);
         }
 
         if ($request->has('search') && $request->search) {
@@ -114,6 +114,14 @@ class FamilyController extends Controller
                 'message' => __('messages.family_not_found')
             ], 404);
         }
+
+        $user = Auth::user();
+        if ($user->role === 'delegate'&& $family->camp_id !== $user->camp_id) {
+            return response()->json([
+                'success' => false,
+                'message' => __('messages.access_denied')
+            ], 403);
+        }
         return response()->json([
             'success' => true,
             'message' => __('messages.family_retrieved_successfully'),
@@ -133,7 +141,7 @@ class FamilyController extends Controller
         }
 
         $user = Auth::user();
-        if ($user->role === 'delegate' && $family->added_by !== $user->id) {
+        if ($user->role === 'delegate' &&  $family->camp_id !== $user->camp_id) {
             return response()->json([
                 'success' => false,
                 'message' => __('messages.access_denied')

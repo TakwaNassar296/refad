@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\User;
+use App\Models\Project;
 use App\Models\Contribution;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -10,6 +11,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Resources\ProjectResource;
 use App\Http\Resources\ContributionResource;
 use App\Http\Requests\AdminCreateUserRequest;
 
@@ -112,7 +114,42 @@ class AdminController extends Controller
         ]);
     }
 
+    public function approveProject(Request $request, $id): JsonResponse
+    {
+        $user = Auth::user();
 
+        if ($user->role !== 'admin') {
+            return response()->json([
+                'success' => false,
+                'message' => __('messages.access_denied'),
+            ], 403);
+        }
+
+        $project = Project::find($id);
+
+        if (!$project) {
+            return response()->json([
+                'success' => false,
+                'message' => __('messages.project_not_found'),
+            ], 404);
+        }
+
+        if ($project->is_approved) {
+            return response()->json([
+                'success' => false,
+                'message' => __('messages.project_already_approved'),
+            ], 400);
+        }
+
+        $project->is_approved = true;
+        $project->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => __('messages.project_approved_successfully'),
+            'data' => new ProjectResource($project->load(['camp', 'addedBy'])),
+        ]);
+    }
 
 
     public function allContributions(): JsonResponse

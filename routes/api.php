@@ -20,7 +20,7 @@ use App\Http\Controllers\Api\ActivityLogController;
 use App\Http\Controllers\Api\ContributorController;
 use App\Http\Controllers\Api\TestimonialController;
 use App\Http\Controllers\Api\FamilyMemberController;
-use App\Http\Controllers\Api\ProjectFamilyController;
+use App\Http\Controllers\Api\DelegateFamiliesController ;
 
 Route::middleware(SetLocale::class)->group(function () {
 
@@ -47,10 +47,11 @@ Route::middleware(SetLocale::class)->group(function () {
         Route::post('users/{user}/approve', [AdminController::class, 'approveUser']);
         Route::post('users/{user}/reject', [AdminController::class, 'rejectUser']);
 
+        Route::post('/projects/{id}/approve', [AdminController::class, 'approveProject']);
+
+
         Route::delete('/families/{family}', [FamilyController::class, 'destroy']);
         Route::delete('/families/{family}/members/{member}', [FamilyMemberController::class, 'destroy']);
-        Route::delete('/projects/{project}/families/{family}', [ProjectFamilyController::class, 'destroy']);
-
         Route::get('/admin/contributions', [AdminController::class, 'allContributions']);
         Route::post('/contributions/{contributionId}/status', [AdminController::class, 'updateContributionStatus']);
 
@@ -92,11 +93,9 @@ Route::middleware(SetLocale::class)->group(function () {
         Route::post('/families/{family}/members', [FamilyMemberController::class, 'store']);
         Route::get('/families/{family}/members/{member}', [FamilyMemberController::class, 'show']);
         Route::post('/families/{family}/members/{member}', [FamilyMemberController::class, 'update']);
-
-        Route::get('/delegate/contributions', [ProjectController::class, 'delegateContributions']);
     });
 
-    Route::middleware(['auth:sanctum', 'role:delegate'])->group(function () {
+    Route::middleware(['auth:sanctum', 'role:delegate,admin'])->group(function () {
     
         Route::get('/projects', [ProjectController::class, 'index']);
         Route::post('/projects', [ProjectController::class, 'store']);
@@ -105,20 +104,15 @@ Route::middleware(SetLocale::class)->group(function () {
         Route::delete('/projects/{project}', [ProjectController::class, 'destroy']);
         Route::get('/projects/export/data', [ProjectController::class, 'export']);
 
-
-        Route::get('/projects/{project}/families', [ProjectFamilyController::class, 'index']);
-        Route::post('/projects/{project}/families', [ProjectFamilyController::class, 'store']);
-        Route::post('projects/{project}/families/mark-beneficial', [ProjectFamilyController::class, 'markAsBeneficial']);
+        Route::get('/contributions/{contributionId}/families', [DelegateFamiliesController::class, 'index']);
+        Route::post('/contributions/{contributionId}/families', [DelegateFamiliesController::class, 'store']);
+        Route::delete('/contributions/{contributionId}/families/{familyId}', [DelegateFamiliesController::class, 'destroy']);
     });
 
     Route::middleware(['auth:sanctum', 'role:contributor'])->group(function () {
-        Route::get('contributor/camps', [ContributorController::class, 'index']);
-        Route::get('contributor/camps/{campId}/projects', [ContributorController::class, 'projects']);
         Route::get('/contributor/camps/{campId}/families', [ContributorController::class, 'campFamilies']);
         Route::post('/contributor/projects/{projectId}/contribute', [ContributorController::class, 'contribute']);
         Route::get('/contributor/history', [ContributorController::class, 'history']);
-        Route::post('/contributor/contributions/{id}', [ContributorController::class, 'update']);
-        Route::delete('/contributor/contributions/{id}', [ContributorController::class, 'destroy']);
     });
 
 

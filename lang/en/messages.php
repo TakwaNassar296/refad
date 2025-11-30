@@ -110,6 +110,24 @@ return [
     'camp_statistics_fetched' => 'Camp statistics fetched successfully',
     'family_member_retrieved_successfully' => 'Family member retrieved successfully',
     'camp_statistics_fetched' => 'Camp statistics fetched successfully',
+    'project_status_updated_successfully' => 'Project status updated successfully.',
+    'project_status_already_set' => 'Project status has already been set.',
+    'project_not_open_for_contribution' => 'This project is not open for contributions.',
+    'access_denied' => 'Access denied.',
+    'project_not_found' => 'Project not found.',
+    'project_already_approved' => 'Project is already approved.',
+    'project_approved_successfully' => 'Project approved successfully.',
+    'project_not_approved' => 'Project is not approved for contributions yet.',
+    'access_denied' => 'Access denied.',
+    'contribution_not_found' => 'Contribution not found.',
+    'project_not_approved_yet' => 'Cannot contribute to this project yet.',
+    'family_not_in_your_camp' => 'This family does not belong to your camp.',
+    'family_already_added_to_contribution' => 'This family has already been added to the contribution.',
+    'family_added_to_contribution_successfully' => 'Family added to contribution successfully.',
+    'family_removed_from_contribution_successfully' => 'Family removed from contribution successfully.',
+    'contribution_retrieved_successfully' => 'Contribution retrieved successfully.',
+    'contribution_exceeds_project_remaining' => 'Contribution quantity exceeds project remaining amount.',
+
 
 
 

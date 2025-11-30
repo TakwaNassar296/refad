@@ -111,6 +111,24 @@ return [
     'camp_statistics_fetched' => 'تم جلب إحصائيات المخيم بنجاح',
     'family_member_retrieved_successfully' => 'تم استرجاع بيانات عضو الأسرة بنجاح',
     'camp_statistics_fetched' => 'تم جلب إحصائيات المخيم بنجاح',
+    'project_status_updated_successfully' => 'تم تحديث حالة المشروع بنجاح.',
+    'project_status_already_set' => 'تم تحديد حالة المشروع مسبقاً.',
+    'project_not_open_for_contribution' => 'لا يمكن المساهمة في هذا المشروع حالياً.',
+    'access_denied' => 'غير مسموح بالدخول.',
+    'project_not_found' => 'المشروع غير موجود.',
+    'project_already_approved' => 'تم اعتماد المشروع مسبقاً.',
+    'project_approved_successfully' => 'تم اعتماد المشروع بنجاح.',
+    'project_not_approved' => 'المشروع غير معتمد للمساهمات بعد.',
+    'access_denied' => 'غير مسموح بالدخول.',
+    'contribution_not_found' => 'المساهمة غير موجودة.',
+    'project_not_approved_yet' => 'لا يمكن المساهمة في هذا المشروع حالياً.',
+    'family_not_in_your_camp' => 'هذه العائلة ليست ضمن مخيمك.',
+    'family_already_added_to_contribution' => 'تمت إضافة هذه العائلة مسبقاً للمساهمة.',
+    'family_added_to_contribution_successfully' => 'تمت إضافة العائلة إلى المساهمة بنجاح.',
+    'family_removed_from_contribution_successfully' => 'تمت إزالة العائلة من المساهمة بنجاح.',
+    'contribution_retrieved_successfully' => 'تم استرجاع المساهمة بنجاح.',
+    'contribution_exceeds_project_remaining' => 'قيمة المساهمة تتجاوز المتبقي في المشروع.',
+
 
    
 

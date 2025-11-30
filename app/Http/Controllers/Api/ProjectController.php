@@ -18,32 +18,35 @@ class ProjectController extends Controller
     public function index(Request $request): JsonResponse
     {
         $user = Auth::user();
-        $query = Project::with(['camp', 'delegate', 'beneficiaryFamilies']);
+        $query = Project::with(['camp'])
+            ->where('is_approved', true);
 
         if ($user->role === 'delegate') {
-            $query->where('added_by', $user->id);
+            $query->where('camp_id', $user->camp_id);
         }
 
-        if ($request->has('search') && $request->search) {
+        if ($request->filled('search')) {
             $query->where('name', 'like', '%' . $request->search . '%');
         }
 
 
-        if ($request->has('family_name') && $request->family_name) {
-            $query->whereHas('beneficiaryFamilies', function($q) use ($request) {
-                $q->where('family_name', 'like', '%' . $request->family_name . '%');
+        if ($request->filled('family_name')) {
+           $query->whereHas('contributions', function($q) use ($request) {
+                $q->whereHas('delegateFamilies', function($q) use ($request) {
+                    $q->where('family_name', 'like', '%' . $request->family_name . '%');
+                });
             });
         }
 
-        if ($request->has('status')) {
+        if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
-        if ($request->has('beneficiary_count')) {
+        if ($request->filled('beneficiary_count')) {
             $query->where('beneficiary_count', $request->beneficiary_count);
         }
 
-        if ($request->has('type')) {
+        if ($request->filled('type')) {
             $query->where('type', $request->type);
         }
 
@@ -67,15 +70,32 @@ class ProjectController extends Controller
     {
         $user = Auth::user();
 
+        if ($user->isDelegate()) {
+            $campId = $user->camp_id;
+
+        } elseif ($user->isAdmin()) {
+            $request->validate([
+                'camp_id' => 'required|exists:camps,id'
+            ]);
+            $campId = $request->camp_id;
+
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => __('auth.unauthorized'),
+                'data' => null,
+            ], 403);
+        }
+
         $project = Project::create([
-            'camp_id' => $user->camp_id,
+            'camp_id' =>  $campId,
             'added_by' => $user->id,
             'name' => $request->name,
             'type' => $request->type,
             'beneficiary_count' => $request->beneficiary_count ?? 0,
             'college' => $request->college,
             'project_number' => $request->project_number,
-            'status' => $request->status ?? 'pending',
+            'status' => 'pending',
             'notes' => $request->notes,
         ]);
         
@@ -86,13 +106,13 @@ class ProjectController extends Controller
         return response()->json([
             'success' => true,
             'message' => __('messages.project_added_successfully'),
-            'data' => new ProjectResource($project->load(['camp', 'delegate', 'beneficiaryFamilies'])),
+            'data' => new ProjectResource($project->load(['camp'])),
         ], 201);
     }
 
     public function show($id): JsonResponse
     {
-        $project = Project::with(['camp', 'delegate', 'beneficiaryFamilies','contributions'])->find($id);
+        $project = Project::with(['camp', 'contributions'])->find($id);
 
         if (!$project) {
             return response()->json([
@@ -102,7 +122,7 @@ class ProjectController extends Controller
         }
 
         $user = Auth::user();
-        if ($user->role === 'delegate' && $project->added_by !== $user->id) {
+        if ($user->role === 'delegate'&& $project->camp_id !== $user->camp_id) {
             return response()->json([
                 'success' => false,
                 'message' => __('messages.access_denied')
@@ -127,14 +147,23 @@ class ProjectController extends Controller
         }
 
         $user = Auth::user();
-        if ($user->role === 'delegate' && $project->added_by !== $user->id) {
+
+        if ($user->role === 'delegate' &&  $project->camp_id !== $user->camp_id) {
             return response()->json([
                 'success' => false,
                 'message' => __('messages.access_denied')
             ], 403);
         }
 
-        $project->update($request->validated());
+        $data = $request->validated();
+
+        if ($user->role === 'admin' && $request->has('camp_id')) {
+            $data['camp_id'] = $request->camp_id;
+        } elseif ($user->role === 'delegate') {
+            $data['camp_id'] = $user->camp_id;
+        }
+
+        $project->update($data);
 
         if ($request->hasFile('file')) {
             $this->handleFileUpload($project, $request->file('file'));
@@ -143,9 +172,10 @@ class ProjectController extends Controller
         return response()->json([
             'success' => true,
             'message' => __('messages.project_updated_successfully'),
-            'data' => new ProjectResource($project->load(['camp', 'delegate', 'beneficiaryFamilies'])),
+            'data' => new ProjectResource($project->load(['camp', 'addedBy'])),
         ]);
     }
+
 
     public function destroy($id): JsonResponse
     {
@@ -159,7 +189,7 @@ class ProjectController extends Controller
         }
 
         $user = Auth::user();
-        if ($user->role === 'delegate' && $project->added_by !== $user->id) {
+        if ($user->role === 'delegate' && $project->camp_id !== $user->camp_id) {
             return response()->json([
                 'success' => false,
                 'message' => __('messages.access_denied')
@@ -177,18 +207,34 @@ class ProjectController extends Controller
     public function export(Request $request): JsonResponse
     {
         $user = Auth::user();
-        $query = Project::with(['camp', 'delegate', 'beneficiaryFamilies']);
+
+        $query = Project::with([
+            'camp',
+            'contributions.delegateFamilies', 
+        ]);
 
         if ($user->role === 'delegate') {
-            $query->where('added_by', $user->id);
+            $query->where('camp_id', $user->camp_id);
         }
 
-        if ($request->has('search') && $request->search) {
+        if ($request->filled('search')) {
             $query->where('name', 'like', '%' . $request->search . '%');
         }
 
-        if ($request->has('status')) {
+        if ($request->filled('family_name')) {
+           $query->whereHas('contributions', function($q) use ($request) {
+                $q->whereHas('delegateFamilies', function($q) use ($request) {
+                    $q->where('family_name', 'like', '%' . $request->family_name . '%');
+                });
+            });
+        }
+
+        if ($request->filled('status')) {
             $query->where('status', $request->status);
+        }
+
+        if ($request->filled('beneficiary_count')) {
+            $query->where('beneficiary_count', $request->beneficiary_count);
         }
 
         if ($request->has('type')) {
@@ -218,29 +264,4 @@ class ProjectController extends Controller
         ]);
     }
 
-     public function delegateContributions(): JsonResponse
-    {
-        $user = Auth::user();
-
-        if ($user->role !== 'delegate') {
-            return response()->json([
-                'success' => false,
-                'message' => __('messages.access_denied'),
-                'data' => null,
-            ], 403);
-        }
-
-        $contributions = Contribution::with(['project', 'families'])
-            ->whereHas('project', function($q) use ($user) {
-                $q->where('added_by', $user->id);
-            })
-            ->where('status', 'approved')
-            ->get();
-
-        return response()->json([
-            'success' => true,
-            'message' => __('messages.contribution_history_fetched'),
-            'data' => ContributionResource::collection($contributions),
-        ], 200);
-    }
 }

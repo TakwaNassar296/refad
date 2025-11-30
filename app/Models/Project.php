@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Spatie\Activitylog\Traits\LogsActivity;
+use App\Models\Contribution;
 use Spatie\Activitylog\LogOptions;
+use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Project extends Model
 {
@@ -30,7 +31,13 @@ class Project extends Model
         'file_size',
         'total_received',       
         'total_remaining',      
-        'total_contributions',  
+        'total_contributions', 
+        'is_approved', 
+    ];
+
+
+    protected $casts = [
+        'is_approved' => 'boolean', 
     ];
 
     public function camp(): BelongsTo
@@ -38,16 +45,9 @@ class Project extends Model
         return $this->belongsTo(Camp::class);
     }
 
-    public function delegate(): BelongsTo
+    public function addedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'added_by');
-    }
-
-    public function beneficiaryFamilies(): BelongsToMany
-    {
-        return $this->belongsToMany(Family::class, 'project_beneficiaries')
-                    ->withPivot(['requested_quantity', 'received_quantity', 'received', 'notes', 'support_date'])
-                    ->withTimestamps();
     }
 
     public function contributions()
@@ -86,5 +86,4 @@ class Project extends Model
 
 
     
-  
 }

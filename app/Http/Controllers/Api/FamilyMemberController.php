@@ -26,7 +26,7 @@ class FamilyMemberController extends Controller
         }
 
         $user = Auth::user();
-        if ($user->role === 'delegate' && $family->added_by !== $user->id) {
+        if ($user->role === 'delegate' &&  $family->camp_id !== $user->camp_id) {
             return response()->json([
                 'success' => false,
                 'message' => __('messages.access_denied')
@@ -55,7 +55,7 @@ class FamilyMemberController extends Controller
         }
 
         $user = Auth::user();
-        if ($user->role === 'delegate' && $family->added_by !== $user->id) {
+        if ($user->role === 'delegate' &&  $family->camp_id !== $user->camp_id) {
             return response()->json([
                 'success' => false,
                 'message' => __('messages.access_denied')
@@ -85,7 +85,7 @@ class FamilyMemberController extends Controller
         }
 
         $user = Auth::user();
-        if ($user->role === 'delegate' && $family->added_by !== $user->id) {
+        if ($user->role === 'delegate' &&  $family->camp_id !== $user->camp_id) {
             return response()->json([
                 'success' => false,
                 'message' => __('messages.access_denied')
@@ -120,7 +120,7 @@ class FamilyMemberController extends Controller
         }
 
         $user = Auth::user();
-        if ($user->role === 'delegate' && $family->added_by !== $user->id) {
+        if ($user->role === 'delegate' &&  $family->camp_id !== $user->camp_id) {
             return response()->json([
                 'success' => false,
                 'message' => __('messages.access_denied')

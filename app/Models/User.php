@@ -156,10 +156,6 @@ class User extends Authenticatable
         return $this->hasMany(Contribution::class, 'user_id');
     }
 
-    public function delegateContributions()
-    {
-        return $this->hasMany(Contribution::class, 'delegate_id');
-    }
 
     public function notifications()
     {

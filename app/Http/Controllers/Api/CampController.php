@@ -15,7 +15,9 @@ class CampController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        $query = Camp::with('projects');
+        $query = Camp::with(['projects' => function($q) {
+           $q->whereIn('status', ['pending', 'in_progress','delivered'])->where('is_approved', true);
+        }]);
 
         if ($request->has('name') && $request->name) {
             $query->where(function ($q) use ($request) {
@@ -71,6 +73,12 @@ class CampController extends Controller
                 'data' => null
             ], 404);
         }
+
+        $camp->load(['projects' => function($q) {
+           $q->whereIn('status', ['pending', 'in_progress' , 'delivered'])->where('is_approved', true);
+        }]);
+
+
 
         return response()->json([
             'status' => true,
