@@ -128,6 +128,50 @@ return [
     'family_removed_from_contribution_successfully' => 'تمت إزالة العائلة من المساهمة بنجاح.',
     'contribution_retrieved_successfully' => 'تم استرجاع المساهمة بنجاح.',
     'contribution_exceeds_project_remaining' => 'قيمة المساهمة تتجاوز المتبقي في المشروع.',
+    'no_notifications_found' => 'لا توجد إشعارات.',
+    'list_retrieved' => 'تم استرجاع الإشعارات بنجاح.',
+    'marked_as_read' => 'تم تعليم الإشعار كمقروء.',
+    'all_marked_as_read' => 'تم تعليم جميع الإشعارات كمقروء.',
+    'deleted' => 'تم حذف الإشعار بنجاح.',
+    'user_approved_contributor' => 'تمت الموافقة على حسابك كمساهم',
+    'user_approved_delegate'    => 'تمت الموافقة على حسابك كمندوب',
+    'user_rejected_contributor' => 'تم رفض حسابك كمساهم',
+    'user_rejected_delegate'    => 'تم رفض حسابك كمندوب',
+    'new_project_added_title' => 'تم إضافة مشروع جديد',
+    'new_project_added_body'  => 'قام المندوب :name بإضافة مشروع جديد باسم: :project',
+    'project_approved_title' => 'تمت الموافقة على المشروع',
+    'project_approved_body'  => 'تمت الموافقة على مشروعك باسم: :project',
+    'new_contribution_title' => 'مساهمة جديدة',
+    'new_contribution_body' => 'المساهم :name يريد المساهمة بكمية :quantity في مشروع :project',
+    'new_contact_us_title' => 'رسالة جديدة من نموذج اتصل بنا',
+    'new_contact_us_body' => 'قام :name بإرسال رسالة بعنوان: :subject',
+    'new_complaint_title' => 'شكوى جديدة',
+    'new_complaint_body' => 'قام :name بإرسال شكوى بعنوان: :subject',
+    'contribution_status_title' => 'تحديث حالة المساهمة',
+    'contribution_status_body' => 'قام المسؤول بـ:status المساهمة في المشروع :project.',
+    'contribution_approved' => 'الموافقة',
+    'contribution_rejected' => 'الرفض',
+    'contribution_not_approved' => 'لم يتم الموافقة على هذه المساهمة بعد.',
+    'contribution_updated_admin' => 'قام مندوب بإضافة عائلات إلى مساهمة في المشروع :project.',
+    'contribution_updated_contributor' => 'تم تحديث مساهمتك في المشروع :project.',
+    'id' => 'المعرف',
+    'name' => 'الاسم',
+    'type' => 'النوع',
+    'beneficiary_count' => 'عدد المستفيدين',
+    'college' => 'الكمية',
+    'project_number' => 'رقم المشروع',
+    'status' => 'الحالة',
+    'is_approved' => 'تم الموافقة؟',
+    'camp' => 'المخيم',
+    'added_by' => 'أضيف بواسطة',
+    'created_at' => 'تاريخ الإنشاء',
+
+
+
+
+
+
+
 
 
    

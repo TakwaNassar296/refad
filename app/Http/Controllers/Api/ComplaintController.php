@@ -44,6 +44,18 @@ class ComplaintController extends Controller
     {
         $complaint = Complaint::create($request->validated());
 
+        $this->notifyAdmin(
+            __('messages.new_complaint_title'),
+            __('messages.new_complaint_body', [
+                'name' => $complaint->name,
+                'subject' => $complaint->subject ?? 'بدون موضوع'
+            ]),
+            [
+                'type' => 'new_complaint',
+                'complaint_id' => $complaint->id,
+            ]
+        );
+
         return response()->json([
             'success' => true,
             'message' => __('messages.complaint_created'),

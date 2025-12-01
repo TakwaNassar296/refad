@@ -54,6 +54,16 @@ class DelegateFamiliesController extends Controller
             ], 404);
         }
 
+
+        if ($contribution->status !== 'approved') {
+            return response()->json([
+                'success' => false,
+                'message' => __('messages.contribution_not_approved'),
+                'data' => null,
+            ], 403);
+        }
+
+
         if (!$contribution->project->is_approved) {
             return response()->json([
                 'success' => false,
@@ -122,6 +132,24 @@ class DelegateFamiliesController extends Controller
         $project->save();
 
         $contribution->load(['delegateFamilies', 'project']);
+
+        $projectName = $contribution->project->name;
+
+        if ($project->status === 'delivered') {
+            $adminMessage = __('messages.contribution_updated_admin_delivered', ['project' => $projectName]);
+        } else {
+            $adminMessage = __('messages.contribution_updated_admin', ['project' => $projectName]);
+        }
+
+        $this->notifyAdmin($adminMessage, $adminMessage);
+
+        $this->notifyUser(
+            $contribution->user_id,
+            __('messages.contribution_updated_contributor', ['project' => $projectName]),
+            __('messages.contribution_updated_contributor', ['project' => $projectName])
+        );
+
+
 
         return response()->json([
             'success' => true,

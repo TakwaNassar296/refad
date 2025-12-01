@@ -29,7 +29,15 @@ class AuthController extends Controller
             ], 403);
         }
 
-        $this->createUser($data);
+        $user = $this->createUser($data);
+
+        $this->notifyAdmin(
+            "طلب موافقة مستخدم جديد",
+            "المستخدم {$user->name} يحتاج إلى موافقتك",
+            ["type" => "user_approval", "user_id" => $user->id]
+        );
+
+
 
         return response()->json([
             'success' => true,

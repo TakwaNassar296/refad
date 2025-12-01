@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Api;
 use App\Models\Project;
 use App\Models\Contribution;
 use Illuminate\Http\Request;
+use App\Exports\ProjectsExport;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Resources\ProjectResource;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
@@ -18,11 +20,11 @@ class ProjectController extends Controller
     public function index(Request $request): JsonResponse
     {
         $user = Auth::user();
-        $query = Project::with(['camp'])
-            ->where('is_approved', true);
+        $query = Project::with(['camp']);
 
         if ($user->role === 'delegate') {
-            $query->where('camp_id', $user->camp_id);
+            $query->where('is_approved', true)
+              ->where('camp_id', $user->camp_id);
         }
 
         if ($request->filled('search')) {
@@ -72,12 +74,14 @@ class ProjectController extends Controller
 
         if ($user->isDelegate()) {
             $campId = $user->camp_id;
+            $isApproved = false;
 
         } elseif ($user->isAdmin()) {
             $request->validate([
                 'camp_id' => 'required|exists:camps,id'
             ]);
             $campId = $request->camp_id;
+            $isApproved = true;
 
         } else {
             return response()->json([
@@ -96,12 +100,25 @@ class ProjectController extends Controller
             'college' => $request->college,
             'project_number' => $request->project_number,
             'status' => 'pending',
+            'is_approved' => $isApproved,
             'notes' => $request->notes,
         ]);
         
         if ($request->hasFile('file')) {
             $this->handleFileUpload($project, $request->file('file'));
         }
+
+        if ($user->isDelegate()) {
+            $this->notifyAdmin(
+                __('messages.new_project_added_title'),
+                __('messages.new_project_added_body', [
+                    'name' => $user->name,
+                    'project' => $project->name
+                ]),
+                ["type" => "new_project", "project_id" => $project->id]
+            );
+        }
+
 
         return response()->json([
             'success' => true,
@@ -204,7 +221,7 @@ class ProjectController extends Controller
         ]);
     }
 
-    public function export(Request $request): JsonResponse
+    public function export(Request $request)
     {
         $user = Auth::user();
 
@@ -214,7 +231,8 @@ class ProjectController extends Controller
         ]);
 
         if ($user->role === 'delegate') {
-            $query->where('camp_id', $user->camp_id);
+            $query->where('is_approved', true)
+              ->where('camp_id', $user->camp_id);
         }
 
         if ($request->filled('search')) {
@@ -241,15 +259,9 @@ class ProjectController extends Controller
             $query->where('type', $request->type);
         }
 
-        $projects = $query->latest()->get();
+        $fileName = 'projects_' . now()->format('Y_m_d_H_i_s') . '.xlsx';
 
-        return response()->json([
-            'success' => true,
-            'data' => ProjectResource::collection($projects),
-            'exported_at' => now()->toDateTimeString(),
-            'total_projects' => $projects->count(),
-            'total_beneficiaries' => $projects->sum('beneficiary_count'),
-        ]);
+        return Excel::download(new ProjectsExport($query), $fileName);
     }
 
     private function handleFileUpload(Project $project, $file): void

@@ -63,6 +63,12 @@ class AdminController extends Controller
                 'camp_id' => $request->camp_id
             ]);
 
+            $this->notifyUser(
+                $user->id,
+                __('messages.user_approved_delegate'),
+                __('messages.user_approved_delegate')
+            );
+
             return response()->json([
                 'status' => true,
                 'message' => __('auth.delegate_approved_successfully'),
@@ -74,6 +80,12 @@ class AdminController extends Controller
             $user->update([
                 'status' => 'approved'
             ]);
+
+            $this->notifyUser(
+                $user->id,
+                __('messages.user_approved_contributor'),
+                __('messages.user_approved_contributor')
+            );
 
             return response()->json([
                 'status' => true,
@@ -107,6 +119,14 @@ class AdminController extends Controller
             ? 'delegate_rejected_successfully' 
             : ($user->isContributor() ? 'contributor_rejected_successfully' : 'user_role_not_supported');
 
+
+        if ($messageKey !== 'user_role_not_supported') {
+            $this->notifyUser(
+                $user->id,
+                __('auth.' . $messageKey), 
+                __('auth.' . $messageKey)  
+            );
+        }
         return response()->json([
             'status' => true,
             'message' => __('auth.' . $messageKey),
@@ -144,6 +164,17 @@ class AdminController extends Controller
         $project->is_approved = true;
         $project->save();
 
+        if ($project->addedBy && $project->addedBy->isDelegate()) {
+            $this->notifyUser(
+                $project->addedBy->id,
+                __('messages.project_approved_title'),
+                __('messages.project_approved_body', [
+                    'project' => $project->name
+                ])
+            );
+        }
+
+
         return response()->json([
             'success' => true,
             'message' => __('messages.project_approved_successfully'),
@@ -164,7 +195,7 @@ class AdminController extends Controller
             ], 403);
         }
 
-        $contributions = Contribution::with(['project', 'families', 'delegate'])
+        $contributions = Contribution::with(['project', 'delegateFamilies', 'contributorFamilies'])
             ->get();
 
         return response()->json([
@@ -205,10 +236,30 @@ class AdminController extends Controller
             'status' => $validated['status'],
         ]);
 
+        $statusText = $validated['status'] === 'approved' 
+            ? __('messages.contribution_approved') 
+            : __('messages.contribution_rejected');
+
+        $delegateIds = $contribution->project->camp->delegates()
+            ->where('role', 'delegate')
+            ->pluck('id')
+            ->toArray();
+
+        $this->notifyUsers(
+            $delegateIds,
+            __('messages.contribution_status_title'),
+            __('messages.contribution_status_body', [
+                'contributor' => $contribution->contributor->name,
+                'quantity' => $contribution->total_quantity,
+                'project' => $contribution->project->name,
+                'status' => $statusText
+            ])
+        );
+
         return response()->json([
             'success' => true,
             'message' => __('messages.contribution_status_updated'),
-            'data' => new ContributionResource($contribution->load(['project', 'families'])),
+            'data' => new ContributionResource($contribution->load(['project', 'contributorFamilies' , 'delegateFamilies'])),
         ], 200);
     }
 

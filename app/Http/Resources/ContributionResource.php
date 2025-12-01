@@ -16,10 +16,10 @@ class ContributionResource extends JsonResource
             'project' => $this->whenLoaded('project', function () {
                 return new ProjectResource($this->project);
             }),
-            'families' => $this->whenLoaded('contributorFamilies', function () {
+            'contributorFamilies' => $this->whenLoaded('contributorFamilies', function () {
                 return FamilyResource::collection($this->contributorFamilies);
             }),
-            'families' => $this->whenLoaded('delegateFamilies', function () {
+            'delegateFamilies' => $this->whenLoaded('delegateFamilies', function () {
                 return FamilyResource::collection($this->delegateFamilies);
             }),
             'createdAt' => $this->created_at,

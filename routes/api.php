@@ -20,16 +20,21 @@ use App\Http\Controllers\Api\ActivityLogController;
 use App\Http\Controllers\Api\ContributorController;
 use App\Http\Controllers\Api\TestimonialController;
 use App\Http\Controllers\Api\FamilyMemberController;
+use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\DelegateFamiliesController ;
 
 Route::middleware(SetLocale::class)->group(function () {
 
     Route::prefix('auth')->group(function () {
-        Route::post('register', [AuthController::class, 'register']);
-        Route::post('login', [AuthController::class, 'login']);
+        Route::post('register', [AuthController::class, 'register'])
+         ->middleware('custom.throttle:5,1');
+        Route::post('login', [AuthController::class, 'login'])
+        ->middleware('custom.throttle:5,1');
+
         Route::post('refresh-token', [AuthController::class, 'refreshToken']);
         Route::post('forgot-password', [AuthController::class, 'forgotPassword']);
-        Route::post('verify-reset-code', [AuthController::class, 'verifyResetCode']);
+        Route::post('verify-reset-code', [AuthController::class, 'verifyResetCode'])
+         ->middleware('custom.throttle:3,1');
         Route::post('reset-password', [AuthController::class, 'resetPassword']);
     });
 
@@ -125,6 +130,14 @@ Route::middleware(SetLocale::class)->group(function () {
     Route::prefix('homepage')->group(function () {
         Route::get('/', [HomepageController::class, 'show'])->name('homepage.show');
         Route::post('/{homepage}', [HomepageController::class, 'update'])->name('homepage.update');
+    });
+
+
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/notifications', [NotificationController::class, 'index']);
+        Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
+        Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead']);
+        Route::delete('/notifications/{id}', [NotificationController::class, 'destroy']);
     });
 
 

@@ -157,6 +157,21 @@ class ContributorController extends Controller
             $contribution->contributorFamilies()->attach($validFamilies);
         }
 
+        $this->notifyAdmin(
+            __('messages.new_contribution_title'),
+            __('messages.new_contribution_body', [
+                'name' => $user->name,
+                'project' => $project->name,
+                'quantity' => $validated['contributedQuantity'],
+            ]),
+            [
+                'type' => 'new_contribution',
+                'contribution_id' => $contribution->id,
+                'project_id' => $project->id,
+            ]
+        );
+
+
         return response()->json([
             'success' => true,
             'message' => __('messages.contribution_added_successfully'),

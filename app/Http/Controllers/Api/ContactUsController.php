@@ -44,6 +44,20 @@ class ContactUsController extends Controller
     {
         $contact = ContactUs::create($request->validated());
 
+
+        $this->notifyAdmin(
+            __('messages.new_contact_us_title'),
+            __('messages.new_contact_us_body', [
+                'name' => $contact->name,
+                'subject' => $contact->subject ?? 'بدون موضوع'
+            ]),
+            [
+                'type' => 'new_contact_us',
+                'contact_id' => $contact->id,
+            ]
+        );
+
+
         return response()->json([
             'success' => true,
             'message' => __('messages.contact_created'),
