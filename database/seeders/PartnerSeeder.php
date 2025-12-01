@@ -17,42 +17,37 @@ class PartnerSeeder extends Seeder
             'name' => 'وزارة التنمية الاجتماعية',
             'logo' => 'partners/social-development.jpg',
             'order' => 1,
-            'is_active' => true
         ]);
 
         Partner::create([
             'name' => 'الأونروا',
             'logo' => 'partners/unrwa.jpg',
             'order' => 2,
-            'is_active' => true
         ]);
 
         Partner::create([
             'name' => 'برنامج الأمم المتحدة الإنمائي',
             'logo' => 'partners/undp.jpg',
             'order' => 3,
-            'is_active' => true
         ]);
 
         Partner::create([
             'name' => 'منظمة الصحة العالمية',
             'logo' => 'partners/who.jpg',
             'order' => 4,
-            'is_active' => true
         ]);
 
         Partner::create([
             'name' => 'اليونيسف',
             'logo' => 'partners/unicef.jpg',
             'order' => 5,
-            'is_active' => true
         ]);
 
         Partner::create([
             'name' => 'الصليب الأحمر',
             'logo' => 'partners/red-cross.jpg',
             'order' => 6,
-            'is_active' => true
+           
         ]);
     }
 }
