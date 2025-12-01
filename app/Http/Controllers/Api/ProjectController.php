@@ -102,6 +102,8 @@ class ProjectController extends Controller
             'status' => 'pending',
             'is_approved' => $isApproved,
             'notes' => $request->notes,
+            'total_received' => 0,
+            'total_remaining' => $request->college,
         ]);
         
         if ($request->hasFile('file')) {
@@ -139,13 +141,15 @@ class ProjectController extends Controller
         }
 
         $user = Auth::user();
-        if ($user->role === 'delegate'&& $project->camp_id !== $user->camp_id) {
-            return response()->json([
-                'success' => false,
-                'message' => __('messages.access_denied')
-            ], 403);
+        if ($user->role === 'delegate') {
+            if (!$project->is_approved || $project->camp_id !== $user->camp_id) {
+                return response()->json([
+                    'success' => false,
+                    'message' => __('messages.access_denied'),
+                    'data' => null
+                ], 403);
+            }
         }
-
         return response()->json([
             'success' => true,
             'data' => new ProjectResource($project),

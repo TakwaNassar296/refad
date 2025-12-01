@@ -164,6 +164,7 @@ return [
     'camp' => 'Camp',
     'added_by' => 'Added By',
     'created_at' => 'Created At',
+    'camp_not_found' => 'Camp not found.',
 
 
 
