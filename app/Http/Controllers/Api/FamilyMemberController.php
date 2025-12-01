@@ -156,6 +156,15 @@ class FamilyMemberController extends Controller
             ], 404);
         }
 
+        
+        $user = Auth::user();
+        if ($user->role === 'delegate' &&  $family->camp_id !== $user->camp_id) {
+            return response()->json([
+                'success' => false,
+                'message' => __('messages.access_denied')
+            ], 403);
+        }
+
         $member = FamilyMember::where('family_id', $familyId)->find($memberId);
 
         if (!$member) {

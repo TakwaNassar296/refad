@@ -53,10 +53,6 @@ Route::middleware(SetLocale::class)->group(function () {
         Route::post('users/{user}/reject', [AdminController::class, 'rejectUser']);
 
         Route::post('/projects/{id}/approve', [AdminController::class, 'approveProject']);
-
-
-        Route::delete('/families/{family}', [FamilyController::class, 'destroy']);
-        Route::delete('/families/{family}/members/{member}', [FamilyMemberController::class, 'destroy']);
         Route::get('/admin/contributions', [AdminController::class, 'allContributions']);
         Route::post('/contributions/{contributionId}/status', [AdminController::class, 'updateContributionStatus']);
 
@@ -92,12 +88,14 @@ Route::middleware(SetLocale::class)->group(function () {
         Route::post('/families', [FamilyController::class, 'store']);
         Route::get('/families/{family}', [FamilyController::class, 'show']);
         Route::post('/families/{family}', [FamilyController::class, 'update']);
+        Route::delete('/families/{family}', [FamilyController::class, 'destroy']);
 
 
         Route::get('/families/{family}/members', [FamilyMemberController::class, 'index']);
         Route::post('/families/{family}/members', [FamilyMemberController::class, 'store']);
         Route::get('/families/{family}/members/{member}', [FamilyMemberController::class, 'show']);
         Route::post('/families/{family}/members/{member}', [FamilyMemberController::class, 'update']);
+        Route::delete('/families/{family}/members/{member}', [FamilyMemberController::class, 'destroy']);
     });
 
     Route::middleware(['auth:sanctum', 'role:delegate,admin'])->group(function () {

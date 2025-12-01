@@ -76,9 +76,9 @@ class StatisticsController extends Controller
             return [
                 'id' => $camp->id,
                 'name' => $camp->getTranslation('name', app()->getLocale()),
-                'registered_families' => $camp->families_count,
-                'current_projects' => $camp->projects_count,
-                'contributions_percentage' => $contributions . '%',
+                'registeredFamilies' => $camp->families_count,
+                'currentProjects' => $camp->projects_count,
+                'contributionsPercentage' => $contributions . '%',
             ];
         });
 
