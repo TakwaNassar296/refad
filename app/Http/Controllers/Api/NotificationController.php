@@ -87,4 +87,22 @@ class NotificationController extends Controller
             'message' => __('messages.deleted'),
         ]);
     }
+
+    /**
+     * Delete all notifications for the authenticated user
+    */
+    public function destroyAll(): JsonResponse
+    {
+        $user = Auth::user();
+
+        UserNotification::where('notifiable_id', $user->id)
+            ->where('notifiable_type', $user::class)
+            ->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => __('messages.all_deleted'),
+        ]);
+    }
+
 }

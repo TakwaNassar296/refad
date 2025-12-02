@@ -34,7 +34,7 @@ class Contribution extends Model
                 };
                 $projectName = $this->project?->name ?? 'بدون مشروع';
 
-                return $eventText . ' في المشروع "' . $projectName . '"';
+                return $eventText . ' في المشروع ' . $projectName;
             });
     }
 

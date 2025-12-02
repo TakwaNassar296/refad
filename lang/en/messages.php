@@ -165,6 +165,9 @@ return [
     'added_by' => 'Added By',
     'created_at' => 'Created At',
     'camp_not_found' => 'Camp not found.',
+    'contribution_updated_admin_delivered' => 'Families have been added to the contribution, and the project ":project" is now completed.',
+    'all_deleted' => 'All notifications have been deleted successfully.',
+
 
 
 

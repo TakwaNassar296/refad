@@ -136,6 +136,7 @@ Route::middleware(SetLocale::class)->group(function () {
         Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
         Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead']);
         Route::delete('/notifications/{id}', [NotificationController::class, 'destroy']);
+        Route::delete('/notifications', [NotificationController::class, 'destroyAll']);
     });
 
 

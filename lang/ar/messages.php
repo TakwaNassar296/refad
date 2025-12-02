@@ -166,6 +166,9 @@ return [
     'added_by' => 'أضيف بواسطة',
     'created_at' => 'تاريخ الإنشاء',
     'camp_not_found' => 'المخيم غير موجود.',
+    'contribution_updated_admin_delivered' => 'تمت إضافة عائلات إلى المساهمة، والمشروع ":project" اكتمل بالكامل الآن.',
+    'all_deleted' => 'تم حذف جميع الإشعارات بنجاح.',
+
 
 
 

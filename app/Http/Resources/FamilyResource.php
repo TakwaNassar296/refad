@@ -35,11 +35,8 @@ class FamilyResource extends JsonResource
 
             'pivot' => $this->when($this->pivot, function () {
                 return [
-                   // 'requestedQuantity' => $this->pivot->requested_quantity,
+                    
                     'receivedQuantity' => $this->pivot->received_quantity,
-                   // 'remainingQuantity' => $this->pivot->requested_quantity - ($this->pivot->received_quantity ?? 0),
-                    'received' => (bool) $this->pivot->received,
-                   // 'supportDate' => $this->pivot->support_date,
                     'notes' => $this->pivot->notes,
                 ];
             }),

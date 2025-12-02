@@ -16,7 +16,7 @@ class DelegateFamiliesController extends Controller
 {
     public function index($contributionId): JsonResponse
     {
-        $contribution = Contribution::with(['delegateFamilies', 'project'])->find($contributionId);
+        $contribution = Contribution::with(['delegateFamilies', 'project','contributorFamilies'])->find($contributionId);
 
         if (!$contribution) {
             return response()->json([

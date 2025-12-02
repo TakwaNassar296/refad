@@ -191,7 +191,7 @@ class ContributorController extends Controller
             ], 403);
         }
 
-        $contributions = Contribution::with(['project', 'contributorFamilies'])
+        $contributions = Contribution::with(['project', 'contributorFamilies', 'delegateFamilies'])
             ->where('user_id', $user->id)
             ->get();
 

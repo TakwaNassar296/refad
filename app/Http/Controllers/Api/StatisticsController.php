@@ -63,22 +63,23 @@ class StatisticsController extends Controller
 
     public function getCampStatistics(Request $request): JsonResponse
     {
-        $camps = Camp::withCount(['families', 'projects'])->get();
+        $camps = Camp::with(['projects' => function($query) {
+            $query->where('is_approved', true);
+        }, 'families'])->get();
 
         $data = $camps->map(function ($camp) {
-            $contributions = 0;
-            $totalProjects = $camp->projects_count;
-            if ($totalProjects > 0) {
-                $totalContributions = $camp->projects()->sum('contribution_percentage');
-                $contributions = round($totalContributions / $totalProjects);
-            }
+            $registeredFamilies = $camp->families->count();
+            $currentProjects = $camp->projects->count();
+            $totalReceived = $camp->projects->sum('total_received');
+            $totalQuantity = $camp->projects->sum('total_quantity');
+            $contributionsPercentage = $totalQuantity > 0 ? round(($totalReceived / $totalQuantity) * 100) : 0;
 
             return [
                 'id' => $camp->id,
                 'name' => $camp->getTranslation('name', app()->getLocale()),
-                'registeredFamilies' => $camp->families_count,
-                'currentProjects' => $camp->projects_count,
-                'contributionsPercentage' => $contributions . '%',
+                'registeredFamilies' => $registeredFamilies,
+                'currentProjects' => $currentProjects,
+                'contributionsPercentage' => $contributionsPercentage . '%',
             ];
         });
 
@@ -88,6 +89,7 @@ class StatisticsController extends Controller
             'data' => $data,
         ]);
     }
+
 
 
 }
