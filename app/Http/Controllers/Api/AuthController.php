@@ -3,17 +3,19 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\User;
+use Illuminate\Support\Str;
 use App\Models\RefreshToken;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Requests\LoginRequest;
+use App\Mail\ResetPasswordCodeMail;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use App\Http\Requests\RegisterRequest;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Str;
+use App\Http\Requests\RegisterRequest;
 
 class AuthController extends Controller
 {
@@ -196,10 +198,12 @@ class AuthController extends Controller
         $user->reset_code_expires_at = now()->addMinutes(15);
         $user->save();
 
+        Mail::to($user->email)->send(new ResetPasswordCodeMail($resetCode));
+
         return response()->json([
             'success' => true,
             'message' => __('auth.reset_code_sent'),
-            'data' => ['resetCode' => $resetCode],
+           // 'data' => ['resetCode' => $resetCode],
         ]);
     }
 

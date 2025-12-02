@@ -57,6 +57,16 @@ return [
     'user_cannot_be_rejected' => 'لا يمكن رفض هذا المستخدم',
     'delegate_rejected_successfully' => 'تم رفض المفوض بنجاح',
     'contributor_rejected_successfully' => 'تم رفض المساهم بنجاح',
+    'reset_password_subject' => 'إعادة تعيين كلمة المرور',
+    'hello' => 'مرحبًا',
+    'reset_code_text' => 'رمز إعادة تعيين كلمة المرور الخاص بك هو: :code',
+    'reset_code_expires' => 'ستنتهي صلاحية هذا الرمز خلال 15 دقيقة.',
+    'reset_password_instruction' => 'لقد طلبت إعادة تعيين كلمة المرور الخاصة بك. يرجى استخدام رمز التحقق التالي:',
+    'reset_code_warning' => 'إذا لم تطلب إعادة تعيين كلمة المرور هذه، يرجى تجاهل هذا البريد الإلكتروني أو الاتصال بالدعم إذا كانت لديك أي مخاوف.',
+    'need_help' => 'هل تحتاج إلى مساعدة؟',
+    'contact_support' => 'يرجى التواصل مع فريق الدعم إذا كان لديك أي أسئلة.',
+    'email_sent_from' => 'تم إرسال هذا البريد الإلكتروني من',
+    'all_rights_reserved' => 'جميع الحقوق محفوظة.',
 
 
 

@@ -51,8 +51,16 @@ return [
     'user_cannot_be_rejected' => 'User cannot be rejected',
     'delegate_rejected_successfully' => 'Delegate rejected successfully',
     'contributor_rejected_successfully' => 'Contributor rejected successfully',
-    
-
+    'reset_password_subject' => 'Reset Your Password',
+    'hello' => 'Hello',
+    'reset_code_text' => 'Your password reset code is: :code',
+    'reset_code_expires' => 'This code will expire in 15 minutes.',
+    'reset_password_instruction' => 'You have requested to reset your password. Please use the following verification code:',
+    'reset_code_warning' => 'If you didn\'t request this password reset, please ignore this email or contact support if you have concerns.',
+    'need_help' => 'Need help?',
+    'contact_support' => 'Please contact our support team if you have any questions.',
+    'email_sent_from' => 'This email was sent from',
+    'all_rights_reserved' => 'All rights reserved.',
 
 
 ];
