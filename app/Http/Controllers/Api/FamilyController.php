@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Family;
 use Illuminate\Http\Request;
+use App\Exports\FamiliesExport;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Resources\FamilyResource;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\StoreFamilyRequest;
@@ -201,4 +203,32 @@ class FamilyController extends Controller
             'message' => __('messages.family_deleted_successfully')
         ]);
     }
+
+    public function exportFamilies(Request $request)
+    {
+        $user = Auth::user();
+
+        $query = Family::with('camp', 'delegate');
+
+       // if ($user->role === 'delegate') {
+       //     $query->where('camp_id', $user->camp_id);
+       // }
+
+        if ($request->filled('search')) {
+            $query->where('family_name', 'like', '%' . $request->search . '%');
+        }
+
+        if ($request->filled('total_members')) {
+            $query->where('total_members', $request->total_members);
+        }
+
+        if ($request->filled('medical_conditions_count')) {
+            $query->where('medical_conditions_count', $request->medical_conditions_count);
+        }
+
+        $fileName = 'families_' . now()->format('Y_m_d_H_i_s') . '.xlsx';
+
+        return Excel::download(new FamiliesExport($query), $fileName);
+    }
+
 }

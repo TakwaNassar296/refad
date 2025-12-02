@@ -82,7 +82,7 @@ Route::middleware(SetLocale::class)->group(function () {
         Route::delete('users/{user}', [AdminController::class, 'deleteUser']);
     });
    
-
+ Route::get('/families/export', [FamilyController::class, 'exportFamilies']);
     Route::middleware(['auth:sanctum', 'role:delegate,admin'])->group(function () {
         Route::get('/families', [FamilyController::class, 'index']);
         Route::post('/families', [FamilyController::class, 'store']);
@@ -139,9 +139,11 @@ Route::middleware(SetLocale::class)->group(function () {
         Route::delete('/notifications', [NotificationController::class, 'destroyAll']);
     });
 
+    Route::middleware(['auth:sanctum', 'role:delegate'])->get('user/statistics', [StatisticsController::class, 'statistics']);
+    Route::middleware(['auth:sanctum', 'role:delegate'])->get('/camp/statistics', [StatisticsController::class, 'DelegateStatistics']);
+    Route::middleware(['auth:sanctum', 'role:delegate'])->get('/camp-statistics/export', [StatisticsController::class, 'exportCampStatistics']);
+    Route::middleware(['auth:sanctum', 'role:contributor'])->get('/contributor-statistics', [StatisticsController::class, 'ContributorStatistics']);
 
-
-    Route::middleware('auth:sanctum')->get('user/statistics', [StatisticsController::class, 'statistics']);
    
     
     Route::prefix('pages')->group(function () {
@@ -185,6 +187,4 @@ Route::middleware(SetLocale::class)->group(function () {
     });
 
     Route::get('/stats', [StatisticsController::class, 'getStats']);
-
-
 });

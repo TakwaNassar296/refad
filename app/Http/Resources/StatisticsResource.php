@@ -21,19 +21,19 @@ class StatisticsResource extends JsonResource
 
     public function toArray($request): array
     {
-        $user = $this->resource;
+        $camp = $this->resource;
 
-        $families = $user->families()
+        $families = $camp->families()
             ->whereBetween('created_at', [$this->startDate, $this->endDate])
             ->get();
 
-        $projects = $user->projects()
+        $projects = $camp->projects()
+            ->where('is_approved', true)
             ->whereBetween('created_at', [$this->startDate, $this->endDate])
             ->get();
 
         $months = collect();
         $current = $this->startDate->copy()->startOfMonth();
-
         while ($current <= $this->endDate) {
             $months->push($current->copy());
             $current->addMonth();
@@ -46,26 +46,33 @@ class StatisticsResource extends JsonResource
             $monthFamilies = $families->filter(fn($f) => $f->created_at->month == $month->month && $f->created_at->year == $month->year);
             $monthProjects = $projects->filter(fn($p) => $p->created_at->month == $month->month && $p->created_at->year == $month->year);
 
-            $deliveredProjects = $monthProjects->where('status', 'delivered');
-            $contributionsPercentage = $monthProjects->count() > 0 
-                ? round(($deliveredProjects->count() / $monthProjects->count()) * 100)
-                : 0;
+            $totalReceived = $monthProjects->sum(function($p){
+                return $p->contributions()->where('status','approved')->sum('total_quantity');
+            });
+            $totalCollege = $monthProjects->sum('college');
+            $contributionsPercentage = $totalCollege > 0 ? round(($totalReceived / $totalCollege) * 100) : 0;
 
             $lastMonths[$monthKey] = [
                 'familiesCount' => $monthFamilies->count(),
                 'projectsCount' => $monthProjects->count(),
-                'contributionsPercentage' => $contributionsPercentage,
+                'contributionsPercentage' => $contributionsPercentage . '%',
             ];
         }
 
+        $totalProjects = $camp->projects()->where('is_approved', true)->get();
+        $totalReceived = $totalProjects->sum(function($p){
+            return $p->contributions()->where('status','approved')->sum('total_quantity');
+        });
+        $totalCollege = $totalProjects->sum('college');
+        $totalContributionsPercentage = $totalCollege > 0 ? round(($totalReceived / $totalCollege) * 100) : 0;
+
         return [
             'total' => [
-                'familiesCount' => $user->families()->count(),
-                'projectsCount' => $user->projects()->count(),
-                'projectsDeliveredCount' => $user->projects()->where('status', 'delivered')->count(),
-                'contributionsCount' => $user->contributions()->count(),
+                'familiesCount' => $camp->families()->count(),
+                'projectsCount' => $totalProjects->count(),
+                'contributionsPercentage' => $totalContributionsPercentage . '%',
             ],
-            'lastMonths' => $lastMonths
+            'lastMonths' => $lastMonths,
         ];
     }
 }
