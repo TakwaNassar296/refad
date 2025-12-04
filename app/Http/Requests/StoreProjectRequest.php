@@ -28,7 +28,7 @@ class StoreProjectRequest extends FormRequest
             'college' => 'required|string|max:255',
             'project_number' => 'required|string|max:100',
             'notes' => 'nullable|string|max:1000',
-            'file' => 'nullable|file|max:10240',
+            'project_image' => 'required|image|mimes:jpg,jpeg,png,webp|max:10240',
         ];
     }
 

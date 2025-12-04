@@ -34,6 +34,10 @@ class CampController extends Controller
             $query->where('family_count', $request->family_count);
         }
 
+        if ($request->has('governorate_id') && $request->governorate_id) {
+            $query->where('governorate_id', $request->governorate_id);
+        }
+
         $camps = $query->latest()->get();
 
         return response()->json([

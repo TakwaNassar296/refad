@@ -36,6 +36,7 @@ class UpdateCampRequest extends FormRequest
             'bank_account' => 'sometimes|string|max:255',
             'location' => 'nullable|string|max:255',
             'camp_img' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'governorate_id' => 'sometimes|exists:governorates,id',
         ];
     }
 }

@@ -194,6 +194,12 @@ return [
     'contributions_percentage' => 'Contributions %',
     'monthly_stats' => 'Monthly Stats',
     'contributor_statistics_fetched' => 'Contributor statistics fetched successfully',
+    'camp_already_has_delegate' => 'This camp already has a delegate account.',
+    'governorates_retrieved' => 'Governorates retrieved successfully',
+    'governorate_created'    => 'Governorate created successfully',
+    'governorate_retrieved'  => 'Governorate retrieved successfully',
+    'governorate_updated'    => 'Governorate updated successfully',
+    'governorate_deleted'    => 'Governorate deleted successfully',
 
 
 

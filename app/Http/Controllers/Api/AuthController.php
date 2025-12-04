@@ -54,6 +54,7 @@ class AuthController extends Controller
             'name' => $data['name'],
             'email' => $data['email'] ?? null,
             'password' => Hash::make($data['password']),
+            'camp_name' => $data['camp_name'] ?? null,
             'id_number' => $data['id_number'],
             'phone' => $data['phone'],
             'backup_phone' => $data['backup_phone'] ?? null,
@@ -62,6 +63,7 @@ class AuthController extends Controller
             'license_number' => $data['license_number'] ?? null,
             'accept_terms' => $data['accept_terms'] ?? false,
             'is_approved' => false,
+            'status' => 'pending', 
         ]);
     }
 

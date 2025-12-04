@@ -58,6 +58,18 @@ class AdminController extends Controller
                 'camp_id' => 'required|exists:camps,id'
             ]);
 
+            $existingDelegate = User::where('camp_id', $request->camp_id)
+                ->where('role', 'delegate')
+                ->first();
+
+            if ($existingDelegate) {
+                return response()->json([
+                    'status' => false,
+                    'message' => __('messages.camp_already_has_delegate'),
+                    'data' => null
+                ], 422);
+            }
+
             $user->update([
                 'status' => 'approved',
                 'camp_id' => $request->camp_id

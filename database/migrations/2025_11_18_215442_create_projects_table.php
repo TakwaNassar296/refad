@@ -19,16 +19,9 @@ return new class extends Migration
             $table->string('type')->nullable();            
             $table->unsignedInteger('beneficiary_count')->default(0); 
             $table->string('college')->nullable();         
-            $table->string('project_number')->nullable();  
             $table->enum('status', ['pending', 'in_progress', 'delivered', 'cancelled'])->default('pending');  
             $table->text('notes')->nullable(); 
-
-
-            $table->string('file_path')->nullable();       
-            $table->string('file_original_name')->nullable(); 
-            $table->string('file_type')->nullable();       
-            $table->unsignedBigInteger('file_size')->nullable(); 
-
+            $table->string('project_image')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

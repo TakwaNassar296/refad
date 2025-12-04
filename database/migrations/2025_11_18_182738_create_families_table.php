@@ -16,11 +16,9 @@ return new class extends Migration
             $table->foreignId('camp_id')->constrained()->onDelete('cascade');
             $table->foreignId('added_by')->constrained('users')->onDelete('cascade');
             $table->string('family_name'); 
-            $table->string('father_name')->nullable(); 
             $table->string('national_id')->unique(); 
             $table->date('dob')->nullable();    
             $table->string('phone')->nullable();         
-            $table->string('email')->nullable(); 
             $table->integer('total_members')->default(0);    
             $table->integer('elderly_count')->default(0);
             $table->integer('medical_conditions_count')->default(0); 

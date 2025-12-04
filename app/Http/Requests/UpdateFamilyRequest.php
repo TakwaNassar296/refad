@@ -24,7 +24,6 @@ class UpdateFamilyRequest extends FormRequest
     {
         return [
             'family_name' => 'sometimes|required|string|max:255',
-            'father_name' => 'sometimes|string|max:255',
             'national_id' => [
                 'sometimes',
                 'required',
@@ -33,7 +32,6 @@ class UpdateFamilyRequest extends FormRequest
             ],
             'dob' => 'sometimes|date',
             'phone' => ['sometimes', 'string', 'max:20',  'regex:/^\+?[0-9\s\-\(\)]{7,20}$/', Rule::unique('families', 'phone')->ignore($this->family)],
-            'email' => ['nullable', 'email', 'max:255', Rule::unique('families', 'email')->ignore($this->family)],
             'total_members' => 'sometimes|integer|min:1',
             'elderly_count' => 'sometimes|required|integer|min:0',
             'medical_conditions_count' => 'sometimes|required|integer|min:0',

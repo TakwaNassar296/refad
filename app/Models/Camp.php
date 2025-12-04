@@ -29,6 +29,7 @@ class Camp extends Model
         'description',
         'camp_img',   
         'location', 
+        'governorate_id'
     ];
 
     public function getActivitylogOptions(): LogOptions
@@ -117,6 +118,11 @@ class Camp extends Model
     public function complaints()
     {
         return $this->hasMany(Complaint::class);
+    }
+
+    public function governorate()
+    {
+        return $this->belongsTo(Governorate::class);
     }
 
 }

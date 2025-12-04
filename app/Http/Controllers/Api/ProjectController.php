@@ -11,6 +11,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Resources\ProjectResource;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Http\Resources\ContributionResource;
@@ -91,6 +92,11 @@ class ProjectController extends Controller
             ], 403);
         }
 
+        if ($request->hasFile('project_image')) {
+            $projectImage = $request->file('project_image')->store('projects', 'public');
+        }
+
+
         $project = Project::create([
             'camp_id' =>  $campId,
             'added_by' => $user->id,
@@ -98,17 +104,13 @@ class ProjectController extends Controller
             'type' => $request->type,
             'beneficiary_count' => $request->beneficiary_count ?? 0,
             'college' => $request->college,
-            'project_number' => $request->project_number,
             'status' => 'pending',
             'is_approved' => $isApproved,
             'notes' => $request->notes,
             'total_received' => 0,
             'total_remaining' => $request->college,
+            'project_image' => $projectImage,
         ]);
-        
-        if ($request->hasFile('file')) {
-            $this->handleFileUpload($project, $request->file('file'));
-        }
 
         if ($user->isDelegate()) {
             $this->notifyAdmin(
@@ -184,11 +186,15 @@ class ProjectController extends Controller
             $data['camp_id'] = $user->camp_id;
         }
 
-        $project->update($data);
 
-        if ($request->hasFile('file')) {
-            $this->handleFileUpload($project, $request->file('file'));
+        if ($request->hasFile('project_image')) {
+            if ($project->project_image && Storage::disk('public')->exists($project->project_image)) {
+                Storage::disk('public')->delete($project->project_image);
+            }
+            $data['project_image'] = $request->file('project_image')->store('projects', 'public');
         }
+
+        $project->update($data);
 
         return response()->json([
             'success' => true,

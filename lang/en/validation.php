@@ -227,6 +227,10 @@ return [
         'password_confirmation' => 'password confirmation',
         'reset_code' => 'reset code',
         'reset_token' => 'reset token',
+        'governorate_id' => 'Governorate',
+        'camp_name' => 'Camp Name',
+        'role' => 'Role',
+        'delegate' => 'Delegate',
     ],
 
 ];

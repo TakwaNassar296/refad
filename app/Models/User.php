@@ -37,7 +37,8 @@ class User extends Authenticatable
         'backup_phone',
         'camp_id',
         'fcm_token',
-        'profile_image'
+        'profile_image',
+        'camp_name'
     ];
 
     /**

@@ -13,6 +13,7 @@ class CampResource extends JsonResource
             'name' => $this->getTranslation('name', app()->getLocale()),
             'description' =>  $this->getTranslation('description', app()->getLocale()),
             'slug' => $this->slug,
+            'governorate' => $this->governorate ? $this->governorate->getTranslation('name', app()->getLocale()) : null,
             'familyCount' => $this->family_count,
             'childrenCount' => $this->children_count,
             'elderlyCount' => $this->elderly_count,

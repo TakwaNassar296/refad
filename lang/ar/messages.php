@@ -195,6 +195,13 @@ return [
     'contributions_percentage' => 'نسبة المساهمات',
     'monthly_stats' => 'الإحصائيات الشهرية',
     'contributor_statistics_fetched' => 'تم جلب إحصائيات المساهم بنجاح',
+    'camp_already_has_delegate' => 'هذا المخيم لديه حساب مندوب بالفعل.',
+    'governorates_retrieved' => 'تم استرجاع المحافظات بنجاح',
+    'governorate_created'    => 'تم إنشاء المحافظة بنجاح',
+    'governorate_retrieved'  => 'تم استرجاع المحافظة بنجاح',
+    'governorate_updated'    => 'تم تحديث المحافظة بنجاح',
+    'governorate_deleted'    => 'تم حذف المحافظة بنجاح',
+
 
 
 

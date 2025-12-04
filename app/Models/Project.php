@@ -22,17 +22,13 @@ class Project extends Model
         'type',
         'beneficiary_count',
         'college',
-        'project_number',
         'status',
         'notes',
-        'file_path',
-        'file_original_name',
-        'file_type',
-        'file_size',
         'total_received',       
         'total_remaining',      
         'total_contributions', 
-        'is_approved', 
+        'is_approved',
+        'project_image' 
     ];
 
 

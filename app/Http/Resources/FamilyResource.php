@@ -11,11 +11,9 @@ class FamilyResource extends JsonResource
         return [
             'id' => $this->id,
             'familyName' => $this->family_name,
-            'fatherName' => $this->father_name,
             'nationalId' => $this->national_id,
             'dob' => $this->dob?->format('Y-m-d'),
             'phone' => $this->phone,
-            'email' => $this->email,
             'totalMembers' => $this->total_members,
             'elderlyCount' => $this->elderly_count,
             'medicalConditionsCount' => $this->medical_conditions_count,

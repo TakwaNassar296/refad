@@ -28,14 +28,15 @@ class StoreCampRequest extends FormRequest
             'description' => 'nullable|array',
             'description.ar' => 'nullable|string|max:1000',
             'description.en' => 'nullable|string|max:1000',
-            'location' => 'nullable|string|max:255',
-            'family_count' => 'sometimes|integer|min:0',
-            'children_count' => 'sometimes|integer|min:0',
-            'elderly_count' => 'sometimes|integer|min:0',
-            'latitude' => 'sometimes|numeric|between:-90,90',
-            'longitude' => 'sometimes|numeric|between:-180,180',
-            'bank_account' => 'sometimes|string|max:255',
-            'camp_img' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'location' => 'required|string|max:255',
+          //  'family_count' => 'sometimes|integer|min:0',
+          //  'children_count' => 'sometimes|integer|min:0',
+           // 'elderly_count' => 'sometimes|integer|min:0',
+           // 'latitude' => 'sometimes|numeric|between:-90,90',
+           // 'longitude' => 'sometimes|numeric|between:-180,180',
+           // 'bank_account' => 'sometimes|string|max:255',
+            'camp_img' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'governorate_id' => 'required|exists:governorates,id', 
         ];
     }
 }

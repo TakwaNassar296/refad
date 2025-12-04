@@ -227,5 +227,9 @@ return [
         'password_confirmation' => 'تأكيد كلمة المرور',
         'reset_code' => 'كود إعادة التعيين',
         'reset_token' => 'رمز إعادة التعيين',
+        'governorate_id' => 'المحافظة', 
+        'camp_name' => 'اسم المخيم',
+        'role' => 'الدور',
+        'delegate' => 'المندوب',
     ],
 ];

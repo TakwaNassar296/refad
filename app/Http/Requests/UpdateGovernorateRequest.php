@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreContactUsRequest extends FormRequest
+class UpdateGovernorateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,10 +22,9 @@ class StoreContactUsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
-            'email' => 'required|email',
-            'phone' => 'required|string|max:20|regex:/^\+?[0-9\s\-\(\)]{7,20}$/',
-            'message' => 'required|string'
+            'name' => 'sometimes|array',
+            'name.ar' => 'sometimes|string|max:255',
+            'name.en' => 'sometimes|string|max:255',
         ];
     }
 }

@@ -26,10 +26,9 @@ class UpdateProjectRequest extends FormRequest
             'type' => 'sometimes|string|max:255',
             'beneficiary_count' => 'sometimes|integer|min:0',
             'college' => 'sometimes|string|max:255',
-            'project_number' => 'sometimes|string|max:100',
             'status' => 'nullable|in:pending,in_progress,delivered,cancelled',
             'notes' => 'nullable|string|max:1000',
-            'file' => 'nullable|file|max:10240',
+            'project_image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:10240',
         ];
     }
 

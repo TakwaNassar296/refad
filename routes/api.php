@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\ContactUsController;
 use App\Http\Controllers\Api\StatisticsController;
 use App\Http\Controllers\Api\ActivityLogController;
 use App\Http\Controllers\Api\ContributorController;
+use App\Http\Controllers\Api\GovernorateController;
 use App\Http\Controllers\Api\TestimonialController;
 use App\Http\Controllers\Api\FamilyMemberController;
 use App\Http\Controllers\Api\NotificationController;
@@ -72,7 +73,6 @@ Route::middleware(SetLocale::class)->group(function () {
 
     Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
         Route::post('camps', [CampController::class, 'store']);
-        Route::post('camps/{slug}', [CampController::class, 'update']);
         Route::delete('camps/{slug}', [CampController::class, 'destroy']);
     });
 
@@ -106,6 +106,9 @@ Route::middleware(SetLocale::class)->group(function () {
         Route::post('/projects/{project}', [ProjectController::class, 'update']);
         Route::delete('/projects/{project}', [ProjectController::class, 'destroy']);
         Route::get('/projects/export/data', [ProjectController::class, 'export']);
+
+
+        Route::post('camps/{slug}', [CampController::class, 'update']);
 
         Route::get('/contributions/{contributionId}/families', [DelegateFamiliesController::class, 'index']);
         Route::post('/contributions/{contributionId}/families', [DelegateFamiliesController::class, 'store']);
@@ -187,4 +190,12 @@ Route::middleware(SetLocale::class)->group(function () {
     });
 
     Route::get('/stats', [StatisticsController::class, 'getStats']);
+
+    Route::prefix('governorates')->group(function () {
+        Route::get('/', [GovernorateController::class, 'index']);
+        Route::post('/', [GovernorateController::class, 'store']);
+        Route::get('{governorate}', [GovernorateController::class, 'show']);
+        Route::post('{governorate}', [GovernorateController::class, 'update']);
+        Route::delete('{governorate}', [GovernorateController::class, 'destroy']);
+    });
 });
