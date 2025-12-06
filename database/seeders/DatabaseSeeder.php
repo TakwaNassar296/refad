@@ -23,7 +23,10 @@ class DatabaseSeeder extends Seeder
            PageSeeder::class,
            PartnerSeeder::class,
            SettingSeeder::class,
-           TestimonialSeeder::class
+           TestimonialSeeder::class,
+           MaritalStatusSeeder::class,
+           MedicalConditionSeeder::class,
+           RelationshipSeeder::class
         ]);
 
     }

@@ -14,6 +14,7 @@ class ContributionFamily extends Model
     protected $fillable = [
         'contribution_id',
         'family_id',
+        'quantity'
     ];
 
     public function contribution()

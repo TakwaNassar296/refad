@@ -201,6 +201,49 @@ return [
     'governorate_retrieved'  => 'تم استرجاع المحافظة بنجاح',
     'governorate_updated'    => 'تم تحديث المحافظة بنجاح',
     'governorate_deleted'    => 'تم حذف المحافظة بنجاح',
+    // Marital Status
+    'marital_statuses_retrieved_successfully' => 'تم جلب الحالات الاجتماعية بنجاح',
+    'marital_status_added_successfully' => 'تم إضافة الحالة الاجتماعية بنجاح',
+    'marital_status_retrieved_successfully' => 'تم جلب الحالة الاجتماعية بنجاح',
+    'marital_status_updated_successfully' => 'تم تحديث الحالة الاجتماعية بنجاح',
+    'marital_status_deleted_successfully' => 'تم حذف الحالة الاجتماعية بنجاح',
+    'marital_status_already_exists_restored' => 'تم استرجاع الحالة الاجتماعية الموجودة مسبقًا بنجاح',
+
+
+    // Medical Condition
+    'medical_conditions_retrieved_successfully' => 'تم جلب الحالات المرضية بنجاح',
+    'medical_condition_added_successfully' => 'تم إضافة الحالة المرضية بنجاح',
+    'medical_condition_retrieved_successfully' => 'تم جلب الحالة المرضية بنجاح',
+    'medical_condition_updated_successfully' => 'تم تحديث الحالة المرضية بنجاح',
+    'medical_condition_deleted_successfully' => 'تم حذف الحالة المرضية بنجاح',
+    'medical_condition_already_exists_restored' => 'تم استرجاع الحالة المرضية الموجودة مسبقًا بنجاح',
+    'backup_phone' => 'رقم الهاتف الاحتياطي',
+    'marital_status' => 'الحالة الاجتماعية',
+    'relationships_retrieved_successfully' => 'تم استرجاع صلات القرابة بنجاح.',
+    'relationship_added_successfully' => 'تم إضافة صلة القرابة بنجاح.',
+    'relationship_restored_successfully' => 'تم استعادة صلة القرابة بنجاح.',
+    'relationship_retrieved_successfully' => 'تم استرجاع صلة القرابة بنجاح.',
+    'relationship_updated_successfully' => 'تم تحديث صلة القرابة بنجاح.',
+    'relationship_deleted_successfully' => 'تم حذف صلة القرابة بنجاح.',
+    'new_contribution_title' => 'تمت مساهمة جديدة',
+    'new_contribution_body_delegate' => ':name قام بإضافة مساهمة للمشروع :project، يرجى التحقق وإدخال الكمية المناسبة لكل عائلة.',
+    'delegate' => 'مندوب',
+    'member_name' => 'اسم الفرد',
+    'member_gender' => 'جنس الفرد',
+    'member_dob' => 'تاريخ ميلاد الفرد',
+    'member_national_id' => 'الرقم القومي للفرد',
+    'member_relationship' => 'صلة القرابة',
+    'member_medical_condition' => 'الحالة الصحية للفرد',
+    'status_pending' => 'معلق',
+    'status_in_progress' => 'قيد التنفيذ',
+    'status_delivered' => 'تم التسليم',
+    'status_cancelled' => 'ملغى',
+    'yes' => 'نعم',
+    'no'  => 'لا',
+    'contributions' => 'المساهمات',
+
+
+
 
 
 

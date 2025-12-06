@@ -53,6 +53,10 @@ class HomepageController extends Controller
             $homepage->hero_image = $request->file('hero_image')->store('homepage', 'public');
         }
 
+        if ($request->file('small_hero_image')) {
+            $homepage->small_hero_image = $request->file('small_hero_image')->store('homepage', 'public');
+        }
+
         $homepage->save();
 
         return response()->json([

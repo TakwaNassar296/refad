@@ -231,5 +231,9 @@ return [
         'camp_name' => 'اسم المخيم',
         'role' => 'الدور',
         'delegate' => 'المندوب',
+        'backup_phone' => 'رقم هاتف احتياطي',
+        'marital_status_id' => 'الحالة الاجتماعية',
+        'relationship_id' => 'صلة القرابة',
+        'medical_condition_id' => 'الحالة المرضية',
     ],
 ];

@@ -32,14 +32,13 @@ class UpdateFamilyRequest extends FormRequest
             ],
             'dob' => 'sometimes|date',
             'phone' => ['sometimes', 'string', 'max:20',  'regex:/^\+?[0-9\s\-\(\)]{7,20}$/', Rule::unique('families', 'phone')->ignore($this->family)],
+            'backup_phone' => ['nullable', 'string', 'max:20','regex:/^\+?[0-9\s\-\(\)]{7,20}$/'],
             'total_members' => 'sometimes|integer|min:1',
-            'elderly_count' => 'sometimes|required|integer|min:0',
-            'medical_conditions_count' => 'sometimes|required|integer|min:0',
             'file' => 'sometimes|file|mimes:pdf,jpg,jpeg,png,txt|max:2048',
-            'children_count' => 'sometimes|required|integer|min:0',
             'tent_number' => 'sometimes|string|max:50',
             'location' => 'sometimes|string|max:500',
             'notes' => 'nullable|string|max:1000',
+            'marital_status_id' => ['sometimes','required','integer', Rule::exists('marital_statuses','id')],
         ];
     }
 }

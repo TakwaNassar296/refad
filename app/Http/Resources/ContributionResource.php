@@ -19,9 +19,6 @@ class ContributionResource extends JsonResource
             'contributorFamilies' => $this->whenLoaded('contributorFamilies', function () {
                 return FamilyResource::collection($this->contributorFamilies);
             }),
-            'delegateFamilies' => $this->whenLoaded('delegateFamilies', function () {
-                return FamilyResource::collection($this->delegateFamilies);
-            }),
             'createdAt' => $this->created_at,
             'updatedAt' => $this->updated_at,
         ];

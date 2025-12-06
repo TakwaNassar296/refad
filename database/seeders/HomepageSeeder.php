@@ -27,6 +27,7 @@ class HomepageSeeder extends Seeder
                 'ar' => 'هدفنا دعم المحتاجين وتنمية الأمل.'
             ],
             'hero_image' => 'homepage/refad-hero.jpg',
+            'small_hero_image' => 'homepage/refad-hero.jpg',
             'camps_count' => 6500,
             'contributors_count' => 3200,
             'projects_count' => 1400,

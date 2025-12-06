@@ -21,9 +21,8 @@ class Family extends Model
         'national_id',
         'dob',
         'phone',
-        'elderly_count',
-        'medical_conditions_count',
-        'children_count',
+        'backup_phone', 
+        'marital_status_id',
         'tent_number',
         'location',
         'notes',
@@ -78,11 +77,9 @@ class Family extends Model
                     ->withTimestamps();
     }
 
-    public function delegateContributions()
+    public function maritalStatus(): BelongsTo
     {
-        return $this->belongsToMany(Contribution::class, 'delegate_families')
-                    ->withPivot('received_quantity', 'notes')
-                    ->withTimestamps();
+        return $this->belongsTo(MaritalStatus::class);
     }
 
 

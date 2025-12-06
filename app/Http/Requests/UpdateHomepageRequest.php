@@ -32,6 +32,7 @@ class UpdateHomepageRequest extends FormRequest
             'hero_subtitle.ar' => 'sometimes|string',
             'hero_subtitle.en' => 'sometimes|string',
             'hero_image' => 'sometimes|image|max:2048',
+            'small_hero_image' => 'sometimes|image|max:2048',
         ];
     }
 }

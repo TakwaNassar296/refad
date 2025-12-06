@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateFamilyMemberRequest extends FormRequest
+class UpdateMedicalConditionRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,18 +22,15 @@ class UpdateFamilyMemberRequest extends FormRequest
      */
     public function rules(): array
     {
+       
         return [
-            'name' => 'sometimes|required|string|max:255',
-            'gender' => 'sometimes|required|in:male,female',
-            'dob' => 'sometimes|date',
-            'national_id' => [
+            'name' => [
                 'sometimes',
-                'required',
                 'string',
-                Rule::unique('family_members' , 'national_id')->ignore($this->family_member)
+                'max:255',
+                Rule::unique('medical_conditions', 'name')->ignore($this->medical_condition),
             ],
-            'relationship_id' => 'sometimes|required|exists:relationships,id',
-            'medical_condition_id' => 'sometimes|nullable|exists:medical_conditions,id',
         ];
+        
     }
 }

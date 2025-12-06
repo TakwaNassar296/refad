@@ -200,6 +200,50 @@ return [
     'governorate_retrieved'  => 'Governorate retrieved successfully',
     'governorate_updated'    => 'Governorate updated successfully',
     'governorate_deleted'    => 'Governorate deleted successfully',
+    // Marital Status
+    'marital_statuses_retrieved_successfully' => 'Marital statuses retrieved successfully',
+    'marital_status_added_successfully' => 'Marital status added successfully',
+    'marital_status_retrieved_successfully' => 'Marital status retrieved successfully',
+    'marital_status_updated_successfully' => 'Marital status updated successfully',
+    'marital_status_deleted_successfully' => 'Marital status deleted successfully',
+    'marital_status_already_exists_restored' => 'The existing marital status was restored successfully',
+
+
+    // Medical Condition
+    'medical_conditions_retrieved_successfully' => 'Medical conditions retrieved successfully',
+    'medical_condition_added_successfully' => 'Medical condition added successfully',
+    'medical_condition_retrieved_successfully' => 'Medical condition retrieved successfully',
+    'medical_condition_updated_successfully' => 'Medical condition updated successfully',
+    'medical_condition_deleted_successfully' => 'Medical condition deleted successfully',
+    'medical_condition_already_exists_restored' => 'The existing medical condition was restored successfully',
+    'backup_phone' => 'Backup Phone',
+    'marital_status' => 'Marital Status',
+    'relationships_retrieved_successfully' => 'Relationships retrieved successfully.',
+    'relationship_added_successfully' => 'Relationship added successfully.',
+    'relationship_restored_successfully' => 'Relationship restored successfully.',
+    'relationship_retrieved_successfully' => 'Relationship retrieved successfully.',
+    'relationship_updated_successfully' => 'Relationship updated successfully.',
+    'relationship_deleted_successfully' => 'Relationship deleted successfully.',
+    'new_contribution_title' => 'New Contribution Added',
+    'new_contribution_body_delegate' => ':name has made a contribution to the project :project. Please review and enter the appropriate quantity for each family.',
+    'delegate' => 'Delegate',
+    'member_name' => 'Member Name',
+    'member_gender' => 'Member Gender',
+    'member_dob' => 'Member Date of Birth',
+    'member_national_id' => 'Member National ID',
+    'member_relationship' => 'Member Relationship',
+    'member_medical_condition' => 'Member Medical Condition',
+    'status_pending' => 'Pending',
+    'status_in_progress' => 'In Progress',
+    'status_delivered' => 'Delivered',
+    'status_cancelled' => 'Cancelled',
+    'yes' => 'Yes',
+    'no'  => 'No',
+    'contributions' => 'Contributions',
+
+
+    
+
 
 
 

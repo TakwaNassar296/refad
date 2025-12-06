@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use Carbon\Carbon;
 use App\Models\Camp;
 use App\Models\Project;
 use App\Models\Contribution;
@@ -9,10 +10,10 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CampResource;
-use App\Http\Resources\ProjectResource;
-use App\Http\Resources\FamilyResource;
-use App\Http\Resources\ContributionResource;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Resources\FamilyResource;
+use App\Http\Resources\ProjectResource;
+use App\Http\Resources\ContributionResource;
 
 class ContributorController extends Controller
 {
@@ -25,47 +26,62 @@ class ContributorController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => __('messages.access_denied'),
-                'data' => null,
             ], 403);
         }
 
-        $camp = Camp::with('families')->find($campId);
-
+        $camp = Camp::find($campId);
         if (!$camp) {
             return response()->json([
                 'success' => false,
                 'message' => __('messages.camp_not_found'),
-                'data' => null,
             ], 404);
         }
 
-        $familiesQuery = $camp->families();
+        $query = $camp->families();
 
         if ($request->filled('search')) {
-            $search = $request->search;
-            $familiesQuery->where('family_name', 'like', "%{$search}%");
+            $query->where('family_name', 'like', '%' . $request->search . '%');
         }
 
-        if ($request->filled('medical')) {
-            $familiesQuery->where('medical_conditions_count', '>', 0);
+        if ($request->filled('total_members')) {
+            $query->where('total_members', $request->total_members);
         }
 
-        if ($request->filled('children')) {
-            $familiesQuery->where('children_count', '>', 0);
-        }
-
-        if ($request->filled('elderly')) {
-            $familiesQuery->where('elderly_count', '>', 0);
-        }
-
-        if ($request->filled('orphans')) {
-            $familiesQuery->whereHas('members', function ($q) {
-                $q->where('status', 'orphan');
+        if ($request->filled('marital_status')) {
+            $query->whereHas('members', function ($q) use ($request) {
+                $q->whereHas('maritalStatus', function ($mq) use ($request) {
+                    $mq->where('name', $request->marital_status);
+                });
             });
         }
 
+        if ($request->filled('medical_condition')) {
+            $query->whereHas('members', function ($q) use ($request) {
+                $q->whereHas('medicalCondition', function ($mq) use ($request) {
+                    $mq->where('name', $request->medical_condition);
+                });
+            });
+        }
 
-        $families = $familiesQuery->get();
+        if ($request->filled('has_children') && $request->has_children) {
+            $fourYearsAgo = Carbon::now()->subYears(4)->startOfDay();
+            $today = Carbon::now()->endOfDay();
+
+            $query->whereHas('members', function ($q) use ($fourYearsAgo, $today) {
+                $q->whereBetween('dob', [$fourYearsAgo, $today]);
+            });
+        }
+
+        if ($request->filled('year_from') && $request->filled('year_to')) {
+            $from = Carbon::createFromDate($request->year_from)->startOfYear();
+            $to = Carbon::createFromDate($request->year_to)->endOfYear();
+
+            $query->whereHas('members', function ($q) use ($from, $to) {
+                $q->whereBetween('dob', [$from, $to]);
+            });
+        }
+
+        $families = $query->get();
 
         return response()->json([
             'success' => true,
@@ -73,7 +89,6 @@ class ContributorController extends Controller
             'data' => FamilyResource::collection($families),
         ], 200);
     }
-
 
 
     public function contribute(Request $request, $projectId): JsonResponse
@@ -171,7 +186,23 @@ class ContributorController extends Controller
             ]
         );
 
-
+        $delegate = $project->camp->delegates()->first();
+        if ($delegate && $delegate->fcm_token) {
+            $this->notifyUser(
+                $delegate->id,
+                __('messages.new_contribution_title'),
+                __('messages.new_contribution_body_delegate', [
+                    'name' => $user->name,
+                    'project' => $project->name,
+                ]),
+                [
+                    'type' => 'new_contribution',
+                    'contribution_id' => $contribution->id,
+                    'project_id' => $project->id,
+                    'families' => $validFamilies,
+                ]
+            );
+        }
         return response()->json([
             'success' => true,
             'message' => __('messages.contribution_added_successfully'),
@@ -191,7 +222,7 @@ class ContributorController extends Controller
             ], 403);
         }
 
-        $contributions = Contribution::with(['project', 'contributorFamilies', 'delegateFamilies'])
+        $contributions = Contribution::with(['project', 'contributorFamilies'])
             ->where('user_id', $user->id)
             ->get();
 

@@ -207,7 +207,7 @@ class AdminController extends Controller
             ], 403);
         }
 
-        $contributions = Contribution::with(['project', 'delegateFamilies', 'contributorFamilies'])
+        $contributions = Contribution::with(['project',  'contributorFamilies'])
             ->get();
 
         return response()->json([
@@ -271,7 +271,7 @@ class AdminController extends Controller
         return response()->json([
             'success' => true,
             'message' => __('messages.contribution_status_updated'),
-            'data' => new ContributionResource($contribution->load(['project', 'contributorFamilies' , 'delegateFamilies'])),
+            'data' => new ContributionResource($contribution->load(['project', 'contributorFamilies' ])),
         ], 200);
     }
 

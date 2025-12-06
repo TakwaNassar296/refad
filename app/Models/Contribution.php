@@ -17,6 +17,7 @@ class Contribution extends Model
         'total_quantity',
         'notes',
         'status',
+        'confirmed_quantity'
     ];
 
     public function getActivitylogOptions(): \Spatie\Activitylog\LogOptions
@@ -52,13 +53,6 @@ class Contribution extends Model
     public function contributorFamilies()
     {
         return $this->belongsToMany(Family::class, 'contribution_families')
-                    ->withTimestamps();
-    }
-
-    public function delegateFamilies()
-    {
-        return $this->belongsToMany(Family::class, 'delegate_families')
-                    ->withPivot('received_quantity', 'notes')
                     ->withTimestamps();
     }
 

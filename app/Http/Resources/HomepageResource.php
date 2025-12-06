@@ -20,6 +20,7 @@ class HomepageResource extends JsonResource
             'heroDescription' => $this->getTranslations('hero_description'),
             'heroSubtitle' => $this->getTranslations( 'hero_subtitle'),
             'heroImage' => $this->hero_image ? asset('storage/' . $this->hero_image) : null,
+            'smallHeroImage' => $this->small_hero_image ? asset('storage/' . $this->small_hero_image) : null,
             'campsCount' => \App\Models\Camp::count(),
             'contributorsCount' => \App\Models\Contribution::count(),
             'projectsCount' => \App\Models\Project::count(),

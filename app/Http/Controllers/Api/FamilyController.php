@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use Carbon\Carbon;
 use App\Models\Family;
 use Illuminate\Http\Request;
 use App\Exports\FamiliesExport;
@@ -34,9 +35,38 @@ class FamilyController extends Controller
             $query->where('total_members', $request->total_members);
         }
 
-        if ($request->has('medical_conditions_count')) {
-            $query->where('medical_conditions_count', $request->medical_conditions_count);
+        if ($request->has('marital_status') && $request->marital_status) {
+            $query->whereHas('maritalStatus', function ($q) use ($request) {
+                $q->where('name', $request->marital_status);
+            });
         }
+        if ($request->has('medical_condition') && $request->medical_condition) {
+            $query->whereHas('members', function ($q) use ($request) {
+                $q->whereHas('medicalCondition', function ($mq) use ($request) {
+                    $mq->where('name', $request->medical_condition);
+                });
+            });
+        }
+
+        if ($request->filled('has_children') && $request->has_children) {
+            $fourYearsAgo = Carbon::now()->subYears(4)->startOfDay();
+            $today = Carbon::now()->endOfDay();
+
+            $query->whereHas('members', function ($q) use ($fourYearsAgo, $today) {
+                $q->whereBetween('dob', [$fourYearsAgo, $today]);
+            });
+        }
+
+        if ($request->filled('year_from') && $request->filled('year_to')) {
+            $from = Carbon::createFromDate($request->year_from)->startOfYear();
+            $to = Carbon::createFromDate($request->year_to)->endOfYear();
+
+            $query->whereHas('members', function ($q) use ($from, $to) {
+                $q->whereBetween('dob', [$from, $to]);
+            });
+        }
+
+
 
         $families = $query->latest()->get();
 
@@ -78,14 +108,13 @@ class FamilyController extends Controller
                 'national_id' => $request->national_id,
                 'dob' => $request->dob,
                 'phone' => $request->phone,
+                'backup_phone' => $request->backup_phone,
                 'total_members' => $request->total_members,
-                'elderly_count' => $request->elderly_count,
-                'medical_conditions_count' => $request->medical_conditions_count,
-                'children_count' => $request->children_count,
                 'tent_number' => $request->tent_number,
                 'location' => $request->location,
                 'notes' => $request->notes,
                 'file' => $filePath,
+                'marital_status_id' => $request->marital_status_id,
             ]);
 
             return response()->json([
@@ -208,9 +237,9 @@ class FamilyController extends Controller
 
         $query = Family::with('camp', 'delegate');
 
-       // if ($user->role === 'delegate') {
-       //     $query->where('camp_id', $user->camp_id);
-       // }
+        if ($user->role === 'delegate') {
+            $query->where('camp_id', $user->camp_id);
+        }
 
         if ($request->filled('search')) {
             $query->where('family_name', 'like', '%' . $request->search . '%');
@@ -220,13 +249,16 @@ class FamilyController extends Controller
             $query->where('total_members', $request->total_members);
         }
 
-        if ($request->filled('medical_conditions_count')) {
-            $query->where('medical_conditions_count', $request->medical_conditions_count);
+        if ($request->filled('marital_status')) {
+            $query->whereHas('maritalStatus', function ($q) use ($request) {
+                $q->where('name', $request->marital_status);
+            });
         }
 
         $fileName = 'families_' . now()->format('Y_m_d_H_i_s') . '.xlsx';
 
         return Excel::download(new FamiliesExport($query), $fileName);
     }
+
 
 }

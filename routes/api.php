@@ -22,7 +22,10 @@ use App\Http\Controllers\Api\GovernorateController;
 use App\Http\Controllers\Api\TestimonialController;
 use App\Http\Controllers\Api\FamilyMemberController;
 use App\Http\Controllers\Api\NotificationController;
-use App\Http\Controllers\Api\DelegateFamiliesController ;
+use App\Http\Controllers\Api\RelationshipController;
+use App\Http\Controllers\Api\MaritalStatusController;
+use App\Http\Controllers\Api\MedicalConditionController;
+
 
 Route::middleware(SetLocale::class)->group(function () {
 
@@ -82,13 +85,14 @@ Route::middleware(SetLocale::class)->group(function () {
         Route::delete('users/{user}', [AdminController::class, 'deleteUser']);
     });
    
- Route::get('/families/export', [FamilyController::class, 'exportFamilies']);
     Route::middleware(['auth:sanctum', 'role:delegate,admin'])->group(function () {
         Route::get('/families', [FamilyController::class, 'index']);
         Route::post('/families', [FamilyController::class, 'store']);
         Route::get('/families/{family}', [FamilyController::class, 'show']);
         Route::post('/families/{family}', [FamilyController::class, 'update']);
         Route::delete('/families/{family}', [FamilyController::class, 'destroy']);
+
+        Route::get('/families/export', [FamilyController::class, 'exportFamilies']);
 
 
         Route::get('/families/{family}/members', [FamilyMemberController::class, 'index']);
@@ -109,10 +113,6 @@ Route::middleware(SetLocale::class)->group(function () {
 
 
         Route::post('camps/{slug}', [CampController::class, 'update']);
-
-        Route::get('/contributions/{contributionId}/families', [DelegateFamiliesController::class, 'index']);
-        Route::post('/contributions/{contributionId}/families', [DelegateFamiliesController::class, 'store']);
-        Route::delete('/contributions/{contributionId}/families/{familyId}', [DelegateFamiliesController::class, 'destroy']);
     });
 
     Route::middleware(['auth:sanctum', 'role:contributor'])->group(function () {
@@ -197,5 +197,29 @@ Route::middleware(SetLocale::class)->group(function () {
         Route::get('{governorate}', [GovernorateController::class, 'show']);
         Route::post('{governorate}', [GovernorateController::class, 'update']);
         Route::delete('{governorate}', [GovernorateController::class, 'destroy']);
+    });
+
+    Route::prefix('marital-statuses')->group(function () {
+        Route::get('/', [MaritalStatusController::class, 'index']);
+        Route::post('/', [MaritalStatusController::class, 'store']);
+        Route::get('{maritalStatus}', [MaritalStatusController::class, 'show']);
+        Route::post('{maritalStatus}', [MaritalStatusController::class, 'update']);
+        Route::delete('{maritalStatus}', [MaritalStatusController::class, 'destroy']);
+    });
+
+    Route::prefix('medical-conditions')->group(function () {
+        Route::get('/', [MedicalConditionController::class, 'index']);
+        Route::post('/', [MedicalConditionController::class, 'store']);
+        Route::get('{medicalCondition}', [MedicalConditionController::class, 'show']);
+        Route::post('{medicalCondition}', [MedicalConditionController::class, 'update']);
+        Route::delete('{medicalCondition}', [MedicalConditionController::class, 'destroy']);
+    });
+
+    Route::prefix('relationships')->group(function () {
+        Route::get('/', [RelationshipController::class, 'index']);
+        Route::post('/', [RelationshipController::class, 'store']);
+        Route::get('{relationship}', [RelationshipController::class, 'show']);
+        Route::post('{relationship}', [RelationshipController::class, 'update']);
+        Route::delete('{relationship}', [RelationshipController::class, 'destroy']);
     });
 });

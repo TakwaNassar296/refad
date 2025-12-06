@@ -20,7 +20,8 @@ class Homepage extends Model
         'contributors_count',
         'projects_count',
         'families_count',
-        'hero_subtitle'
+        'hero_subtitle',
+        'small_hero_image'
     ];
 
  

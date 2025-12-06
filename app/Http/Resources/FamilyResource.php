@@ -14,11 +14,10 @@ class FamilyResource extends JsonResource
             'nationalId' => $this->national_id,
             'dob' => $this->dob?->format('Y-m-d'),
             'phone' => $this->phone,
+            'backupPhone' => $this->backup_phone,
             'totalMembers' => $this->total_members,
-            'elderlyCount' => $this->elderly_count,
-            'medicalConditionsCount' => $this->medical_conditions_count,
             'fileUrl' => $this->file ? asset('storage/' . $this->file) : null,
-            'childrenCount' => $this->children_count,
+            'maritalStatus' => optional($this->maritalStatus)->name,
             'femalesCount' => $this->whenLoaded('members', function () {
                 return $this->members->where('gender', 'female')->count();
             }),

@@ -231,6 +231,10 @@ return [
         'camp_name' => 'Camp Name',
         'role' => 'Role',
         'delegate' => 'Delegate',
+        'backup_phone' => 'Backup Phone',
+        'marital_status_id' => 'Marital Status',
+        'relationship_id' => 'Relationship',
+        'medical_condition_id' => 'Medical Condition',
     ],
 
 ];

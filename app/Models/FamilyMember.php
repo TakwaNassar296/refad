@@ -19,7 +19,8 @@ class FamilyMember extends Model
         'gender',
         'dob',
         'national_id',
-        'status'
+        'relationship_id',
+        'medical_condition_id',
     ];
 
     protected $casts = [
@@ -53,5 +54,15 @@ class FamilyMember extends Model
     public function family(): BelongsTo
     {
         return $this->belongsTo(Family::class);
+    }
+
+    public function relationship()
+    {
+        return $this->belongsTo(Relationship::class);
+    }
+
+    public function medicalCondition()
+    {
+        return $this->belongsTo(MedicalCondition::class);
     }
 }

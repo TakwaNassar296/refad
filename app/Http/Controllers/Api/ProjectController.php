@@ -35,7 +35,7 @@ class ProjectController extends Controller
 
         if ($request->filled('family_name')) {
            $query->whereHas('contributions', function($q) use ($request) {
-                $q->whereHas('delegateFamilies', function($q) use ($request) {
+                $q->whereHas('contributorFamilies', function($q) use ($request) {
                     $q->where('family_name', 'like', '%' . $request->family_name . '%');
                 });
             });
@@ -237,7 +237,7 @@ class ProjectController extends Controller
 
         $query = Project::with([
             'camp',
-            'contributions.delegateFamilies', 
+            'contributions.contributorFamilies', 
         ]);
 
         if ($user->role === 'delegate') {
@@ -251,7 +251,7 @@ class ProjectController extends Controller
 
         if ($request->filled('family_name')) {
            $query->whereHas('contributions', function($q) use ($request) {
-                $q->whereHas('delegateFamilies', function($q) use ($request) {
+                $q->whereHas('contributorFamilies', function($q) use ($request) {
                     $q->where('family_name', 'like', '%' . $request->family_name . '%');
                 });
             });

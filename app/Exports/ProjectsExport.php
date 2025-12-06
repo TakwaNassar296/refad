@@ -2,7 +2,6 @@
 
 namespace App\Exports;
 
-use App\Models\Project;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
@@ -20,7 +19,7 @@ class ProjectsExport implements FromQuery, WithHeadings, WithMapping, WithStyles
 
     public function query()
     {
-        return $this->query;
+        return $this->query->with('camp', 'addedBy');
     }
 
     public function headings(): array
@@ -47,8 +46,8 @@ class ProjectsExport implements FromQuery, WithHeadings, WithMapping, WithStyles
             $project->type,
             $project->beneficiary_count,
             $project->college,
-            $project->status,
-            $project->is_approved ? 'Yes' : 'No',
+            __('messages.status_' . $project->status),
+            $project->is_approved ? __('messages.yes') : __('messages.no'),
             $project->camp ? $project->camp->name : 'N/A',
             $project->addedBy ? $project->addedBy->name : 'N/A',
             $project->created_at->format('Y-m-d H:i:s'),
