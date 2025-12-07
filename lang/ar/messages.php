@@ -249,7 +249,7 @@ return [
     'contribution_already_processed' => 'تم معالجة هذه المساهمة مسبقًا.',
     'contribution_confirmed_successfully' => 'تم تأكيد المساهمة بنجاح.',
     'contribution_approved_title' => 'تمت الموافقة على المساهمة',
-    'contribution_approved_body' => 'تمت الموافقة الكاملة على المساهمة رقم :contribution_id من المساهم :contributor.',
+    'contribution_approved_body' => 'تمت الموافقة  على المساهمة رقم :contribution_id من المساهم :contributor.',
     'contribution_confirmed_title' => 'تم تأكيد مساهمتك',
     'contribution_confirmed_body' => 'تم تأكيد المساهمة رقم :contribution_id الخاصة بك من قبل المندوب :delegate.',
     'contribution_mismatch_title' => 'عدم تطابق في الكمية',

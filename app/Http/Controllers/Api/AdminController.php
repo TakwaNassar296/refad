@@ -195,7 +195,7 @@ class AdminController extends Controller
     }
 
 
-    public function allContributions(): JsonResponse
+    public function allContributions(Request $request): JsonResponse
     {
         $user = Auth::user();
 
@@ -207,8 +207,27 @@ class AdminController extends Controller
             ], 403);
         }
 
-        $contributions = Contribution::with(['project',  'contributorFamilies'])
-            ->get();
+        $status = $request->query('status');
+        $campId = $request->query('camp_id');
+        $projectId = $request->query('project_id');
+
+        $query = Contribution::with(['project', 'contributorFamilies', 'contributor']);
+
+        if ($status && in_array($status, ['pending', 'approved', 'rejected'])) {
+            $query->where('status', $status);
+        }
+
+        if ($campId) {
+            $query->whereHas('project', function ($q) use ($campId) {
+                $q->where('camp_id', $campId);
+            });
+        }
+
+        if ($projectId) {
+            $query->where('project_id', $projectId);
+        }
+
+        $contributions = $query->get();
 
         return response()->json([
             'success' => true,
@@ -218,7 +237,8 @@ class AdminController extends Controller
     }
 
 
-    public function updateContributionStatus(Request $request, $contributionId): JsonResponse
+
+   /* public function updateContributionStatus(Request $request, $contributionId): JsonResponse
     {
         $user = Auth::user();
 
@@ -273,7 +293,7 @@ class AdminController extends Controller
             'message' => __('messages.contribution_status_updated'),
             'data' => new ContributionResource($contribution->load(['project', 'contributorFamilies' ])),
         ], 200);
-    }
+    }*/
 
     public function createUser(AdminCreateUserRequest $request): JsonResponse
     {
