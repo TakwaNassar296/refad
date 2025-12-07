@@ -86,8 +86,11 @@ class ContributorController extends Controller
             $from = Carbon::createFromDate($request->year_from)->startOfYear();
             $to = Carbon::createFromDate($request->year_to)->endOfYear();
 
-            $query->whereHas('members', function ($q) use ($from, $to) {
-                $q->whereBetween('dob', [$from, $to]);
+            $query->where(function ($query) use ($from, $to) {
+                $query->whereBetween('dob', [$from, $to])
+                    ->orWhereHas('members', function ($q) use ($from, $to) {
+                        $q->whereBetween('dob', [$from, $to]);
+                    });
             });
         }
 
