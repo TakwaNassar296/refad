@@ -86,7 +86,7 @@ class StatisticsController extends Controller
                     }]);
             },
             'families'
-        ])->get();
+        ])->paginate(12);
 
         $data = $camps->map(function ($camp) {
             $registeredFamilies = $camp->families->count();
@@ -115,6 +115,11 @@ class StatisticsController extends Controller
             'success' => true,
             'message' => __('messages.camp_statistics_fetched'),
             'data' => $data,
+            'pagination' => [
+                'current_page' => $camps->currentPage(),
+                'last_page' => $camps->lastPage(),
+                'total' => $camps->total(),
+            ]
         ]);
     }
 
