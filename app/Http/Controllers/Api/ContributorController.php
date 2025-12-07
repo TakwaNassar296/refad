@@ -18,15 +18,27 @@ use App\Http\Resources\ContributionResource;
 class ContributorController extends Controller
 {
 
-    public function campFamilies(Request $request, $campId): JsonResponse
+    public function campFamilies(Request $request, $campId = null): JsonResponse
     {
         $user = Auth::user();
 
-        if ($user->role !== 'contributor') {
-            return response()->json([
-                'success' => false,
-                'message' => __('messages.access_denied'),
-            ], 403);
+        if ($user->isContributor()) {
+            if (!$campId) {
+                return response()->json([
+                    'success' => false,
+                    'message' => __('messages.camp_id_required'),
+                ], 422);
+            }
+        }
+
+        if ($user->isDelegate()) {
+            if (!$user->camp_id) {
+                return response()->json([
+                    'success' => false,
+                    'message' => __('messages.delegate_has_no_camp'),
+                ], 403);
+            }
+            $campId = $user->camp_id;
         }
 
         $camp = Camp::find($campId);
@@ -47,15 +59,13 @@ class ContributorController extends Controller
             $query->where('total_members', $request->total_members);
         }
 
-        if ($request->filled('marital_status')) {
-            $query->whereHas('members', function ($q) use ($request) {
-                $q->whereHas('maritalStatus', function ($mq) use ($request) {
-                    $mq->where('name', $request->marital_status);
-                });
+        if ($request->has('marital_status') && $request->marital_status) {
+            $query->whereHas('maritalStatus', function ($q) use ($request) {
+                $q->where('name', $request->marital_status);
             });
         }
 
-        if ($request->filled('medical_condition')) {
+        if ($request->has('medical_condition') && $request->medical_condition) {
             $query->whereHas('members', function ($q) use ($request) {
                 $q->whereHas('medicalCondition', function ($mq) use ($request) {
                     $mq->where('name', $request->medical_condition);

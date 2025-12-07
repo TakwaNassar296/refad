@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\AboutUsController;
 use App\Http\Controllers\Api\PartnerController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\ProjectController;
+use App\Http\Controllers\Api\DelegateController;
 use App\Http\Controllers\API\HomepageController;
 use App\Http\Controllers\Api\SettingsController;
 use App\Http\Controllers\Api\ComplaintController;
@@ -115,8 +116,8 @@ Route::middleware(SetLocale::class)->group(function () {
         Route::post('camps/{slug}', [CampController::class, 'update']);
     });
 
-    Route::middleware(['auth:sanctum', 'role:contributor'])->group(function () {
-        Route::get('/contributor/camps/{campId}/families', [ContributorController::class, 'campFamilies']);
+    Route::middleware(['auth:sanctum'])->group(function () {
+        Route::get('/contributor/camps/families/{campId?}', [ContributorController::class, 'campFamilies']);
         Route::post('/contributor/projects/{projectId}/contribute', [ContributorController::class, 'contribute']);
         Route::get('/contributor/history', [ContributorController::class, 'history']);
     });
@@ -147,6 +148,13 @@ Route::middleware(SetLocale::class)->group(function () {
     Route::middleware(['auth:sanctum', 'role:delegate'])->get('/camp-statistics/export', [StatisticsController::class, 'exportCampStatistics']);
     Route::middleware(['auth:sanctum', 'role:contributor'])->get('/contributor-statistics', [StatisticsController::class, 'ContributorStatistics']);
 
+    Route::middleware(['auth:sanctum', 'role:delegate'])->group(function () {
+        Route::get('/delegate/contributions', [DelegateController::class, 'contributions']);
+        Route::post('/delegate/contributions/{contributionId}/confirm', [DelegateController::class, 'confirmContribution']);
+        Route::post('/delegate/contributions/{contributionId}/add-families', [DelegateController::class, 'addFamiliesToContribution']);
+        Route::post('contributions/{contribution}/families/{family}/quantity', [DelegateController::class, 'updateFamilyQuantity']);
+        Route::delete('contributions/{contribution}/families/{family}', [DelegateController::class, 'removeFamilyFromContribution']);
+    });
    
     
     Route::prefix('pages')->group(function () {

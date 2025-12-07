@@ -34,6 +34,8 @@ class Project extends Model
 
     protected $casts = [
         'is_approved' => 'boolean', 
+        'total_received' => 'integer',
+        'total_remaining' => 'integer',
     ];
 
     public function camp(): BelongsTo
@@ -61,7 +63,6 @@ class Project extends Model
                 'type',
                 'beneficiary_count',
                 'college',
-                'project_number',
                 'status',
                 'notes',
                 'total_received',

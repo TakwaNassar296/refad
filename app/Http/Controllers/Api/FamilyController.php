@@ -56,7 +56,7 @@ class FamilyController extends Controller
                 $q->whereBetween('dob', [$fourYearsAgo, $today]);
             });
         }
-
+        
         if ($request->filled('year_from') && $request->filled('year_to')) {
             $from = Carbon::createFromDate($request->year_from)->startOfYear();
             $to = Carbon::createFromDate($request->year_to)->endOfYear();

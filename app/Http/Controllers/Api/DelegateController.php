@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
 use App\Models\Contribution;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Resources\ContributionResource;
 
 class DelegateController extends Controller
 {
-    public function contributionsPending(): JsonResponse
+    public function contributions(Request $request): JsonResponse
     {
         $user = Auth::user();
 
@@ -21,19 +22,28 @@ class DelegateController extends Controller
             ], 403);
         }
 
-        $contributions = Contribution::with(['user', 'contributorFamilies'])
+        $status = $request->query('status'); 
+
+        $contributionsQuery = Contribution::with(['contributor', 'contributorFamilies'])
             ->whereHas('project', function ($q) use ($user) {
                 $q->where('camp_id', $user->camp_id);
-            })
-            ->where('status', 'pending')
-            ->get();
+            });
+
+        if ($status && in_array($status, ['pending', 'approved'])) {
+            $contributionsQuery->where('status', $status);
+        }
+
+        $contributions = $contributionsQuery->get();
 
         return response()->json([
             'success' => true,
-            'message' => __('messages.pending_contributions_fetched'),
-            'data' => $contributions,
+            'message' => __('messages.contributions_fetched'),
+            'data' => ContributionResource::collection(
+                $contributions->each(fn($c) => $c->makeHidden('total_quantity'))
+            ),
         ]);
     }
+
 
     public function confirmContribution(Request $request, $contributionId): JsonResponse
     {
@@ -46,7 +56,7 @@ class DelegateController extends Controller
             ], 403);
         }
 
-        $contribution = Contribution::with('contributorFamilies', 'project', 'user')
+        $contribution = Contribution::with('contributorFamilies', 'project', 'contributor')
             ->find($contributionId);
 
         if (!$contribution || $contribution->project->camp_id != $user->camp_id) {
@@ -54,6 +64,13 @@ class DelegateController extends Controller
                 'success' => false,
                 'message' => __('messages.contribution_not_found'),
             ], 404);
+        }
+
+        if ($contribution->status !== 'pending') {
+            return response()->json([
+                'success' => false,
+                'message' => __('messages.contribution_already_processed'),
+            ], 400);
         }
 
         $validated = $request->validate([
@@ -72,7 +89,7 @@ class DelegateController extends Controller
                 __('messages.contribution_approved_title'),
                 __('messages.contribution_approved_body', [
                     'contribution_id' => $contribution->id,
-                    'contributor' => $contribution->user->name,
+                    'contributor' => $contribution->contributor->name,
                 ]),
                 ['contribution_id' => $contribution->id]
             );
@@ -95,7 +112,7 @@ class DelegateController extends Controller
                 __('messages.contribution_mismatch_title'),
                 __('messages.contribution_mismatch_body', [
                     'contribution_id' => $contribution->id,
-                    'contributor' => $contribution->user->name,
+                    'contributor' => $contribution->contributor->name,
                 ]),
                 ['contribution_id' => $contribution->id]
             );
@@ -104,7 +121,7 @@ class DelegateController extends Controller
         return response()->json([
             'success' => true,
             'message' => __('messages.contribution_confirmed_successfully'),
-            'data' => $contribution,
+            'data' => new  ContributionResource($contribution),
         ]);
     }
 
@@ -119,8 +136,7 @@ class DelegateController extends Controller
             ], 403);
         }
 
-        $contribution = Contribution::with('project', 'contributorFamilies')
-            ->find($contributionId);
+        $contribution = Contribution::with('project', 'contributorFamilies')->find($contributionId);
 
         if (!$contribution || $contribution->project->camp_id != $user->camp_id) {
             return response()->json([
@@ -130,30 +146,49 @@ class DelegateController extends Controller
         }
 
         $validated = $request->validate([
-            'families' => 'required|array',
-            'families.*' => 'exists:families,id',
+            'families' => 'required|array|min:1',
+            'families.*.id' => 'required|exists:families,id',
+            'families.*.quantity' => 'required|integer|min:1',
         ]);
 
-        $validFamilies = $contribution->project->camp->families()
-            ->whereIn('id', $validated['families'])
-            ->pluck('id')
-            ->toArray();
+        $campFamilies = $contribution->project->camp->families()->pluck('id')->toArray();
+        $attachData = [];
 
-        if (empty($validFamilies)) {
-            return response()->json([
-                'success' => false,
-                'message' => __('messages.invalid_families_for_camp'),
-            ], 422);
+        foreach ($validated['families'] as $family) {
+            if (!in_array($family['id'], $campFamilies)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => __('messages.invalid_families_for_camp'),
+                ], 422);
+            }
+
+            if ($contribution->contributorFamilies->contains($family['id'])) {
+                return response()->json([
+                    'success' => false,
+                    'message' => __('messages.family_already_added'),
+                    'familyId' => $family['id'],
+                ], 422);
+            }
+
+            $attachData[$family['id']] = [
+                'quantity' => $family['quantity']
+            ];
         }
 
-        $contribution->contributorFamilies()->sync($validFamilies);
+        if (!empty($attachData)) {
+            $contribution->contributorFamilies()->attach($attachData);
+        }
+
+        $contribution->load('contributorFamilies');
 
         return response()->json([
             'success' => true,
             'message' => __('messages.families_added_to_contribution_successfully'),
-            'data' => $contribution->load('contributorFamilies'),
+            'data' => new ContributionResource($contribution),
         ]);
     }
+
+
 
     protected function updateProjectAfterDelegateConfirmation(Contribution $contribution)
     {
@@ -174,6 +209,89 @@ class DelegateController extends Controller
 
         $project->save();
     }
+
+    public function updateFamilyQuantity(Request $request, $contributionId, $familyId): JsonResponse
+    {
+        $user = Auth::user();
+
+        if (!$user->isDelegate()) {
+            return response()->json([
+                'success' => false,
+                'message' => __('messages.access_denied'),
+            ], 403);
+        }
+
+        $contribution = Contribution::with('contributorFamilies')->find($contributionId);
+
+        if (!$contribution || $contribution->project->camp_id != $user->camp_id) {
+            return response()->json([
+                'success' => false,
+                'message' => __('messages.contribution_not_found'),
+            ], 404);
+        }
+
+        $validated = $request->validate([
+            'quantity' => 'required|integer|min:1',
+        ]);
+
+        if (!$contribution->contributorFamilies->contains($familyId)) {
+            return response()->json([
+                'success' => false,
+                'message' => __('messages.family_not_in_contribution'),
+            ], 422);
+        }
+
+        $contribution->contributorFamilies()->updateExistingPivot($familyId, [
+            'quantity' => $validated['quantity']
+        ]);
+
+        $contribution->load('contributorFamilies');
+
+        return response()->json([
+            'success' => true,
+            'message' => __('messages.family_quantity_updated_successfully'),
+            'data' => new ContributionResource($contribution),
+        ]);
+    }
+
+    public function removeFamilyFromContribution(Request $request, $contributionId, $familyId): JsonResponse
+    {
+        $user = Auth::user();
+
+        if (!$user->isDelegate()) {
+            return response()->json([
+                'success' => false,
+                'message' => __('messages.access_denied'),
+            ], 403);
+        }
+
+        $contribution = Contribution::with('contributorFamilies')->find($contributionId);
+
+        if (!$contribution || $contribution->project->camp_id != $user->camp_id) {
+            return response()->json([
+                'success' => false,
+                'message' => __('messages.contribution_not_found'),
+            ], 404);
+        }
+
+        if (!$contribution->contributorFamilies->contains($familyId)) {
+            return response()->json([
+                'success' => false,
+                'message' => __('messages.family_not_in_contribution'),
+            ], 422);
+        }
+
+        $contribution->contributorFamilies()->detach($familyId);
+
+        $contribution->load('contributorFamilies');
+
+        return response()->json([
+            'success' => true,
+            'message' => __('messages.family_removed_from_contribution_successfully'),
+            'data' => new ContributionResource($contribution),
+        ]);
+    }
+
 
 
 }

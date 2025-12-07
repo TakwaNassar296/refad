@@ -20,6 +20,12 @@ class Contribution extends Model
         'confirmed_quantity'
     ];
 
+    protected $casts = [
+        'total_quantity' => 'integer',
+        'confirmed_quantity' => 'integer',
+    ];
+
+
     public function getActivitylogOptions(): \Spatie\Activitylog\LogOptions
     {
         return \Spatie\Activitylog\LogOptions::defaults()
@@ -53,7 +59,8 @@ class Contribution extends Model
     public function contributorFamilies()
     {
         return $this->belongsToMany(Family::class, 'contribution_families')
-                    ->withTimestamps();
+                ->withPivot('quantity')
+                ->withTimestamps();
     }
 
 }

@@ -241,6 +241,32 @@ return [
     'yes' => 'نعم',
     'no'  => 'لا',
     'contributions' => 'المساهمات',
+    'camp_id_required' => 'يجب إرسال معرّف المعسكر.',
+    'delegate_has_no_camp' => 'لا يوجد معسكر مرتبط بهذا المفوّض.',
+    'access_denied' => 'ليس لديك صلاحية لتنفيذ هذا الإجراء.',
+    'pending_contributions_fetched' => 'تم جلب المساهمات المعلقة بنجاح.',
+    'contribution_not_found' => 'المساهمة غير موجودة.',
+    'contribution_already_processed' => 'تم معالجة هذه المساهمة مسبقًا.',
+    'contribution_confirmed_successfully' => 'تم تأكيد المساهمة بنجاح.',
+    'contribution_approved_title' => 'تمت الموافقة على المساهمة',
+    'contribution_approved_body' => 'تمت الموافقة الكاملة على المساهمة رقم :contribution_id من المساهم :contributor.',
+    'contribution_confirmed_title' => 'تم تأكيد مساهمتك',
+    'contribution_confirmed_body' => 'تم تأكيد المساهمة رقم :contribution_id الخاصة بك من قبل المندوب :delegate.',
+    'contribution_mismatch_title' => 'عدم تطابق في الكمية',
+    'contribution_mismatch_body' => 'أبلغ المندوب عن عدم تطابق في كمية المساهمة رقم :contribution_id للمساهم :contributor.',
+    'invalid_families_for_camp' => 'الأسر المحددة لا تتبع المعسكر الخاص بك.',
+    'families_added_to_contribution_successfully' => 'تم إضافة الأسر إلى المساهمة بنجاح.',
+    'family_already_added' => 'تمت إضافة هذه الأسرة إلى المساهمة مسبقًا.',
+    'family_already_added' => 'تم إضافة هذه الأسرة مسبقًا إلى المساهمة.',
+    'invalid_families_for_camp' => 'أسر غير صالحة لهذا المخيم.',
+    'families_added_to_contribution_successfully' => 'تمت إضافة الأسر إلى المساهمة بنجاح.',
+    'family_not_in_contribution' => 'هذه الأسرة غير موجودة ضمن المساهمة.',
+    'family_quantity_updated_successfully' => 'تم تحديث كمية الأسرة بنجاح.',
+    'family_removed_from_contribution_successfully' => 'تم إزالة الأسرة من المساهمة بنجاح.',
+    'contributions_fetched' => 'تم جلب المساهمات بنجاح.',
+
+
+
 
 
 

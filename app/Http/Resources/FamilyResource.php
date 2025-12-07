@@ -30,13 +30,9 @@ class FamilyResource extends JsonResource
             'camp' => $this->camp ? $this->camp->name : null,
             'members' => FamilyMemberResource::collection($this->whenLoaded('members')),
 
-            'pivot' => $this->when($this->pivot, function () {
-                return [
-                    
-                    'receivedQuantity' => $this->pivot->received_quantity,
-                    'notes' => $this->pivot->notes,
-                ];
-            }),
+           'quantity' => $this->pivot->quantity ?? null,
+
+
             'createdAt' => $this->created_at,
             'updatedAt' => $this->updated_at,
         ];

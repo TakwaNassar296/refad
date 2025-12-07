@@ -240,6 +240,32 @@ return [
     'yes' => 'Yes',
     'no'  => 'No',
     'contributions' => 'Contributions',
+    'camp_id_required' => 'Camp ID is required.',
+    'delegate_has_no_camp' => 'No camp is assigned to this delegate.',
+    'access_denied' => 'You do not have permission to perform this action.',
+    'pending_contributions_fetched' => 'Pending contributions retrieved successfully.',
+    'contribution_not_found' => 'Contribution not found.',
+    'contribution_already_processed' => 'This contribution has already been processed.',
+    'contribution_confirmed_successfully' => 'Contribution confirmed successfully.',
+    'contribution_approved_title' => 'Contribution Approved',
+    'contribution_approved_body' => 'Contribution #:contribution_id from :contributor has been fully approved.',
+    'contribution_confirmed_title' => 'Your Contribution Has Been Confirmed',
+    'contribution_confirmed_body' => 'Your contribution #:contribution_id has been confirmed by delegate :delegate.',
+    'contribution_mismatch_title' => 'Contribution Quantity Mismatch',
+    'contribution_mismatch_body' => 'Delegate reported a quantity mismatch for contribution #:contribution_id from :contributor.',
+    'invalid_families_for_camp' => 'The selected families do not belong to your assigned camp.',
+    'families_added_to_contribution_successfully' => 'Families added to contribution successfully.',
+    'family_already_added' => 'This family has already been added to the contribution.',
+    'family_already_added' => 'This family has already been added to the contribution.',
+    'invalid_families_for_camp' => 'Invalid families for this camp.',
+    'families_added_to_contribution_successfully' => 'Families added to contribution successfully.',
+    'family_not_in_contribution' => 'This family is not part of the contribution.',
+    'family_quantity_updated_successfully' => 'Family quantity updated successfully.',
+    'family_removed_from_contribution_successfully' => 'Family removed from contribution successfully.',
+    'contributions_fetched' => 'Contributions fetched successfully.',
+
+
+
 
 
     

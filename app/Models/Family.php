@@ -74,6 +74,7 @@ class Family extends Model
     public function contributions()
     {
         return $this->belongsToMany(Contribution::class, 'contribution_families')
+                    ->withPivot('quantity')
                     ->withTimestamps();
     }
 
