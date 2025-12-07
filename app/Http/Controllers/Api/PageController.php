@@ -53,12 +53,16 @@ class PageController extends Controller
             ], 404);
         }
 
-        foreach ($request->title as $locale => $value) {
-            $page->setTranslation('title', $locale, $value);
+        if ($request->has('title') && is_array($request->title)) {
+            foreach ($request->title as $locale => $value) {
+                $page->setTranslation('title', $locale, $value);
+            }
         }
 
-        foreach ($request->description as $locale => $value) {
-            $page->setTranslation('description', $locale, $value);
+        if ($request->has('description') && is_array($request->description)) {
+            foreach ($request->description as $locale => $value) {
+                $page->setTranslation('description', $locale, $value);
+            }
         }
 
         if ($request->hasFile('image')) {
@@ -73,6 +77,7 @@ class PageController extends Controller
             'data' => new PageResource($page),
         ]);
     }
+
 
    
 

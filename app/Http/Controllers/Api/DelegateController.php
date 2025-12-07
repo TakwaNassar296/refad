@@ -35,12 +35,18 @@ class DelegateController extends Controller
 
         $contributions = $contributionsQuery->get();
 
+        $data = ContributionResource::collection($contributions)->map(function ($item) {
+            $array = $item->toArray(request());
+            unset($array['totalQuantity']);
+            unset($array['project']); 
+            return $array;
+        });
+
         return response()->json([
             'success' => true,
             'message' => __('messages.contributions_fetched'),
-            'data' => ContributionResource::collection(
-                $contributions->each(fn($c) => $c->makeHidden('total_quantity'))
-            ),
+            'data' =>  $data,
+           
         ]);
     }
 
