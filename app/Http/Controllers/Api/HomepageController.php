@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\APi;
 
 use App\Models\Setting;
 use App\Models\Homepage;
