@@ -12,7 +12,7 @@ use App\Http\Controllers\Api\PartnerController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\ProjectController;
 use App\Http\Controllers\Api\DelegateController;
-use App\Http\Controllers\API\HomepageController;
+use App\Http\Controllers\Api\HomepageController;
 use App\Http\Controllers\Api\SettingsController;
 use App\Http\Controllers\Api\ComplaintController;
 use App\Http\Controllers\Api\ContactUsController;
