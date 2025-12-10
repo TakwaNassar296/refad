@@ -264,6 +264,9 @@ return [
     'family_quantity_updated_successfully' => 'تم تحديث كمية الأسرة بنجاح.',
     'family_removed_from_contribution_successfully' => 'تم إزالة الأسرة من المساهمة بنجاح.',
     'contributions_fetched' => 'تم جلب المساهمات بنجاح.',
+    'slide_not_found' => 'الشريحة بالرقم :id غير موجودة.',
+    'homepage_not_found' => 'الصفحة الرئيسية غير موجودة.',
+    'slide_created' => 'تم إنشاء الشريحة بنجاح.',
 
 
 

@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
            AdminSeeder::class,
            HomepageSeeder::class,
            PageSeeder::class,
+           AboutUsSeeder::class,
            PartnerSeeder::class,
            SettingSeeder::class,
            TestimonialSeeder::class,

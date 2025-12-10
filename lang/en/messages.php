@@ -263,6 +263,9 @@ return [
     'family_quantity_updated_successfully' => 'Family quantity updated successfully.',
     'family_removed_from_contribution_successfully' => 'Family removed from contribution successfully.',
     'contributions_fetched' => 'Contributions fetched successfully.',
+    'slide_not_found' => 'Slide with id :id not found.',
+    'homepage_not_found' => 'Homepage not found.',
+    'slide_created' => 'Slide created successfully.',
 
 
 

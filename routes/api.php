@@ -131,7 +131,9 @@ Route::middleware(SetLocale::class)->group(function () {
 
     Route::prefix('homepage')->group(function () {
         Route::get('/', [HomepageController::class, 'show'])->name('homepage.show');
-        Route::post('/{homepage}', [HomepageController::class, 'update'])->name('homepage.update');
+        Route::post('/', [HomepageController::class, 'update'])->name('homepage.update');
+        Route::post('/slides', [HomepageController::class, 'createSlide']);
+
     });
 
 

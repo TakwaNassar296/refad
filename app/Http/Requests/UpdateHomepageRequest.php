@@ -6,33 +6,27 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateHomepageRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
         return [
-            'hero_title' => 'sometimes|array',
-            'hero_title.ar' => 'sometimes|string|max:255',
-            'hero_title.en' => 'sometimes|string|max:255',
-            'hero_description' => 'sometimes|array',
-            'hero_description.ar' => 'sometimes|string',
-            'hero_description.en' => 'sometimes|string',
-            'hero_subtitle' => 'sometimes|array',
-            'hero_subtitle.ar' => 'sometimes|string',
-            'hero_subtitle.en' => 'sometimes|string',
-            'hero_image' => 'sometimes|image|max:2048',
-            'small_hero_image' => 'sometimes|image|max:2048',
+            'slides' => 'sometimes|array',
+            'slides.*.id' => 'required|integer|exists:homepage_slides,id',
+            'slides.*.hero_title' => 'sometimes|array',
+            'slides.*.hero_title.ar' => 'sometimes|string|max:255',
+            'slides.*.hero_title.en' => 'sometimes|string|max:255',
+            'slides.*.hero_description' => 'sometimes|array',
+            'slides.*.hero_description.ar' => 'sometimes|string',
+            'slides.*.hero_description.en' => 'sometimes|string',
+            'slides.*.hero_subtitle' => 'sometimes|array',
+            'slides.*.hero_subtitle.ar' => 'sometimes|string',
+            'slides.*.hero_subtitle.en' => 'sometimes|string',
+            'slides.*.hero_image' => 'sometimes|image|max:2048',
+            'slides.*.small_hero_image' => 'sometimes|image|max:2048',
         ];
     }
 }

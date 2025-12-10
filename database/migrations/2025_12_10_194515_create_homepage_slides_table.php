@@ -1,0 +1,33 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('homepage_slides', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('homepage_id')->constrained()->onDelete('cascade');
+            $table->json('hero_title');       
+            $table->json('hero_description');  
+            $table->string('hero_image')->nullable();
+            $table->string('small_hero_image')->nullable();
+            $table->string('hero_subtitle')->nullable();
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('homepage_slides');
+    }
+};
