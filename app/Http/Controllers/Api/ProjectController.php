@@ -286,4 +286,43 @@ class ProjectController extends Controller
         ]);
     }
 
+
+    public function listProjects(Request $request): JsonResponse
+    {
+        $query = Project::with(['camp']);
+
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        if ($request->filled('family_name')) {
+            $query->whereHas('contributions', function($q) use ($request) {
+                $q->whereHas('contributorFamilies', function($q) use ($request) {
+                    $q->where('family_name', 'like', '%' . $request->family_name . '%');
+                });
+            });
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('beneficiary_count')) {
+            $query->where('beneficiary_count', $request->beneficiary_count);
+        }
+
+        if ($request->filled('type')) {
+            $query->where('type', $request->type);
+        }
+
+        $projects = $query->latest()->get();
+
+        return response()->json([
+            'success' => true,
+            'message' => __('messages.projects_retrieved_successfully'),
+            'data' => ProjectResource::collection($projects),
+        ]);
+    }
+
+
 }

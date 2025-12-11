@@ -103,6 +103,8 @@ Route::middleware(SetLocale::class)->group(function () {
         Route::delete('/families/{family}/members/{member}', [FamilyMemberController::class, 'destroy']);
     });
 
+    Route::get('/list-projects', [ProjectController::class, 'listProjects']);
+
     Route::middleware(['auth:sanctum', 'role:delegate,admin'])->group(function () {
     
         Route::get('/projects', [ProjectController::class, 'index']);
