@@ -31,6 +31,8 @@ class UpdateAboutUsRequest extends FormRequest
             'description.en' => 'sometimes|string',
 
             'image' => 'sometimes|image|mimes:jpg,jpeg,png,svg,webp|max:4096',
+            'second_image' => 'sometimes|file|mimes:jpg,jpeg,png,webp|max:10240',
+
 
             'file' => 'sometimes|file|mimes:jpg,jpeg,png,svg,webp,pdf,doc,docx,xls,xlsx,txt|max:10240',
         ];

@@ -17,6 +17,7 @@ class AboutUs extends Model
         'title',
         'description',
         'image',
+        'second_image',
         'file'
     ];
 }

@@ -40,6 +40,10 @@ class AboutUsController extends Controller
             $about->image = $request->file('image')->store('about', 'public');
         }
 
+        if ($request->file('second_image')) {
+            $about->second_image = $request->file('second_image')->store('about', 'public');
+        }
+
         if ($request->file('file')) {
             $about->file = $request->file('file')->store('about/files', 'public');
         }
