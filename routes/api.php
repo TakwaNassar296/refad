@@ -135,6 +135,9 @@ Route::middleware(SetLocale::class)->group(function () {
         Route::get('/', [HomepageController::class, 'show'])->name('homepage.show');
         Route::post('/', [HomepageController::class, 'update'])->name('homepage.update');
         Route::post('/slides', [HomepageController::class, 'createSlide']);
+        Route::post('/sections', [HomepageController::class, 'createSection']);
+        Route::delete('/slides/{id}', [HomepageController::class, 'deleteSlide']);
+
 
     });
 

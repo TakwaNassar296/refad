@@ -19,6 +19,7 @@ class AboutUsResource extends JsonResource
             'title'       => $this->getTranslations('title'),
             'description' => $this->getTranslations('description'),
             'image'       => $this->image ? asset('storage/' . $this->image) : null,
+            'file'       => $this->file ? asset('storage/' . $this->file) : null,
         ];
     }
 }

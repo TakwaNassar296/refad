@@ -267,6 +267,11 @@ return [
     'slide_not_found' => 'الشريحة بالرقم :id غير موجودة.',
     'homepage_not_found' => 'الصفحة الرئيسية غير موجودة.',
     'slide_created' => 'تم إنشاء الشريحة بنجاح.',
+    'slide_not_found' => 'الشريحة بالرقم :id غير موجودة.',
+    'slide_deleted' => 'تم حذف الشريحة بنجاح.',
+    'homepage_sections_limit_reached' => 'يمكن إضافة 6 أقسام فقط في الصفحة الرئيسية.',
+    'section_created' => 'تم إنشاء القسم بنجاح.',
+
 
 
 

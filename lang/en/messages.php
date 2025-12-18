@@ -266,6 +266,11 @@ return [
     'slide_not_found' => 'Slide with id :id not found.',
     'homepage_not_found' => 'Homepage not found.',
     'slide_created' => 'Slide created successfully.',
+    'slide_not_found' => 'Slide with ID :id not found.',
+    'slide_deleted' => 'Slide deleted successfully.',
+    'homepage_sections_limit_reached' => 'You can only add up to 6 homepage sections.',
+    'section_created' => 'Section created successfully.',
+
 
 
 
