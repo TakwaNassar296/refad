@@ -17,6 +17,7 @@ class Page extends Model
         'title',
         'description',
         'image',
+        'file', 
     ];
 
 }

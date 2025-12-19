@@ -69,6 +69,10 @@ class PageController extends Controller
             $page->image = $request->file('image')->store('pages', 'public');
         }
 
+        if ($request->hasFile('file')) {
+            $page->file = $request->file('file')->store('pages/files', 'public');
+        }
+
         $page->save();
 
         return response()->json([

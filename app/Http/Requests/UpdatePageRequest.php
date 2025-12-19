@@ -29,6 +29,7 @@ class UpdatePageRequest extends FormRequest
             'description.ar' => 'sometimes|string',
             'description.en' => 'sometimes|string',
             'image' => 'nullable|image|max:2048',
+            'file' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,zip,txt,jpg,jpeg,png|max:10240',
         ];
     }
 }

@@ -21,6 +21,7 @@ class FamilyMember extends Model
         'national_id',
         'relationship_id',
         'medical_condition_id',
+        'file',
     ];
 
     protected $casts = [

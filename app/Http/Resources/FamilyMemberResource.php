@@ -16,6 +16,7 @@ class FamilyMemberResource extends JsonResource
             'nationalId' => $this->national_id,
             'relationship' => $this->relationship?->name,
             'medicalCondition' => $this->medicalCondition ? $this->medicalCondition->name : null,
+            'file' => $this->file ? asset('storage/' . $this->file) : null,
             'createdAt' => $this->created_at,
             'updatedAt' => $this->updated_at,
         ];

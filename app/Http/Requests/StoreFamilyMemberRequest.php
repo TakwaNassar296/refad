@@ -28,6 +28,9 @@ class StoreFamilyMemberRequest extends FormRequest
             'national_id' => 'required|string|unique:family_members,national_id',
             'relationship_id' => 'required|exists:relationships,id',
             'medical_condition_id' => 'nullable|exists:medical_conditions,id',
+            'file' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,zip,txt,jpg,jpeg,png|max:10240',
+
+
         ];
     }
 }

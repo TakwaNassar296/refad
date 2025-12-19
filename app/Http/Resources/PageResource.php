@@ -19,6 +19,7 @@ class PageResource extends JsonResource
             'title' => $this->getTranslation('title', app()->getLocale()),
             'description' => $this->getTranslation('description', app()->getLocale()),
             'image' => $this->image ? asset('storage/' . $this->image) : null,
+            'file' => $this->file ? asset('storage/' . $this->file) : null,
             'isActive' => $this->is_active,
         ];
     }

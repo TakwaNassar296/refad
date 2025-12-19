@@ -34,6 +34,7 @@ class UpdateFamilyMemberRequest extends FormRequest
             ],
             'relationship_id' => 'sometimes|required|exists:relationships,id',
             'medical_condition_id' => 'sometimes|nullable|exists:medical_conditions,id',
+            'file' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,zip,txt,jpg,jpeg,png|max:10240',
         ];
     }
 }

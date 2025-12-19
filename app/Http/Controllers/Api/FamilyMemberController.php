@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\FamilyMemberResource;
 use App\Http\Requests\StoreFamilyMemberRequest;
 use App\Http\Requests\UpdateFamilyMemberRequest;
+use Illuminate\Support\Facades\Storage;
 
 class FamilyMemberController extends Controller
 {
@@ -62,9 +63,14 @@ class FamilyMemberController extends Controller
             ], 403);
         }
 
-        $member = $family->members()->create($request->validated());
+        $data = $request->validated();
 
+        if ($request->hasFile('file')) {
+            $data['file'] = $request->file('file')
+                ->store('family_members/files', 'public');
+        }
 
+        $member = $family->members()->create($data);
 
         return response()->json([
             'success' => true,
@@ -108,6 +114,7 @@ class FamilyMemberController extends Controller
         ]);
     }
 
+
     public function update(UpdateFamilyMemberRequest $request, $familyId, $memberId): JsonResponse
     {
         $family = Family::find($familyId);
@@ -120,7 +127,7 @@ class FamilyMemberController extends Controller
         }
 
         $user = Auth::user();
-        if ($user->role === 'delegate' &&  $family->camp_id !== $user->camp_id) {
+        if ($user->role === 'delegate' && $family->camp_id !== $user->camp_id) {
             return response()->json([
                 'success' => false,
                 'message' => __('messages.access_denied')
@@ -136,7 +143,18 @@ class FamilyMemberController extends Controller
             ], 404);
         }
 
-        $member->update($request->validated());
+        $data = $request->validated();
+
+        if ($request->hasFile('file')) {
+            if ($member->file) {
+                Storage::disk('public')->delete($member->file);
+            }
+
+            $data['file'] = $request->file('file')
+                ->store('family_members/files', 'public');
+        }
+
+        $member->update($data);
 
         return response()->json([
             'success' => true,
@@ -144,6 +162,7 @@ class FamilyMemberController extends Controller
             'data' => new FamilyMemberResource($member)
         ]);
     }
+
 
     public function destroy($familyId, $memberId): JsonResponse
     {
