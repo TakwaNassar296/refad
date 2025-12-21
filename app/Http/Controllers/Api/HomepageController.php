@@ -81,8 +81,21 @@ class HomepageController extends Controller
                         ], 404);
                     }
 
-                    $section->setTranslations('title', $sectionData['title'] ?? $section->title);
-                    $section->setTranslations('description', $sectionData['description'] ?? $section->description);
+                    if (isset($sectionData['title']['en'])) {
+                        $section->setTranslation('title', 'en', $sectionData['title']['en']);
+                    }
+
+                    if (isset($sectionData['title']['ar'])) {
+                        $section->setTranslation('title', 'ar', $sectionData['title']['ar']);
+                    }
+
+                    if (isset($sectionData['description']['en'])) {
+                        $section->setTranslation('description', 'en', $sectionData['description']['en']);
+                    }
+
+                    if (isset($sectionData['description']['ar'])) {
+                        $section->setTranslation('description', 'ar', $sectionData['description']['ar']);
+                    }
 
                     if (isset($sectionData['image'])) {
                         $section->image = $sectionData['image']->store('homepage', 'public');
