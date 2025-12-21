@@ -29,7 +29,7 @@ class StoreFamilyRequest extends FormRequest
             'phone' => ['required', 'string', 'max:20','regex:/^\+?[0-9\s\-\(\)]{7,20}$/', 'unique:families,phone'],
             'backup_phone' => ['nullable', 'string', 'max:20','regex:/^\+?[0-9\s\-\(\)]{7,20}$/'],
             'total_members' => 'required|integer|min:1',
-            'file' => 'required_unless:medical_conditions_count,0|file|mimes:pdf,jpg,jpeg,png,txt|max:2048',
+            'file' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,zip,txt,jpg,jpeg,png|max:10240',
             'tent_number' => 'required|string|max:50',
             'location' => 'required|string|max:500',
             'notes' => 'nullable|string|max:1000',
