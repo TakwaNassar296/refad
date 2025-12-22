@@ -16,8 +16,16 @@ class PageResource extends JsonResource
     {
         return [
             'pageType' => $this->type,
-            'title' => $this->getTranslation('title', app()->getLocale()),
-            'description' => $this->getTranslation('description', app()->getLocale()),
+            'title' => [
+                'ar' => $this->getTranslation('title', 'ar'),
+                'en' => $this->getTranslation('title', 'en'),
+            ],
+
+            'description' => [
+                'ar' => $this->getTranslation('description', 'ar'),
+                'en' => $this->getTranslation('description', 'en'),
+            ],
+
             'image' => $this->image ? asset('storage/' . $this->image) : null,
             'file' => $this->file ? asset('storage/' . $this->file) : null,
             'isActive' => $this->is_active,
