@@ -76,20 +76,31 @@ class Camp extends Model
 
         static::creating(function ($camp) {
             if (empty($camp->slug)) {
-                $camp->slug = static::generateUniqueSlug($camp->name);
+                $name = is_array($camp->name)
+                    ? ($camp->name['ar'] ?? $camp->name['en'])
+                    : $camp->name;
+
+                $camp->slug = static::generateUniqueSlug($name);
             }
         });
 
         static::updating(function ($camp) {
             $originalName = $camp->getOriginal('name');
-            $original = is_array($originalName) ? ($originalName['en'] ?? $originalName['ar'] ?? null) : $originalName;
-            $current = is_array($camp->name) ? ($camp->name['en'] ?? $camp->name['ar'] ?? null) : $camp->name;
+
+            $original = is_array($originalName)
+                ? ($originalName['ar'] ?? $originalName['en'])
+                : $originalName;
+
+            $current = is_array($camp->name)
+                ? ($camp->name['ar'] ?? $camp->name['en'])
+                : $camp->name;
 
             if ($original !== $current) {
-                $camp->slug = static::generateUniqueSlug($camp->name);
+                $camp->slug = static::generateUniqueSlug($current, $camp->id);
             }
         });
     }
+
 
     public static function generateUniqueSlug(string $name, $ignoreId = null, string $separator = '-'): string
     {
@@ -101,14 +112,16 @@ class Camp extends Model
         $count = 1;
 
         while (static::where('slug', $slug)
-            ->when($ignoreId, fn($q) => $q->where('id', '!=', $ignoreId))
+            ->when($ignoreId, fn ($q) => $q->where('id', '!=', $ignoreId))
             ->exists()) {
+
             $slug = "{$original}{$separator}{$count}";
             $count++;
         }
 
         return $slug;
     }
+
 
     public function projects()
     {
