@@ -25,7 +25,7 @@ class StoreProjectRequest extends FormRequest
             'name' => 'required|string|max:255',
             'type' => 'required|string|max:255',
             'beneficiary_count' => 'required|integer|min:0',
-            'college' => 'required|string|max:255',
+            'college' => 'required|integer|min:1',
             'notes' => 'nullable|string|max:1000',
             'project_image' => 'required|image|mimes:jpg,jpeg,png,webp|max:10240',
         ];
