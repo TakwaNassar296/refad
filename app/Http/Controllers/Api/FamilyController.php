@@ -321,4 +321,32 @@ class FamilyController extends Controller
     }
 
 
+    public function statistics($id)
+    {
+        $family = Family::with('members')->find($id);
+
+        if (!$family) {
+            return response()->json([
+                'success' => false,
+                'message' => __('messages.family_not_found'),
+            ], 404);
+        }
+
+        $stats = $family->getStatistics();
+
+        return response()->json([
+            'success' => true,
+            'message' => __('messages.family_statistics_retrieved'),
+            'data' => [
+                'familyId' => $family->id,
+                'familyName' => $family->family_name,
+                'totalMembers' => $stats['total'],
+                'malesCount' => $stats['males'],
+                'femalesCount' => $stats['females'],
+            ]
+        ]);
+    }
+
+
+
 }

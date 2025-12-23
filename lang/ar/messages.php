@@ -271,7 +271,8 @@ return [
     'slide_deleted' => 'تم حذف الشريحة بنجاح.',
     'homepage_sections_limit_reached' => 'يمكن إضافة 6 أقسام فقط في الصفحة الرئيسية.',
     'section_created' => 'تم إنشاء القسم بنجاح.',
-
+    'family_not_found' => 'العائلة غير موجودة.',
+    'family_statistics_retrieved' => 'تم استرجاع إحصائيات العائلة بنجاح.',
 
 
 

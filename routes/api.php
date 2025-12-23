@@ -93,6 +93,8 @@ Route::middleware(SetLocale::class)->group(function () {
         Route::post('/families/{family}', [FamilyController::class, 'update']);
         Route::delete('/families/{family}', [FamilyController::class, 'destroy']);
 
+        Route::get('/families/{id}/statistics', [FamilyController::class, 'statistics']);
+
         Route::get('/families/export', [FamilyController::class, 'exportFamilies']);
 
 

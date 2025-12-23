@@ -270,6 +270,8 @@ return [
     'slide_deleted' => 'Slide deleted successfully.',
     'homepage_sections_limit_reached' => 'You can only add up to 6 homepage sections.',
     'section_created' => 'Section created successfully.',
+    'family_not_found' => 'Family not found.',
+    'family_statistics_retrieved' => 'Family statistics retrieved successfully.',
 
 
 

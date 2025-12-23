@@ -12,7 +12,7 @@ use Spatie\Activitylog\LogOptions;
 
 class Family extends Model
 {
-    use HasFactory, SoftDeletes , LogsActivity;
+    use HasFactory, LogsActivity;
 
     protected $fillable = [
         'camp_id',
@@ -81,6 +81,18 @@ class Family extends Model
     public function maritalStatus(): BelongsTo
     {
         return $this->belongsTo(MaritalStatus::class);
+    }
+
+
+    public function getStatistics(): array
+    {
+        $members = $this->members;
+
+        return [
+            'total' => $members->count(),
+            'males' => $members->where('gender', 'male')->count(),
+            'females' => $members->where('gender', 'female')->count(),
+        ];
     }
 
 

@@ -11,7 +11,7 @@ use Spatie\Activitylog\LogOptions;
 
 class FamilyMember extends Model
 {
-    use HasFactory, SoftDeletes ,  LogsActivity;
+    use HasFactory,LogsActivity;
 
     protected $fillable = [
         'family_id',
