@@ -25,7 +25,6 @@ class Camp extends Model
         'latitude',
         'longitude',
         'bank_account',
-        'slug',
         'description',
         'camp_img',   
         'location', 
