@@ -39,6 +39,34 @@ class UpdateFamilyRequest extends FormRequest
             'location' => 'sometimes|string|max:500',
             'notes' => 'nullable|string|max:1000',
             'marital_status_id' => ['sometimes','required','integer', Rule::exists('marital_statuses','id')],
+
+
+            'members' => 'sometimes|array',
+            'members.*.id' => 'sometimes|exists:family_members,id',
+            'members.*.name' => 'sometimes|required|string|max:255',
+            'members.*.gender' => 'sometimes|required|in:male,female',
+            'members.*.dob' => 'sometimes|required|date',
+            'members.*.relationship_id' => 'sometimes|required|exists:relationships,id',
+            'members.*.medical_condition_id' => 'nullable|exists:medical_conditions,id',
+            'members.*.file' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,zip,txt,jpg,jpeg,png|max:10240',
+            'members.*.national_id' => [
+                'sometimes',
+                'required',
+                'string',
+                'distinct',
+                function ($attribute, $value, $fail) {
+                    $index = explode('.', $attribute)[1]; 
+                    $memberId = $this->input("members.$index.id");
+
+                    $exists = \App\Models\FamilyMember::where('national_id', $value)
+                        ->when($memberId, fn($q) => $q->where('id', '!=', $memberId))
+                        ->exists();
+
+                    if ($exists) {
+                        $fail("رقم الهوية {$value} مستخدم بالفعل.");
+                    }
+                }
+            ],
         ];
     }
 }

@@ -34,6 +34,23 @@ class StoreFamilyRequest extends FormRequest
             'location' => 'required|string|max:500',
             'notes' => 'nullable|string|max:1000',
             'marital_status_id' => ['required', 'integer', Rule::exists('marital_statuses', 'id')],
+
+
+            'members' => 'required|array|min:1',
+
+            'members.*.name' => 'required|string|max:255',
+            'members.*.gender' => 'required|in:male,female',
+            'members.*.dob' => 'required|date',
+            'members.*.national_id' => [
+                'required',
+                'string',
+                'distinct',
+                'unique:family_members,national_id',
+            ],
+            'members.*.relationship_id' => 'required|exists:relationships,id',
+            'members.*.medical_condition_id' => 'nullable|exists:medical_conditions,id',
+            'members.*.file' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,zip,txt,jpg,jpeg,png|max:10240',
+        
         ];
     }
 }

@@ -7,6 +7,7 @@ use App\Models\Family;
 use Illuminate\Http\Request;
 use App\Exports\FamiliesExport;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
@@ -100,33 +101,56 @@ class FamilyController extends Controller
                 ], 403);
             }
 
-            $filePath = $request->hasFile('file') 
-                ? $request->file('file')->store('families', 'public') 
-                : null;
+            $family = DB::transaction(function () use ($request, $campId, $user) {
+                $filePath = $request->hasFile('file') 
+                    ? $request->file('file')->store('families', 'public') 
+                    : null;
 
-            $family = Family::create([
-                'camp_id' => $campId,
-                'added_by' => $user->id,
-                'family_name' => $request->family_name,
-                'national_id' => $request->national_id,
-                'dob' => $request->dob,
-                'phone' => $request->phone,
-                'backup_phone' => $request->backup_phone,
-                'total_members' => $request->total_members,
-                'tent_number' => $request->tent_number,
-                'location' => $request->location,
-                'notes' => $request->notes,
-                'file' => $filePath,
-                'marital_status_id' => $request->marital_status_id,
-            ]);
+                $family = Family::create([
+                    'camp_id' => $campId,
+                    'added_by' => $user->id,
+                    'family_name' => $request->family_name,
+                    'national_id' => $request->national_id,
+                    'dob' => $request->dob,
+                    'phone' => $request->phone,
+                    'backup_phone' => $request->backup_phone,
+                    'total_members' => $request->total_members,
+                    'tent_number' => $request->tent_number,
+                    'location' => $request->location,
+                    'notes' => $request->notes,
+                    'file' => $filePath,
+                    'marital_status_id' => $request->marital_status_id,
+                ]);
+
+                if ($request->has('members') && is_array($request->members)) {
+                    foreach ($request->members as $member) {
+                        $memberFile = $member['file'] ?? null;
+                        if ($memberFile) {
+                            $memberFile = $memberFile->store('family_members', 'public');
+                        }
+
+                        $family->members()->create([
+                            'name' => $member['name'],
+                            'gender' => $member['gender'],
+                            'dob' => $member['dob'],
+                            'national_id' => $member['national_id'],
+                            'relationship_id' => $member['relationship_id'],
+                            'medical_condition_id' => $member['medical_condition_id'] ?? null,
+                            'file' => $memberFile,
+                        ]);
+                    }
+                }
+
+                return $family;
+            });
 
             return response()->json([
                 'success' => true,
                 'message' => __('messages.family_added_successfully'),
-                'data' => new FamilyResource($family->load('camp')),
+                'data' => new FamilyResource($family->load(['camp', 'members'])),
             ], 201);
 
-        } catch (ValidationException $e) {
+        } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
                 'success' => false,
                 'message' => __('messages.validation_failed'),
@@ -134,6 +158,8 @@ class FamilyController extends Controller
             ], 422);
         }
     }
+
+
 
 
     public function show($id): JsonResponse
@@ -173,7 +199,7 @@ class FamilyController extends Controller
         }
 
         $user = Auth::user();
-        if ($user->role === 'delegate' &&  $family->camp_id !== $user->camp_id) {
+        if ($user->role === 'delegate' && $family->camp_id !== $user->camp_id) {
             return response()->json([
                 'success' => false,
                 'message' => __('messages.access_denied')
@@ -199,10 +225,41 @@ class FamilyController extends Controller
 
         $family->update($data);
 
+        if ($request->has('members') && is_array($request->members)) {
+            foreach ($request->members as $memberInput) {
+                if (isset($memberInput['id'])) {
+                    $member = $family->members()->find($memberInput['id']);
+                    if ($member) {
+                        if (isset($memberInput['file'])) {
+                            if ($member->file) {
+                                Storage::disk('public')->delete($member->file);
+                            }
+                            $memberInput['file'] = $memberInput['file']->store('family_members/files', 'public');
+                        }
+                        $member->update($memberInput);
+                    }
+                } else {
+                    $memberFile = isset($memberInput['file'])
+                        ? $memberInput['file']->store('family_members/files', 'public')
+                        : null;
+
+                    $family->members()->create([
+                        'name' => $memberInput['name'],
+                        'gender' => $memberInput['gender'],
+                        'dob' => $memberInput['dob'],
+                        'national_id' => $memberInput['national_id'],
+                        'relationship_id' => $memberInput['relationship_id'],
+                        'medical_condition_id' => $memberInput['medical_condition_id'] ?? null,
+                        'file' => $memberFile,
+                    ]);
+                }
+            }
+        }
+
         return response()->json([
             'success' => true,
             'message' => __('messages.family_updated_successfully'),
-            'data' => new FamilyResource($family->load('camp')),
+            'data' => new FamilyResource($family->load(['camp', 'members'])),
         ]);
     }
 
