@@ -104,22 +104,26 @@ class Camp extends Model
     public static function generateUniqueSlug(string $name, $ignoreId = null, string $separator = '-'): string
     {
         $slug = trim($name);
+
         $slug = preg_replace('/[^\p{Arabic}A-Za-z0-9]+/u', $separator, $slug);
         $slug = trim($slug, $separator);
 
         $original = $slug;
         $count = 1;
 
-        while (static::where('slug', $slug)
-            ->when($ignoreId, fn ($q) => $q->where('id', '!=', $ignoreId))
-            ->exists()) {
-
+        while (
+            static::withTrashed()
+                ->where('slug', $slug)
+                ->when($ignoreId, fn ($q) => $q->where('id', '!=', $ignoreId))
+                ->exists()
+        ) {
             $slug = "{$original}{$separator}{$count}";
             $count++;
         }
 
         return $slug;
     }
+
 
 
     public function projects()
