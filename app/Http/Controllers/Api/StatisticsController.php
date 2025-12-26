@@ -91,6 +91,9 @@ class StatisticsController extends Controller
         $data = $camps->map(function ($camp) {
             $registeredFamilies = $camp->families->count();
             $currentProjects = $camp->projects->count();
+            $deliveredProjects = $camp->projects->where('status', 'delivered')->count();
+            $contributionsCount = $camp->projects->sum(fn($project) => $project->contributions->count());
+
 
             $totalReceived = $camp->projects->sum(function ($project) {
                 return $project->contributions->sum('total_quantity');
@@ -107,6 +110,8 @@ class StatisticsController extends Controller
                 'name' => $camp->getTranslation('name', app()->getLocale()),
                 'registeredFamilies' => $registeredFamilies,
                 'currentProjects' => $currentProjects,
+                'deliveredProjects' =>  $deliveredProjects,
+                'contributionsCount' => $contributionsCount,
                 'contributionsPercentage' => $contributionsPercentage . '%',
             ];
         });

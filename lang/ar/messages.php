@@ -273,7 +273,7 @@ return [
     'section_created' => 'تم إنشاء القسم بنجاح.',
     'family_not_found' => 'العائلة غير موجودة.',
     'family_statistics_retrieved' => 'تم استرجاع إحصائيات العائلة بنجاح.',
-
+    'camp_family_statistics_fetched' => 'تم جلب إحصائيات المخيم بنجاح',
 
 
 

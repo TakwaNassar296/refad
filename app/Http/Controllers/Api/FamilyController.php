@@ -41,10 +41,14 @@ class FamilyController extends Controller
                 $q->where('name', $request->marital_status);
             });
         }
-        if ($request->has('medical_condition') && $request->medical_condition) {
+
+        if ($request->filled('medical_condition')) {
             $query->whereHas('members', function ($q) use ($request) {
-                $q->whereHas('medicalCondition', function ($mq) use ($request) {
-                    $mq->where('name', $request->medical_condition);
+                $q->where(function($mq) use ($request) {
+                    $mq->whereHas('medicalCondition', function ($sub) use ($request) {
+                        $sub->where('name', $request->medical_condition);
+                    })
+                    ->orWhere('other_medical_condition', 'like', '%' . $request->medical_condition . '%');
                 });
             });
         }
@@ -136,6 +140,7 @@ class FamilyController extends Controller
                             'national_id' => $member['national_id'],
                             'relationship_id' => $member['relationship_id'],
                             'medical_condition_id' => $member['medical_condition_id'] ?? null,
+                            'other_medical_condition' => $member['other_medical_condition'] ?? null,
                             'file' => $memberFile,
                         ]);
                     }
@@ -244,12 +249,13 @@ class FamilyController extends Controller
                         : null;
 
                     $family->members()->create([
-                        'name' => $memberInput['name'],
-                        'gender' => $memberInput['gender'],
-                        'dob' => $memberInput['dob'],
-                        'national_id' => $memberInput['national_id'],
-                        'relationship_id' => $memberInput['relationship_id'],
+                        'name' => $memberInput['name'] ?? null,
+                        'gender' => $memberInput['gender'] ?? null,
+                        'dob' => $memberInput['dob'] ?? null,
+                        'national_id' => $memberInput['national_id'] ?? null,
+                        'relationship_id' => $memberInput['relationship_id'] ?? null ,
                         'medical_condition_id' => $memberInput['medical_condition_id'] ?? null,
+                        'other_medical_condition' => $memberInput['other_medical_condition'] ?? null,
                         'file' => $memberFile,
                     ]);
                 }

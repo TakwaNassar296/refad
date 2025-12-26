@@ -20,6 +20,7 @@ use App\Http\Controllers\Api\StatisticsController;
 use App\Http\Controllers\Api\ActivityLogController;
 use App\Http\Controllers\Api\ContributorController;
 use App\Http\Controllers\Api\GovernorateController;
+use App\Http\Controllers\Api\MissionPageController;
 use App\Http\Controllers\Api\TestimonialController;
 use App\Http\Controllers\Api\FamilyMemberController;
 use App\Http\Controllers\Api\NotificationController;
@@ -60,6 +61,9 @@ Route::middleware(SetLocale::class)->group(function () {
         Route::post('/projects/{id}/approve', [AdminController::class, 'approveProject']);
         Route::get('/admin/contributions', [AdminController::class, 'allContributions']);
         Route::post('/contributions/{contributionId}/status', [AdminController::class, 'updateContributionStatus']);
+
+        Route::post('/users/{user}/change-password', [AuthController::class, 'changeUserPassword']);
+
 
     });
 
@@ -154,6 +158,7 @@ Route::middleware(SetLocale::class)->group(function () {
 
     Route::middleware(['auth:sanctum', 'role:delegate'])->get('user/statistics', [StatisticsController::class, 'statistics']);
     Route::middleware(['auth:sanctum', 'role:delegate'])->get('/camp/statistics', [StatisticsController::class, 'DelegateStatistics']);
+    Route::get('camp/family-statistics', [CampController::class, 'getCampFamilyStatistics']);
     Route::middleware(['auth:sanctum', 'role:delegate'])->get('/camp-statistics/export', [StatisticsController::class, 'exportCampStatistics']);
     Route::middleware(['auth:sanctum', 'role:contributor'])->get('/contributor-statistics', [StatisticsController::class, 'ContributorStatistics']);
 
@@ -171,6 +176,8 @@ Route::middleware(SetLocale::class)->group(function () {
         Route::get('{type}', [PageController::class, 'show']);
         Route::post('{type}', [PageController::class, 'update']); 
     });
+
+
     Route::prefix('partners')->group(function () {
         Route::get('/', [PartnerController::class, 'index']);
         Route::get('/{id}', [PartnerController::class, 'show']);
@@ -203,7 +210,8 @@ Route::middleware(SetLocale::class)->group(function () {
 
     Route::prefix('about-us')->group(function () {
         Route::get('/', [AboutUsController::class, 'index']);
-        Route::post('/', [AboutUsController::class, 'update']);
+        Route::post('/{type}', [AboutUsController::class, 'update']);
+
     });
 
     Route::get('/stats', [StatisticsController::class, 'getStats']);

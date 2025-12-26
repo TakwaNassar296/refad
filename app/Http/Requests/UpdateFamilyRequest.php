@@ -43,15 +43,15 @@ class UpdateFamilyRequest extends FormRequest
 
             'members' => 'sometimes|array',
             'members.*.id' => 'sometimes|exists:family_members,id',
-            'members.*.name' => 'sometimes|required|string|max:255',
-            'members.*.gender' => 'sometimes|required|in:male,female',
-            'members.*.dob' => 'sometimes|required|date',
-            'members.*.relationship_id' => 'sometimes|required|exists:relationships,id',
+            'members.*.name' => 'required_without:members.*.id|string|max:255',
+            'members.*.gender' => 'required_without:members.*.id|in:male,female',
+            'members.*.dob' => 'required_without:members.*.id|date',
+            'members.*.relationship_id' => 'required_without:members.*.id|exists:relationships,id',
             'members.*.medical_condition_id' => 'nullable|exists:medical_conditions,id',
+            'members.*.other_medical_condition' => 'nullable|string|max:255',
             'members.*.file' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,zip,txt,jpg,jpeg,png|max:10240',
             'members.*.national_id' => [
-                'sometimes',
-                'required',
+                'required_without:members.*.id',
                 'string',
                 'distinct',
                 function ($attribute, $value, $fail) {

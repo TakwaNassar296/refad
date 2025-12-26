@@ -18,6 +18,7 @@ class AboutUs extends Model
         'description',
         'image',
         'second_image',
-        'file'
+        'file',
+        'page_type'
     ];
 }

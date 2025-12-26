@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Cache;
 use App\Http\Requests\RegisterRequest;
+use App\Http\Requests\ChangeUserPasswordRequest;
 
 class AuthController extends Controller
 {
@@ -318,4 +319,29 @@ class AuthController extends Controller
             'message' => __('messages.fcm_token_saved'),
         ]);
     }
-}
+
+    public function changeUserPassword(ChangeUserPasswordRequest $request, User $user ): JsonResponse
+    {
+
+        if (!in_array($user->role, ['delegate', 'contributor'])) {
+            return response()->json([
+                'success' => false,
+                'message' => __('auth.not_allowed_to_change_password'),
+                'data' => null,
+            ], 422);
+        }
+
+        $user->update([
+            'password' => Hash::make($request->password),
+        ]);
+
+        $user->tokens()->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => __('auth.password_changed_successfully'),
+            'data' => null,
+        ]);
+    }
+
+}    

@@ -272,6 +272,7 @@ return [
     'section_created' => 'Section created successfully.',
     'family_not_found' => 'Family not found.',
     'family_statistics_retrieved' => 'Family statistics retrieved successfully.',
+    'camp_family_statistics_fetched' => 'Camp statistics fetched successfully',
 
 
 

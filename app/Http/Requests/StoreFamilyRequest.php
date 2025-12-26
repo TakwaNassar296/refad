@@ -49,6 +49,7 @@ class StoreFamilyRequest extends FormRequest
             ],
             'members.*.relationship_id' => 'required|exists:relationships,id',
             'members.*.medical_condition_id' => 'nullable|exists:medical_conditions,id',
+            'members.*.other_medical_condition' => 'nullable|string|max:255',
             'members.*.file' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,zip,txt,jpg,jpeg,png|max:10240',
         
         ];

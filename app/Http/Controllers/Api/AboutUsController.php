@@ -11,18 +11,25 @@ class AboutUsController extends Controller
 {
     public function index()
     {
-        $about = AboutUs::first();
+        $about = AboutUs::all();
 
         return response()->json([
             'success' => true,
             'message' => __('messages.about_retrieved'),
-            'data' => new AboutUsResource($about),
+            'data' => AboutUsResource::collection($about)
         ]);
     }
 
-    public function update(UpdateAboutUsRequest $request)
+    public function update(UpdateAboutUsRequest $request , $type )
     {
-        $about = AboutUs::first();
+        $about = AboutUs::where('page_type', $type)->first();
+
+        if (!$about) {
+            return response()->json([
+                'success' => false,
+                'message' => __('messages.page_not_found'),
+            ], 404);
+        }
 
         if ($request->has('title')) {
             foreach ($request->title as $locale => $value) {

@@ -15,7 +15,7 @@ class AboutUsResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id'          => $this->id,
+            'pageType' => $this->page_type,
             'title'       => $this->getTranslations('title'),
             'description' => $this->getTranslations('description'),
             'image'       => $this->image ? asset('storage/' . $this->image) : null,

@@ -165,4 +165,41 @@ class CampController extends Controller
     }
 
 
+    public function getCampFamilyStatistics(): JsonResponse
+    {
+        $camps = Camp::with([
+            'families.members',
+            'projects' => function($query) {
+                $query->where('is_approved', true);
+            },
+        ])->paginate(12);
+
+        $data = $camps->map(function ($camp) {
+            $familyCount = $camp->families->count();
+            $projectCount = $camp->projects->count();
+            $memberCount = $camp->families->sum(fn($family) => $family->members->count());
+
+            return [
+                'id' => $camp->id,
+                'name' => $camp->getTranslation('name', app()->getLocale()),
+                'familyCount' => $familyCount,
+                'projectCount' => $projectCount,
+                'memberCount' => $memberCount,
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'message' => __('messages.camp_family_statistics_fetched'),
+            'data' => $data,
+            'pagination' => [
+                'current_page' => $camps->currentPage(),
+                'last_page' => $camps->lastPage(),
+                'total' => $camps->total(),
+            ]
+        ]);
+    }
+
+
+
 }

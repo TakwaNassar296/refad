@@ -67,6 +67,8 @@ return [
     'contact_support' => 'يرجى التواصل مع فريق الدعم إذا كان لديك أي أسئلة.',
     'email_sent_from' => 'تم إرسال هذا البريد الإلكتروني من',
     'all_rights_reserved' => 'جميع الحقوق محفوظة.',
+    'not_allowed_to_change_password' => 'You are not allowed to change the password for this user',
+    'password_changed_successfully' => 'Password changed successfully',
 
 
 

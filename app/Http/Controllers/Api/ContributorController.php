@@ -51,6 +51,14 @@ class ContributorController extends Controller
 
         $query = $camp->families();
 
+        if ($request->filled('has_medical_condition') && $request->has_medical_condition) {
+            $query->whereHas('members', function ($q) {
+                $q->whereNotNull('medical_condition_id')
+                ->orWhereNotNull('other_medical_condition');
+            });
+        }
+
+
         if ($request->filled('search')) {
             $query->where('family_name', 'like', '%' . $request->search . '%');
         }
