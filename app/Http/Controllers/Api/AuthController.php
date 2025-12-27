@@ -320,8 +320,10 @@ class AuthController extends Controller
         ]);
     }
 
-    public function changeUserPassword(ChangeUserPasswordRequest $request, User $user ): JsonResponse
+    public function changeUserPassword(ChangeUserPasswordRequest $request, $userId ): JsonResponse
     {
+
+       $user = User::find($userId);
 
         if (!$user) {
             return response()->json([

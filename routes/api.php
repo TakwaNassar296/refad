@@ -62,7 +62,7 @@ Route::middleware(SetLocale::class)->group(function () {
         Route::get('/admin/contributions', [AdminController::class, 'allContributions']);
         Route::post('/contributions/{contributionId}/status', [AdminController::class, 'updateContributionStatus']);
 
-        Route::post('/users/{user}/change-password', [AuthController::class, 'changeUserPassword']);
+        Route::post('/users/{userId}/change-password', [AuthController::class, 'changeUserPassword']);
 
 
     });
