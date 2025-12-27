@@ -69,6 +69,8 @@ return [
     'all_rights_reserved' => 'جميع الحقوق محفوظة.',
     'not_allowed_to_change_password' => 'You are not allowed to change the password for this user',
     'password_changed_successfully' => 'Password changed successfully',
+    'user_not_found' => 'User not found',
+
 
 
 

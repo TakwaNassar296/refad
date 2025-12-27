@@ -63,6 +63,8 @@ return [
     'all_rights_reserved' => 'All rights reserved.',
     'not_allowed_to_change_password' => 'غير مسموح لك بتغيير كلمة المرور لهذا المستخدم',
     'password_changed_successfully' => 'تم تغيير كلمة المرور بنجاح',
+    'user_not_found' => 'المستخدم غير موجود',
+
 
 
 ];

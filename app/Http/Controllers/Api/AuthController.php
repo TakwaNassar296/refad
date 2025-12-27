@@ -323,6 +323,14 @@ class AuthController extends Controller
     public function changeUserPassword(ChangeUserPasswordRequest $request, User $user ): JsonResponse
     {
 
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => __('auth.user_not_found'),
+                'data' => null,
+            ], 404);
+        }
+
         if (!in_array($user->role, ['delegate', 'contributor'])) {
             return response()->json([
                 'success' => false,
