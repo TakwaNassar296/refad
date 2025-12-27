@@ -14,7 +14,7 @@ class ProjectResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'type' => $this->type,
-            'addedBy' => $this->addedBy->name,
+            'addedBy' => optional($this->addedBy)->name,
             'beneficiaryCount' => $this->beneficiary_count,
             'college' => $this->college,
             'status' => $this->status,
