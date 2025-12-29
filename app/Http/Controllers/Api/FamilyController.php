@@ -135,9 +135,9 @@ class FamilyController extends Controller
 
                         if (
                             !$medicalConditionId &&
-                            !empty($member['other_medical_condition'])
+                            !empty($member['medical_condition'])
                         ) {
-                            $conditionName = ucfirst(strtolower(trim($member['other_medical_condition'])));
+                            $conditionName = ucfirst(strtolower(trim($member['medical_condition'])));
 
                             $medicalCondition = MedicalCondition::firstOrCreate([
                                 'name' => $conditionName,
@@ -256,9 +256,9 @@ class FamilyController extends Controller
 
                         if (
                             empty($memberInput['medical_condition_id']) &&
-                            !empty($memberInput['other_medical_condition'])
+                            !empty($memberInput['medical_condition'])
                         ) {
-                           $conditionName = ucfirst(strtolower(trim($member['other_medical_condition'])));
+                           $conditionName = ucfirst(strtolower(trim($member['medical_condition'])));
 
                             $medicalCondition = MedicalCondition::firstOrCreate([
                                 'name' => $conditionName,
@@ -287,9 +287,9 @@ class FamilyController extends Controller
 
                     if (
                         !$medicalConditionId &&
-                        !empty($memberInput['other_medical_condition'])
+                        !empty($memberInput['medical_condition'])
                     ) {
-                       $conditionName = ucfirst(strtolower(trim($member['other_medical_condition'])));
+                       $conditionName = ucfirst(strtolower(trim($member['medical_condition'])));
 
                         $medicalCondition = MedicalCondition::firstOrCreate([
                             'name' => $conditionName,
