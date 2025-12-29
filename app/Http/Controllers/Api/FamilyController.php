@@ -137,14 +137,14 @@ class FamilyController extends Controller
                             !$medicalConditionId &&
                             !empty($member['medical_condition'])
                         ) {
-                            $conditionName = ucfirst(strtolower(trim($member['medical_condition'])));
+                            $conditionName = trim($member['medical_condition']);
 
                             $medicalCondition = MedicalCondition::firstOrCreate([
                                 'name' => $conditionName,
                             ]);
+
                             $medicalConditionId = $medicalCondition->id;
                         }
-
                         $family->members()->create([
                             'name' => $member['name'],
                             'gender' => $member['gender'],
@@ -258,7 +258,7 @@ class FamilyController extends Controller
                             empty($memberInput['medical_condition_id']) &&
                             !empty($memberInput['medical_condition'])
                         ) {
-                           $conditionName = ucfirst(strtolower(trim($member['medical_condition'])));
+                            $conditionName = trim($memberInput['medical_condition']);
 
                             $medicalCondition = MedicalCondition::firstOrCreate([
                                 'name' => $conditionName,
@@ -266,7 +266,6 @@ class FamilyController extends Controller
 
                             $medicalConditionId = $medicalCondition->id;
                         }
-
                         $member->update([
                             'name' => $memberInput['name'] ?? $member->name,
                             'gender' => $memberInput['gender'] ?? $member->gender,
@@ -289,7 +288,7 @@ class FamilyController extends Controller
                         !$medicalConditionId &&
                         !empty($memberInput['medical_condition'])
                     ) {
-                       $conditionName = ucfirst(strtolower(trim($member['medical_condition'])));
+                        $conditionName = trim($memberInput['medical_condition']);
 
                         $medicalCondition = MedicalCondition::firstOrCreate([
                             'name' => $conditionName,
@@ -297,6 +296,7 @@ class FamilyController extends Controller
 
                         $medicalConditionId = $medicalCondition->id;
                     }
+
 
                     $family->members()->create([
                         'name' => $memberInput['name'] ?? null,

@@ -16,7 +16,7 @@ class FamilyResource extends JsonResource
             'phone' => $this->phone,
             'backupPhone' => $this->backup_phone,
             'totalMembers' => $this->total_members,
-            'fileUrl' => $this->file ? asset('storage/' . $this->file) : null,
+            //'fileUrl' => $this->file ? asset('storage/' . $this->file) : null,
             'maritalStatus' => optional($this->maritalStatus)->name,
             'membersCount' => $this->whenLoaded('members', function () {
                 return $this->members->count(); 
