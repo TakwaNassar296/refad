@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\Family;
 use Illuminate\Http\Request;
 use App\Exports\FamiliesExport;
+use App\Models\MedicalCondition;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
@@ -43,15 +44,12 @@ class FamilyController extends Controller
         }
 
         if ($request->filled('medical_condition')) {
-            $query->whereHas('members', function ($q) use ($request) {
-                $q->where(function($mq) use ($request) {
-                    $mq->whereHas('medicalCondition', function ($sub) use ($request) {
-                        $sub->where('name', $request->medical_condition);
-                    })
-                    ->orWhere('other_medical_condition', 'like', '%' . $request->medical_condition . '%');
-                });
+            $query->whereHas('members.medicalCondition', function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->medical_condition. '%');
             });
         }
+
+
 
         if ($request->filled('has_children') && $request->has_children) {
             $fourYearsAgo = Carbon::now()->subYears(4)->startOfDay();
@@ -133,14 +131,27 @@ class FamilyController extends Controller
                             $memberFile = $memberFile->store('family_members', 'public');
                         }
 
+                        $medicalConditionId = $member['medical_condition_id'] ?? null;
+
+                        if (
+                            !$medicalConditionId &&
+                            !empty($member['other_medical_condition'])
+                        ) {
+                            $conditionName = ucfirst(strtolower(trim($member['other_medical_condition'])));
+
+                            $medicalCondition = MedicalCondition::firstOrCreate([
+                                'name' => $conditionName,
+                            ]);
+                            $medicalConditionId = $medicalCondition->id;
+                        }
+
                         $family->members()->create([
                             'name' => $member['name'],
                             'gender' => $member['gender'],
                             'dob' => $member['dob'],
                             'national_id' => $member['national_id'],
                             'relationship_id' => $member['relationship_id'],
-                            'medical_condition_id' => $member['medical_condition_id'] ?? null,
-                            'other_medical_condition' => $member['other_medical_condition'] ?? null,
+                            'medical_condition_id' => $medicalConditionId ?? null,
                             'file' => $memberFile,
                         ]);
                     }
@@ -241,21 +252,59 @@ class FamilyController extends Controller
                             }
                             $memberInput['file'] = $memberInput['file']->store('family_members/files', 'public');
                         }
-                        $member->update($memberInput);
+                        $medicalConditionId = $memberInput['medical_condition_id'] ?? $member->medical_condition_id;
+
+                        if (
+                            empty($memberInput['medical_condition_id']) &&
+                            !empty($memberInput['other_medical_condition'])
+                        ) {
+                           $conditionName = ucfirst(strtolower(trim($member['other_medical_condition'])));
+
+                            $medicalCondition = MedicalCondition::firstOrCreate([
+                                'name' => $conditionName,
+                            ]);
+
+                            $medicalConditionId = $medicalCondition->id;
+                        }
+
+                        $member->update([
+                            'name' => $memberInput['name'] ?? $member->name,
+                            'gender' => $memberInput['gender'] ?? $member->gender,
+                            'dob' => $memberInput['dob'] ?? $member->dob,
+                            'national_id' => $memberInput['national_id'] ?? $member->national_id,
+                            'relationship_id' => $memberInput['relationship_id'] ?? $member->relationship_id,
+                            'medical_condition_id' => $medicalConditionId,
+                            'file' => $memberInput['file'] ?? $member->file,
+                        ]);
+
                     }
                 } else {
                     $memberFile = isset($memberInput['file'])
                         ? $memberInput['file']->store('family_members/files', 'public')
                         : null;
 
+                    $medicalConditionId = $memberInput['medical_condition_id'] ?? null;
+
+                    if (
+                        !$medicalConditionId &&
+                        !empty($memberInput['other_medical_condition'])
+                    ) {
+                       $conditionName = ucfirst(strtolower(trim($member['other_medical_condition'])));
+
+                        $medicalCondition = MedicalCondition::firstOrCreate([
+                            'name' => $conditionName,
+                        ]);
+
+                        $medicalConditionId = $medicalCondition->id;
+                    }
+
                     $family->members()->create([
                         'name' => $memberInput['name'] ?? null,
                         'gender' => $memberInput['gender'] ?? null,
                         'dob' => $memberInput['dob'] ?? null,
                         'national_id' => $memberInput['national_id'] ?? null,
-                        'relationship_id' => $memberInput['relationship_id'] ?? null ,
-                        'medical_condition_id' => $memberInput['medical_condition_id'] ?? null,
-                        'other_medical_condition' => $memberInput['other_medical_condition'] ?? null,
+                        'relationship_id' => $memberInput['relationship_id'] ?? null,
+                        'medical_condition_id' => $medicalConditionId,
                         'file' => $memberFile,
                     ]);
                 }

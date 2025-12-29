@@ -273,6 +273,14 @@ return [
     'family_not_found' => 'Family not found.',
     'family_statistics_retrieved' => 'Family statistics retrieved successfully.',
     'camp_family_statistics_fetched' => 'Camp statistics fetched successfully',
+    'admin_positions_retrieved_successfully' => 'Admin positions retrieved successfully.',
+    'admin_position_already_exists_restored' => 'Admin position already exists, restored.',
+    'admin_position_added_successfully' => 'Admin position added successfully.',
+    'admin_position_retrieved_successfully' => 'Admin position retrieved successfully.',
+    'admin_position_updated_successfully' => 'Admin position updated successfully.',
+    'admin_position_deleted_successfully' => 'Admin position deleted successfully.',
+    'refresh_token_invalid' => 'The refresh token is invalid or expired',
+    'user_not_found' => 'User not found',
 
 
 

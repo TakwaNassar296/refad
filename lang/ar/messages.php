@@ -274,6 +274,13 @@ return [
     'family_not_found' => 'العائلة غير موجودة.',
     'family_statistics_retrieved' => 'تم استرجاع إحصائيات العائلة بنجاح.',
     'camp_family_statistics_fetched' => 'تم جلب إحصائيات المخيم بنجاح',
+    'admin_positions_retrieved_successfully' => 'تم استرجاع الصفات الإدارية بنجاح.',
+    'admin_position_already_exists_restored' => 'الصفة الإدارية موجودة مسبقًا وتم استرجاعها.',
+    'admin_position_added_successfully' => 'تم إضافة الصفة الإدارية بنجاح.',
+    'admin_position_retrieved_successfully' => 'تم استرجاع الصفة الإدارية بنجاح.',
+    'admin_position_updated_successfully' => 'تم تحديث الصفة الإدارية بنجاح.',
+    'admin_position_deleted_successfully' => 'تم حذف الصفة الإدارية بنجاح.',
+    'user_not_found' => 'المستخدم غير موجود',
 
 
 

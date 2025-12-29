@@ -38,7 +38,7 @@ class User extends Authenticatable
         'camp_id',
         'fcm_token',
         'profile_image',
-        'camp_name'
+        'admin_position_id',
     ];
 
     /**
@@ -161,6 +161,11 @@ class User extends Authenticatable
     public function notifications()
     {
         return $this->morphMany(UserNotification::class, 'notifiable');
+    }
+
+    public function adminPosition()
+    {
+        return $this->belongsTo(AdminPosition::class);
     }
 
 

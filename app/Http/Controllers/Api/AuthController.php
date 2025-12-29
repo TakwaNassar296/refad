@@ -55,7 +55,7 @@ class AuthController extends Controller
             'name' => $data['name'],
             'email' => $data['email'] ?? null,
             'password' => Hash::make($data['password']),
-            'camp_name' => $data['camp_name'] ?? null,
+            'admin_position_id' => $data['admin_position_id'] ?? null ,
             'id_number' => $data['id_number'],
             'phone' => $data['phone'],
             'backup_phone' => $data['backup_phone'] ?? null,
@@ -169,6 +169,14 @@ class AuthController extends Controller
         }
 
         $user = $refreshToken->user;
+
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => __('auth.user_not_found'),
+                'data' => null,
+            ], 404);
+        }
 
         $refreshToken->delete();
 

@@ -25,6 +25,7 @@ use App\Http\Controllers\Api\TestimonialController;
 use App\Http\Controllers\Api\FamilyMemberController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\RelationshipController;
+use App\Http\Controllers\Api\AdminPositionController;
 use App\Http\Controllers\Api\MaritalStatusController;
 use App\Http\Controllers\Api\MedicalConditionController;
 
@@ -238,6 +239,15 @@ Route::middleware(SetLocale::class)->group(function () {
         Route::get('{medicalCondition}', [MedicalConditionController::class, 'show']);
         Route::post('{medicalCondition}', [MedicalConditionController::class, 'update']);
         Route::delete('{medicalCondition}', [MedicalConditionController::class, 'destroy']);
+    });
+
+
+    Route::prefix('admin-positions')->group(function () {
+        Route::get('/', [AdminPositionController::class, 'index']);
+        Route::post('/', [AdminPositionController::class, 'store']);
+        Route::get('{adminPosition}', [AdminPositionController::class, 'show']);
+        Route::post('{adminPosition}', [AdminPositionController::class, 'update']);
+        Route::delete('{adminPosition}', [AdminPositionController::class, 'destroy']);
     });
 
     Route::prefix('relationships')->group(function () {
