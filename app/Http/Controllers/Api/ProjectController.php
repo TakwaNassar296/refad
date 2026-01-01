@@ -75,7 +75,7 @@ class ProjectController extends Controller
 
         if ($user->isDelegate()) {
             $campId = $user->camp_id;
-            $isApproved = false;
+            $isApproved = true;
 
         } elseif ($user->isAdmin()) {
             $request->validate([

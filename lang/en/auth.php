@@ -61,10 +61,10 @@ return [
     'contact_support' => 'Please contact our support team if you have any questions.',
     'email_sent_from' => 'This email was sent from',
     'all_rights_reserved' => 'All rights reserved.',
-    'not_allowed_to_change_password' => 'غير مسموح لك بتغيير كلمة المرور لهذا المستخدم',
-    'password_changed_successfully' => 'تم تغيير كلمة المرور بنجاح',
-    'user_not_found' => 'المستخدم غير موجود',
-
+    'not_allowed_to_change_password' => 'You are not allowed to change the password for this user',
+    'password_changed_successfully' => 'Password changed successfully',
+    'user_not_found' => 'User not found',
+    'email_already_taken' => 'This email is already taken.',
 
 
 ];

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\User;
 use App\Models\Project;
+use App\Mail\UserStatusMail;
 use App\Models\Contribution;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -11,6 +12,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\ContributionResource;
 use App\Http\Requests\AdminCreateUserRequest;
@@ -54,12 +56,46 @@ class AdminController extends Controller
         }
 
         if ($user->isDelegate()) {
-            $request->validate([
-                'camp_id' => 'required|exists:camps,id'
-            ]);
+            if (!$user->camp_id) {
+                $request->validate([
+                    'camp_id' => 'required|exists:camps,id'
+                ]);
 
-            $existingDelegate = User::where('camp_id', $request->camp_id)
+                $existingDelegate = User::where('camp_id', $request->camp_id)
+                    ->where('role', 'delegate')
+                    ->first();
+
+                if ($existingDelegate) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => __('messages.camp_already_has_delegate'),
+                        'data' => null
+                    ], 422);
+                }
+
+                $user->update([
+                    'status' => 'approved',
+                    'camp_id' => $request->camp_id
+                ]);
+
+              /*  $this->notifyUser(
+                    $user->id,
+                    __('messages.user_approved_delegate'),
+                    __('messages.user_approved_delegate')
+                );*/
+
+                Mail::to($user->email)->send(new UserStatusMail($user, 'accepted'));
+
+                return response()->json([
+                    'status' => true,
+                    'message' => __('auth.delegate_approved_successfully'),
+                    'data' => new UserResource($user)
+                ]);
+            }
+
+            $existingDelegate = User::where('camp_id', $user->camp_id)
                 ->where('role', 'delegate')
+                ->where('id', '!=', $user->id)
                 ->first();
 
             if ($existingDelegate) {
@@ -71,15 +107,10 @@ class AdminController extends Controller
             }
 
             $user->update([
-                'status' => 'approved',
-                'camp_id' => $request->camp_id
+                'status' => 'approved'
             ]);
 
-            $this->notifyUser(
-                $user->id,
-                __('messages.user_approved_delegate'),
-                __('messages.user_approved_delegate')
-            );
+            Mail::to($user->email)->send(new UserStatusMail($user, 'accepted'));
 
             return response()->json([
                 'status' => true,
@@ -93,11 +124,7 @@ class AdminController extends Controller
                 'status' => 'approved'
             ]);
 
-            $this->notifyUser(
-                $user->id,
-                __('messages.user_approved_contributor'),
-                __('messages.user_approved_contributor')
-            );
+            Mail::to($user->email)->send(new UserStatusMail($user, 'accepted'));
 
             return response()->json([
                 'status' => true,
@@ -112,6 +139,7 @@ class AdminController extends Controller
             'data' => null
         ], 422);
     }
+
 
     public function rejectUser(User $user): JsonResponse
     {
@@ -133,12 +161,9 @@ class AdminController extends Controller
 
 
         if ($messageKey !== 'user_role_not_supported') {
-            $this->notifyUser(
-                $user->id,
-                __('auth.' . $messageKey), 
-                __('auth.' . $messageKey)  
-            );
+            Mail::to($user->email)->send(new UserStatusMail($user, 'rejected'));
         }
+        
         return response()->json([
             'status' => true,
             'message' => __('auth.' . $messageKey),
@@ -298,6 +323,24 @@ class AdminController extends Controller
     public function createUser(AdminCreateUserRequest $request): JsonResponse
     {
         $data = $request->validated();
+
+        $existingUser = User::withTrashed()
+            ->where('email', $data['email'])
+            ->orWhere('id_number', $data['id_number'])
+            ->orWhere('phone', $data['phone'])
+            ->first();
+
+        if ($existingUser) {
+            if ($existingUser->trashed()) {
+                $existingUser->forceDelete();
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => __('auth.email_already_taken'),
+                    'data' => null,
+                ], 422);
+            }
+        }
 
         $user = User::create([
             'name' => $data['name'],

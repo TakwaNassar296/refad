@@ -281,6 +281,16 @@ return [
     'admin_position_deleted_successfully' => 'Admin position deleted successfully.',
     'refresh_token_invalid' => 'The refresh token is invalid or expired',
     'user_not_found' => 'User not found',
+    'user_status_subject' => 'Your account status on the platform',
+    'hello' => 'Hello',
+    'status_instruction' => 'Your account status has been updated:',
+    'follow_up_account' => 'You can follow up on your account by logging into the platform.',
+    'contact_support' => 'Please contact our support team if you need any assistance.',
+    'email_sent_from' => 'This email was sent from',
+    'all_rights_reserved' => 'All rights reserved',
+    'accepted' => 'Your account has been approved, you can now access your account.',
+    'rejected' => 'Your account has been rejected, please contact support if needed.',
+    'rejected_follow_up' => 'Your account has been rejected. Please contact support for more information.',
 
 
 

@@ -24,10 +24,24 @@ class AdminCreateUserRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'phone' => 'required|string|regex:/^\+?[0-9\s\-\(\)]{7,20}$/',
+            'email' => [
+                'required',
+                'email',
+                Rule::unique('users')->whereNull('deleted_at'), 
+            ],
+            'phone' => [
+                'required',
+                'string',
+                'regex:/^\+?[0-9\s\-\(\)]{7,20}$/',
+                Rule::unique('users')->whereNull('deleted_at'), 
+            ],
             'backup_phone' => ['nullable', 'string',  'regex:/^\+?[0-9\s\-\(\)]{7,20}$/'],
-            'id_number' => 'required|string|max:50|unique:users,id_number',
+            'id_number' => [
+                'required',
+                'string',
+                'max:50',
+                Rule::unique('users')->whereNull('deleted_at'), 
+            ],
             'role' => 'required|in:delegate,contributor',
             'password' => 'required|string|confirmed|min:8',
             'admin_position_id' => [

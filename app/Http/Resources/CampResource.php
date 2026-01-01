@@ -8,6 +8,10 @@ class CampResource extends JsonResource
 {
     public function toArray($request)
     {
+        $familyCount = $this->families ? $this->families->count() : 0;
+        $projectCount = $this->projects ? $this->projects->where('is_approved', true)->count() : 0;
+        $memberCount = $this->families ? $this->families->sum(fn($family) => $family->members->count()) : 0;
+
         return [
             'id' => $this->id,
             'name' => $this->getTranslation('name', app()->getLocale()),
@@ -25,6 +29,11 @@ class CampResource extends JsonResource
             'delegates' => UserResource::collection($this->whenLoaded('delegates')),
             'families' => FamilyResource::collection($this->whenLoaded('families')),
             'projects' => ProjectResource::collection($this->whenLoaded('projects')),
+            'statistics' => [
+                'familyCount' => $familyCount,
+                'projectCount' => $projectCount,
+                'memberCount' => $memberCount,
+            ],
             'createdAt' => $this->created_at,
             'updatedAt' => $this->updated_at,
         ];

@@ -51,6 +51,8 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    protected $dates = ['deleted_at'];
+
     /**
      * Get the attributes that should be cast.
      *

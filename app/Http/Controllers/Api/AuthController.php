@@ -32,6 +32,24 @@ class AuthController extends Controller
             ], 403);
         }
 
+        $existingUser = User::withTrashed()
+            ->where('email', $data['email'])
+            ->orWhere('id_number', $data['id_number'])
+            ->orWhere('phone', $data['phone'])
+            ->first();
+
+        if ($existingUser) {
+            if ($existingUser->trashed()) {
+                $existingUser->forceDelete();
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => __('auth.email_already_taken'),
+                    'data' => null,
+                ], 422);
+            }
+        }
+
         $user = $this->createUser($data);
 
         $this->notifyAdmin(
@@ -63,6 +81,7 @@ class AuthController extends Controller
             'admin_position' => $data['admin_position'] ?? null,
             'license_number' => $data['license_number'] ?? null,
             'accept_terms' => $data['accept_terms'] ?? false,
+            'camp_id' => $data['camp_id'] ?? null,
             'is_approved' => false,
             'status' => 'pending', 
         ]);

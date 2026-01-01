@@ -25,7 +25,11 @@ class RegisterRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
+            'email' => [
+                'required',
+                'email',
+                Rule::unique('users')->whereNull('deleted_at'),
+            ],
             'password' => [
                 'required',
                 'string', 
@@ -41,8 +45,11 @@ class RegisterRequest extends FormRequest
                 'required_if:role,delegate',
                 'exists:admin_positions,id',
             ],
-            'id_number' => ['required', 'string', 'max:50', 'unique:users,id_number'],
-            'phone' => ['required', 'string', 'max:20', 'unique:users,phone', 'regex:/^\+?[0-9\s\-\(\)]{7,20}$/'],
+            'id_number' => [
+                'required',
+                Rule::unique('users')->whereNull('deleted_at'),
+            ],
+            'phone' => ['required', 'string', 'max:20', Rule::unique('users')->whereNull('deleted_at') , 'regex:/^\+?[0-9\s\-\(\)]{7,20}$/'],
             'backup_phone' => ['nullable', 'string', 'max:20' , 'regex:/^\+?[0-9\s\-\(\)]{7,20}$/'],
             'role' => ['required', 'in:delegate,contributor'],
             'admin_position' => [
@@ -57,6 +64,14 @@ class RegisterRequest extends FormRequest
                 'required_if:admin_position,جمعية' 
             ],
             'accept_terms' => ['required', 'boolean', 'accepted'],
+            'camp_id' => 'nullable|exists:camps,id',
         ];
     }
+
+   /* public function withValidator($validator)
+    {
+        $validator->sometimes('camp_id', 'required|exists:camps,id', function ($input) {
+            return isset($input->role) && $input->role === 'delegate';
+        });
+    }*/
 }

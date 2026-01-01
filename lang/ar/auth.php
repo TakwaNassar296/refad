@@ -67,9 +67,12 @@ return [
     'contact_support' => 'يرجى التواصل مع فريق الدعم إذا كان لديك أي أسئلة.',
     'email_sent_from' => 'تم إرسال هذا البريد الإلكتروني من',
     'all_rights_reserved' => 'جميع الحقوق محفوظة.',
-    'not_allowed_to_change_password' => 'You are not allowed to change the password for this user',
-    'password_changed_successfully' => 'Password changed successfully',
-    'user_not_found' => 'User not found',
+    'not_allowed_to_change_password' => 'غير مسموح لك بتغيير كلمة المرور لهذا المستخدم',
+    'password_changed_successfully' => 'تم تغيير كلمة المرور بنجاح',
+    'user_not_found' => 'المستخدم غير موجود',
+    'email_already_taken' => 'هذا البريد الإلكتروني مستخدم بالفعل.',
+
+   
 
 
 

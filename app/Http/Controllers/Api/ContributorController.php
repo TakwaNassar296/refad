@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Api;
 use Carbon\Carbon;
 use App\Models\Camp;
 use App\Models\Project;
+use App\Helpers\CampHelpers;
 use App\Models\Contribution;
 use Illuminate\Http\Request;
+use App\Models\MedicalCondition;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CampResource;
@@ -104,10 +106,17 @@ class ContributorController extends Controller
 
         $families = $query->get();
 
+        $allMedicalConditions = MedicalCondition::pluck('name')->unique()->values()->toArray();
+
+
         return response()->json([
             'success' => true,
             'message' => __('messages.camp_families_list_fetched'),
-            'data' => FamilyResource::collection($families),
+            'data' => [
+                'families' => FamilyResource::collection($families),
+                'medicalConditions' => CampHelpers::allMedicalConditions(),
+                'ageGroups' => CampHelpers::ageGroupsNames(),
+            ],
         ], 200);
     }
 
