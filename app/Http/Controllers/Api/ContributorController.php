@@ -24,13 +24,11 @@ class ContributorController extends Controller
     {
         $user = Auth::user();
 
-        if ($user->isContributor()) {
-            if (!$campId) {
-                return response()->json([
-                    'success' => false,
-                    'message' => __('messages.camp_id_required'),
-                ], 422);
-            }
+        if ($user->isContributor() && !$campId) {
+            return response()->json([
+                'success' => false,
+                'message' => __('messages.camp_id_required'),
+            ], 422);
         }
 
         if ($user->isDelegate()) {
@@ -51,15 +49,14 @@ class ContributorController extends Controller
             ], 404);
         }
 
-        $query = $camp->families();
+        $query = $camp->families()->with('members.medicalCondition');
 
-        if ($request->filled('has_medical_condition') && $request->has_medical_condition) {
+        if ($request->boolean('has_medical_condition')) {
             $query->whereHas('members', function ($q) {
                 $q->whereNotNull('medical_condition_id')
                 ->orWhereNotNull('other_medical_condition');
             });
         }
-
 
         if ($request->filled('search')) {
             $query->where('family_name', 'like', '%' . $request->search . '%');
@@ -69,21 +66,19 @@ class ContributorController extends Controller
             $query->where('total_members', $request->total_members);
         }
 
-        if ($request->has('marital_status') && $request->marital_status) {
+        if ($request->filled('marital_status')) {
             $query->whereHas('maritalStatus', function ($q) use ($request) {
                 $q->where('name', $request->marital_status);
             });
         }
 
-        if ($request->has('medical_condition') && $request->medical_condition) {
-            $query->whereHas('members', function ($q) use ($request) {
-                $q->whereHas('medicalCondition', function ($mq) use ($request) {
-                    $mq->where('name', $request->medical_condition);
-                });
+        if ($request->filled('medical_condition')) {
+            $query->whereHas('members.medicalCondition', function ($q) use ($request) {
+                $q->where('name', $request->medical_condition);
             });
         }
 
-        if ($request->filled('has_children') && $request->has_children) {
+        if ($request->boolean('has_children')) {
             $fourYearsAgo = Carbon::now()->subYears(4)->startOfDay();
             $today = Carbon::now()->endOfDay();
 
@@ -96,29 +91,49 @@ class ContributorController extends Controller
             $from = Carbon::createFromDate($request->year_from)->startOfYear();
             $to = Carbon::createFromDate($request->year_to)->endOfYear();
 
-            $query->where(function ($query) use ($from, $to) {
-                $query->whereBetween('dob', [$from, $to])
-                    ->orWhereHas('members', function ($q) use ($from, $to) {
-                        $q->whereBetween('dob', [$from, $to]);
-                    });
+            $query->whereHas('members', function ($q) use ($from, $to) {
+                $q->whereBetween('dob', [$from, $to]);
             });
         }
 
         $families = $query->get();
 
-        $allMedicalConditions = MedicalCondition::pluck('name')->unique()->values()->toArray();
+        $familiesData = FamilyResource::collection($families)->toArray($request);
 
+        // إضافة medicalConditions و ageGroups لكل family
+        $familiesData = array_map(function($family, $key) use ($families) {
+            $members = $families[$key]->members;
+
+            $medicalConditions = $members
+                ->map(fn($member) => $member->medicalCondition?->name ?? $member->other_medical_condition)
+                ->filter()
+                ->unique()
+                ->values();
+
+            $ageGroups = $members
+                ->map(fn($member) => $member->age_group)
+                ->filter()
+                ->unique()
+                ->values();
+
+            $family = array_diff_key($family, ['members' => '']); // نحذف members الأصلي
+            $family['medicalConditions'] = $medicalConditions;
+            $family['ageGroups'] = $ageGroups;
+
+            return $family;
+        }, $familiesData, array_keys($familiesData));
 
         return response()->json([
             'success' => true,
             'message' => __('messages.camp_families_list_fetched'),
             'data' => [
-                'families' => FamilyResource::collection($families),
-                'medicalConditions' => CampHelpers::allMedicalConditions(),
-                'ageGroups' => CampHelpers::ageGroupsNames(),
+                'families' => $familiesData,
             ],
         ], 200);
     }
+
+
+
 
 
     public function contribute(Request $request, $projectId): JsonResponse

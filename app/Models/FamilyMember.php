@@ -67,4 +67,32 @@ class FamilyMember extends Model
     {
         return $this->belongsTo(MedicalCondition::class);
     }
+
+
+    public function getAgeGroupAttribute(): ?string
+    {
+        if (!$this->dob) {
+            return null;
+        }
+
+        $days  = $this->dob->diffInDays(now());
+        $years = $this->dob->diffInYears(now());
+
+        return match (true) {
+            $days <= 28                => 'newborns',
+            $days === 29               => 'infants',
+            $years >= 1  && $years < 2 => 'veryEarlyChildhood',
+            $years >= 2  && $years < 3 => 'toddlers',
+            $years >= 3  && $years < 5 => 'earlyChildhood',
+            $years >= 5  && $years < 10=> 'children',
+            $years >= 10 && $years < 18=> 'adolescents',
+            $years >= 18 && $years < 25=> 'youth',
+            $years >= 25 && $years < 40=> 'youngAdults',
+            $years >= 40 && $years < 50=> 'middleAgeAdults',
+            $years >= 50 && $years < 60=> 'lateMiddleAge',
+            $years >= 60               => 'seniors',
+            default                    => null,
+        };
+    }
+
 }
